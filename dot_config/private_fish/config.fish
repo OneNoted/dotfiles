@@ -66,3 +66,13 @@ alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl"
 set -gx VISUAL /usr/bin/nvim
 set -gx EDITOR /usr/bin/nvim
 set -gx SUDO_EDITOR /usr/bin/nvim
+
+# Yazi Shell Wrapper
+function y
+    set tmp (mktemp -t "yazi-cwd.XXXXXX")
+    yazi $argv --cwd-file="$tmp"
+    if read -z cwd <"$tmp"; and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
+        builtin cd -- "$cwd"
+    end
+    rm -f -- "$tmp"
+end

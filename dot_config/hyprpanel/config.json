@@ -1,0 +1,336 @@
+{
+  "bar.launcher.autoDetectIcon": false,
+  "theme.bar.buttons.dashboard.enableBorder": false,
+  "bar": {
+    "bluetooth": {
+      "label": false
+    },
+    "clock": {
+      "format": "%a %b %d  %I:%M %p"
+    },
+    "customModules": {
+      "cava": {
+        "showActiveOnly": true,
+        "showIcon": false,
+        "stereo": true
+      },
+      "updates": {
+        "pollingInterval": 1440000
+      }
+    },
+    "launcher": {
+      "icon": ""
+    },
+    "layouts": {
+      "*": {
+        "left": [
+          "dashboard",
+          "workspaces",
+          "windowtitle"
+        ],
+        "middle": [
+          "media",
+          "cava"
+        ],
+        "right": [
+          "systray",
+          "volume",
+          "bluetooth",
+          "battery",
+          "network",
+          "clock",
+          "notifications"
+        ]
+      }
+    },
+    "media": {
+      "show_active_only": true
+    },
+    "network": {
+      "truncation_size": 12
+    },
+    "notifications": {
+      "show_total": true
+    },
+    "volume": {
+      "label": false
+    },
+    "windowtitle": {
+      "label": true
+    },
+    "workspaces": {
+      "applicationIconEmptyWorkspace": "",
+      "monitorSpecific": false,
+      "numbered_active_indicator": "color",
+      "showApplicationIcons": true,
+      "showWsIcons": true,
+      "show_numbered": false,
+      "workspaces": 5
+    }
+  },
+  "menus": {
+    "clock": {
+      "weather": {
+        "location": "Stockholm",
+        "unit": "metric"
+      }
+    },
+    "dashboard": {
+      "directories": {
+        "left": {
+          "directory1": {
+            "command": "xdg-open /home/notes",
+            "label": "     Home"
+          },
+          "directory2": {
+            "command": "xdg-open /home/notes/Documents",
+            "label": "󰲂     Documents"
+          },
+          "directory3": {
+            "command": "xdg-open /home/notes/Downloads",
+            "label": "󰉍     Downloads"
+          }
+        },
+        "right": {
+          "directory1": {
+            "command": "xdg-open /home/notes/Desktop",
+            "label": "     Desktop"
+          },
+          "directory2": {
+            "command": "xdg-open /home/notes/Videos",
+            "label": "     Videos"
+          },
+          "directory3": {
+            "command": "xdg-open /home/notes/Pictures",
+            "label": "󰉏     Pictures"
+          }
+        }
+      },
+      "powermenu": {
+        "avatar": {
+          "image": "~/.face.icon"
+        },
+        "confirmation": false
+      },
+      "shortcuts": {
+        "left": {
+          "shortcut1": {
+            "command": "zen",
+            "icon": "",
+            "tooltip": "Zen"
+          },
+          "shortcut2": {
+            "command": "caffeine",
+            "icon": "󰅶",
+            "tooltip": "Caffeine"
+          },
+          "shortcut3": {
+            "command": "night-shift",
+            "icon": "󰖔",
+            "tooltip": "Night-shift"
+          },
+          "shortcut4": {
+            "command": "menu",
+            "icon": "",
+            "tooltip": "Search Apps"
+          }
+        },
+        "right": {
+          "shortcut1": {
+            "command": "hyprpicker -a",
+            "icon": "",
+            "tooltip": "Color Picker"
+          },
+          "shortcut3": {
+            "command": "screenshot region swappy",
+            "icon": "󰄀",
+            "tooltip": "Screenshot"
+          }
+        }
+      }
+    },
+    "power": {
+      "lowBatteryNotification": true
+    }
+  },
+  "notifications": {
+    "position": "top right",
+    "showActionsOnHover": true
+  },
+  "theme": {
+    "bar": {
+      "background": "#0f0f15",
+      "border_radius": "17px",
+      "buttons": {
+        "background": "#0f0f15",
+        "hover": "#0f0f15",
+        "icon": "#89b4fa",
+        "monochrome": true,
+        "notifications": {
+          "background": "#15151a",
+          "hover": "#0f0f15",
+          "icon": "#89b4fa",
+          "total": "#89b4fa"
+        },
+        "padding_x": "0.8rem",
+        "padding_y": "0.4rem",
+        "radius": "17px",
+        "spacing": "0.3em",
+        "style": "default",
+        "text": "#cdd6f4",
+        "workspaces": {
+          "active": "#89b4fa",
+          "available": "#45475a",
+          "hover": "#45475a",
+          "occupied": "#45475a"
+        },
+        "y_margins": "0px"
+      },
+      "dropdownGap": "4.5em",
+      "floating": true,
+      "location": "top",
+      "margin_bottom": "0px",
+      "margin_sides": "16px",
+      "margin_top": "16px",
+      "menus": {
+        "background": "#0f0f15",
+        "border": {
+          "color": "#89b4fa",
+          "radius": "17px",
+          "size": "3px"
+        },
+        "buttons": {
+          "active": "#89b4fa",
+          "default": "#89b4fa"
+        },
+        "card_radius": "17px",
+        "cards": "#15151a",
+        "check_radio_button": {
+          "active": "#89b4fa"
+        },
+        "dropdownmenu": {
+          "background": "#15151a",
+          "text": "#cdd6f4"
+        },
+        "iconbuttons": {
+          "active": "#89b4fa"
+        },
+        "icons": {
+          "active": "#89b4fa"
+        },
+        "label": "#cdd6f4",
+        "listitems": {
+          "active": "#89b4fa"
+        },
+        "menu": {
+          "media": {
+            "background": {
+              "color": "#15151a"
+            },
+            "card": {
+              "color": "#15151a",
+              "tint": 90
+            }
+          }
+        },
+        "monochrome": true,
+        "popover": {
+          "background": "#15151a",
+          "text": "#cdd6f4"
+        },
+        "progressbar": {
+          "foreground": "#89b4fa"
+        },
+        "shadow": "0 0 0 0",
+        "slider": {
+          "primary": "#89b4fa"
+        },
+        "switch": {
+          "enabled": "#89b4fa"
+        },
+        "text": "#cdd6f4",
+        "tooltip": {
+          "background": "#15151a",
+          "text": "#cdd6f4"
+        }
+      },
+      "outer_spacing": "0px",
+      "transparent": true
+    },
+    "font": {
+      "name": "Source Sans Pro",
+      "size": "13px"
+    },
+    "notification": {
+      "actions": {
+        "background": "#89b4fa",
+        "text": "#cdd6f4"
+      },
+      "background": "#15151a",
+      "border": "#15151a",
+      "border_radius": "17px",
+      "close_button": {
+        "background": "#15151a",
+        "label": "#f38ba8"
+      },
+      "enableShadow": true,
+      "label": "#89b4fa",
+      "labelicon": "#89b4fa",
+      "opacity": 90,
+      "text": "#cdd6f4"
+    },
+    "osd": {
+      "bar_color": "#89b4fa",
+      "bar_container": "#15151a",
+      "bar_overflow_color": "#45475a",
+      "enable": true,
+      "icon": "#0f0f15",
+      "icon_container": "#89b4fa",
+      "label": "#89b4fa",
+      "location": "left",
+      "margins": "0px 0px 0px 10px",
+      "muted_zero": true,
+      "orientation": "vertical",
+      "radius": "17px"
+    }
+  },
+  "wallpaper": {
+    "enable": false
+  },
+  "bar.customModules.storage.paths": [
+    "/"
+  ],
+  "theme.bar.floating": true,
+  "menus.clock.time.military": true,
+  "theme.bar.enableShadow": false,
+  "bar.clock.format": "%a %b %d  %H : %M : %S",
+  "bar.launcher.icon": "󰣇",
+  "menus.dashboard.shortcuts.left.shortcut1.command": "zen-browser",
+  "bar.layouts": {
+    "*": {
+      "left": [
+        "dashboard",
+        "workspaces",
+        "windowtitle"
+      ],
+      "middle": [
+        "media",
+        "cava"
+      ],
+      "right": [
+        "systray",
+        "volume",
+        "bluetooth",
+        "clock",
+        "notifications",
+        "network"
+      ]
+    }
+  },
+  "wallpaper.image": "/home/notes/Pictures/Wallpapers/night-fairycore-forest-desktop-wallpaper.jpg",
+  "theme.bar.menus.monochrome": true,
+  "bar.media.truncation_size": 100,
+  "bar.battery.label": false,
+  "theme.bar.buttons.network.enableBorder": false,
+  "theme.font.weight": 600
+}
