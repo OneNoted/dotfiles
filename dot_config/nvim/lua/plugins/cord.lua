@@ -16,7 +16,8 @@ return {
 
       text = {
         editing = function(opts)
-          return "Editing a file in " .. opts.filetype
+          -- return "Editing a file in " .. opts.filetype
+          return "Editing a file"
         end,
         viewing = "Viewing a file",
         workspace = "",

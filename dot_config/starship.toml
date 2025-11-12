@@ -11,14 +11,14 @@
 palette = 'catppuccin_macchiato'
 
 format = """
-$hostname\
-$localip\
 $shlvl\
 $shell\
 $env_var\
 $jobs\
 $sudo\
 $username\
+$hostname\
+$localip\
 $character"""
 
 right_format = """
@@ -126,13 +126,17 @@ Redhat = "󱄛"
 
 [localip]
 ssh_only = true
-format = " ◯[$localipv4](bold magenta)"
+format = " ◯ [$localipv4](bold magenta)"
 disabled = false
 
+[hostname]
+style = "mauve"
+ssh_symbol = "󰌘 "
+format = '[$ssh_symbol$hostname]($style)'
 
 [username]
-style_user = "bright-yellow bold italic"
-style_root = "purple bold italic"
+style_user = "bright-yellow bold "
+style_root = "purple bold "
 format = "[⭘ $user]($style) "
 disabled = false
 show_always = false
@@ -157,13 +161,13 @@ format = '[$path]($style)[$read_only]($read_only_style)'
 "Music" = "󰝚 "
 "Developer" = "󰲋 "
 
-[git_commit]
-commit_hash_length = 7
-only_detached = false
-tag_disabled = false
-
-disabled = false
-format = '[ $commit_hash ](fg:blue bg:surface0)'
+# [git_commit]
+# commit_hash_length = 7
+# only_detached = false
+# tag_disabled = false
+#
+# disabled = false
+# format = '[ $commit_hash ](fg:blue bg:surface0)'
 
 [git_branch]
 format = " [$branch(:$remote_branch)]($style)"
@@ -359,7 +363,7 @@ symbol = ' '
 format = "[$symbol]($style)"
 style = "bold mauve"
 # symbol = "[](bold fg:mauve)[](bold fg:mauve bg:mauve)"
-symbol = "[󰚟┈](bold fg:mauve)[](bold fg:mauve bg:mauve)"
+symbol = "[⋈┈](bold fg:mauve)[](bold fg:mauve bg:mauve)"
 
 disabled = false
 
