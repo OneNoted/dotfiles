@@ -332,5 +332,12 @@
   "bar.media.truncation_size": 100,
   "bar.battery.label": false,
   "theme.bar.buttons.network.enableBorder": false,
-  "theme.font.weight": 600
+  "theme.font.weight": 600,
+  "menus.dashboard.shortcuts.left.shortcut3.command": "discord",
+  "menus.dashboard.shortcuts.left.shortcut3.tooltip": "Discord",
+  "menus.dashboard.shortcuts.left.shortcut2.tooltip": "Spotify",
+  "menus.dashboard.shortcuts.left.shortcut3.icon": "",
+  "menus.dashboard.shortcuts.left.shortcut2.command": "spotify-launcher",
+  "menus.dashboard.shortcuts.left.shortcut2.icon": "",
+  "menus.dashboard.shortcuts.left.shortcut1.icon": "󰺕"
 }
