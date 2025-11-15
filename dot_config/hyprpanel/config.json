@@ -339,5 +339,6 @@
   "menus.dashboard.shortcuts.left.shortcut3.icon": "",
   "menus.dashboard.shortcuts.left.shortcut2.command": "spotify-launcher",
   "menus.dashboard.shortcuts.left.shortcut2.icon": "",
-  "menus.dashboard.shortcuts.left.shortcut1.icon": "󰺕"
+  "menus.dashboard.shortcuts.left.shortcut1.icon": "󰺕",
+  "menus.dashboard.shortcuts.left.shortcut4.command": "vicinae toggle"
 }
