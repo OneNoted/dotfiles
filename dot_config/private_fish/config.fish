@@ -5,7 +5,7 @@ end
 # Fastfetch Greeting
 set fish_greeting
 
-# Inits
+##### Inits #####
 
 # Television
 tv init fish | source
@@ -19,23 +19,24 @@ zoxide init fish | source
 # Atuin 
 atuin init fish --disable-up-arrow | source
 
-#  Carapace
+# Carapace
 set -Ux CARAPACE_BRIDGES 'zsh,fish,bash,inshellisense' # optional
 carapace _carapace | source
 
 # fzf
 fzf --fish | FZF_CTRL_R_COMMAND= FZF_CTRL_T_COMMAND= source
 
-# Aliases
+##### Aliases #####
+
 alias yay paru
 alias pamcan pacman
 alias clear "printf '\033[2J\033[3J\033[1;1H'"
-alias q 'qs -c ii'
 alias cd z
 alias find fd
 alias vim nvim
 alias vi nvim
 
+# back aliases 
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
@@ -49,7 +50,7 @@ alias ll='eza -l --color=always --group-directories-first --icons' # long format
 alias lt='eza -aT --color=always --group-directories-first --icons' # tree listing
 alias l.="eza -a | grep -e '^\.'" # show only dotfiles
 
-#  Grep aliases
+# Grep aliases
 alias dir='dir --color=auto'
 alias vdir='vdir --color=auto'
 alias grep='grep --color=auto'
@@ -63,6 +64,8 @@ alias jctl="journalctl -p 3 -xb"
 
 # Recent installed packages
 alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl"
+
+##### Variables #####
 set -gx VISUAL /usr/bin/nvim
 set -gx EDITOR /usr/bin/nvim
 set -gx SUDO_EDITOR /usr/bin/nvim
