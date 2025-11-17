@@ -1,0 +1,21 @@
+return {
+  "folke/snacks.nvim",
+  priority = 1000,
+  lazy = false,
+  opts = {
+    bigfile = { enabled = true },
+    dashboard = {
+      preset = {
+        header = [[
+        {{ if eq .chezmoi.hostname "aeolus" }}
+    ___                  __                
+   /   |  ___   ____    / /  __  __   _____
+  / /| | / _ \ / __ \  / /  / / / /  / ___/
+ / ___ |/  __// /_/ / / /  / /_/ /  (__  ) 
+/_/  |_|\___/ \____/ /_/   \__,_/  /____/  
+{{ end }}
+]],
+      },
+    },
+  },
+}
