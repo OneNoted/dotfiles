@@ -303,7 +303,7 @@
   "theme.bar.floating": true,
   "menus.clock.time.military": true,
   "theme.bar.enableShadow": false,
-  "bar.clock.format": "%a %b %d  %H : %M : %S",
+  "bar.clock.format": "%F %a %b %d  %T",
   "bar.launcher.icon": "󰣇",
   "menus.dashboard.shortcuts.left.shortcut1.command": "zen-browser",
   "bar.layouts": {
@@ -319,8 +319,10 @@
       ],
       "right": [
         "systray",
+        "hyprsunset",
         "volume",
         "bluetooth",
+        "ram",
         "clock",
         "notifications",
         "network"
@@ -333,12 +335,15 @@
   "bar.battery.label": false,
   "theme.bar.buttons.network.enableBorder": false,
   "theme.font.weight": 600,
-  "menus.dashboard.shortcuts.left.shortcut3.command": "discord",
+  "menus.dashboard.shortcuts.left.shortcut3.command": "equibop",
   "menus.dashboard.shortcuts.left.shortcut3.tooltip": "Discord",
   "menus.dashboard.shortcuts.left.shortcut2.tooltip": "Spotify",
   "menus.dashboard.shortcuts.left.shortcut3.icon": "",
-  "menus.dashboard.shortcuts.left.shortcut2.command": "spotify-launcher",
+  "menus.dashboard.shortcuts.left.shortcut2.command": "kitty -e spotify_player",
   "menus.dashboard.shortcuts.left.shortcut2.icon": "",
   "menus.dashboard.shortcuts.left.shortcut1.icon": "󰺕",
-  "menus.dashboard.shortcuts.left.shortcut4.command": "vicinae toggle"
+  "menus.dashboard.shortcuts.left.shortcut4.command": "vicinae toggle",
+  "menus.media.displayTime": true,
+  "menus.media.hideAuthor": false,
+  "bar.customModules.hyprsunset.temperature": "3000k"
 }
