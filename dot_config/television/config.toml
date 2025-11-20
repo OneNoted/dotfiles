@@ -238,9 +238,7 @@ fallback_channel = "files"
   "gunzip",
   "xz",
 ]
-  "dotfiles" = [
-  "vim",
-]
+"dotfiles" = ["vim"]
 "git-diff" = ["git add", "git restore"]
 "git-branch" = [
   "git checkout",
@@ -261,4 +259,4 @@ fallback_channel = "files"
 "smart_autocomplete" = "ctrl-t"
 # controls which keybinding should trigger tv
 # for command history
-"command_history" = "ctrl-r"
+"command_history" = "ctrl-z"
