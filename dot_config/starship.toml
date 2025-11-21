@@ -167,10 +167,10 @@ format = '[$path]($style)[$read_only]($read_only_style)'
 [git_commit]
 style = "bold italic bright-blue"
 commit_hash_length = 7
-only_detached = false
-tag_disabled = false
+only_detached = true
+tag_disabled = true
 disabled = false
-format = '[ ⎪(bold italic bright-blue) $commit $hash](fg:blue )'
+format = '[ ⎪(bold italic bright-blue)  $commit $hash ](fg:blue )'
 
 [git_branch]
 format = " [$branch(:$remote_branch)]($style)"
