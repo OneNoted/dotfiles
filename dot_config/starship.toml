@@ -8,9 +8,12 @@
 
 "$schema" = 'https://starship.rs/config-schema.json'
 
-palette = 'catppuccin_macchiato'
+add_newline = true
+continuation_prompt = "[▸▹ ](dimmed white)"
 
-format = """
+palette = 'catppuccin_mocha'
+
+format = """($nix_shell$container$fill$git_metrics\n)$cmd_duration\
 $shlvl\
 $shell\
 $env_var\
@@ -161,13 +164,13 @@ format = '[$path]($style)[$read_only]($read_only_style)'
 "Music" = "󰝚 "
 "Developer" = "󰲋 "
 
-# [git_commit]
-# commit_hash_length = 7
-# only_detached = false
-# tag_disabled = false
-#
-# disabled = false
-# format = '[ $commit_hash ](fg:blue bg:surface0)'
+[git_commit]
+style = "bold italic bright-blue"
+commit_hash_length = 7
+only_detached = false
+tag_disabled = false
+disabled = false
+format = '[ ⎪(bold italic bright-blue) $commit $hash](fg:blue )'
 
 [git_branch]
 format = " [$branch(:$remote_branch)]($style)"
@@ -377,12 +380,14 @@ vimcmd_visual_symbol = "▼"
 
 
 [cmd_duration]
-min_time = 1000
-show_milliseconds = true
-format = "[   $duration ]($style)"
-style = "bg:mantle fg:peach"
-disabled = false
-show_notifications = true
+format = "[◄ $duration ](italic white)"
+
+# min_time = 1000
+# show_milliseconds = true
+# format = "[   $duration ]($style)"
+# style = "bg:mantle fg:peach"
+# disabled = false
+# show_notifications = true
 
 
 [palettes.catppuccin_macchiato]
