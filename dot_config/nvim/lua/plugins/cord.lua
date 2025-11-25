@@ -1,5 +1,6 @@
 return {
   "vyfor/cord.nvim",
+  lazy = false,
   build = ":Cord update",
   opts = function()
     return {
@@ -22,20 +23,17 @@ return {
         viewing = "Viewing a file",
         workspace = "",
       },
+
+      -- Thank you ChatGPT
       hooks = {
-        -- called after Cord builds the activity but before sending
         post_activity = function(opts, activity)
-          -- try to set the activity type to 'listening'
           activity.type = "watching" -- 'playing' | 'listening' | 'watching' | 'competing'
-          -- optionally tweak which field is shown in the member list
           activity.status_display_type = "name" -- 'name' | 'state' | 'details'
-          -- you can also adjust the details/state strings
           activity.details = activity.details or "wawa"
           activity.state = activity.state or "Neovim"
           return activity
         end,
       },
-      -- asset overrides
       assets = {},
     }
   end,
