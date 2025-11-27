@@ -21,6 +21,7 @@ atuin init fish --disable-up-arrow | source
 
 # Carapace
 set -Ux CARAPACE_BRIDGES 'zsh,fish,bash,inshellisense' # optional
+set -gx CARAPACE_EXCLUDES paru
 carapace _carapace | source
 
 # fzf
