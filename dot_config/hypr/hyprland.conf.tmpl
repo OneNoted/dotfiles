@@ -402,6 +402,7 @@ misc {
 # windowrule = nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0
 
 
+{{ if ne .chezmoi.hostname "hephaestus" }}
 layerrule { # I have 0 clue if this is working or not I am trying my best here okay :c
     name = vicinae-layer
     match:namespace = vicinae 
@@ -410,6 +411,8 @@ layerrule { # I have 0 clue if this is working or not I am trying my best here o
     ignore_alpha = 0.5
     no_anim = true
 }
+{{- end }}
+
 # Overview
 plugin {
     hyprexpo {

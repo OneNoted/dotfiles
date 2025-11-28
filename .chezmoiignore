@@ -3,3 +3,7 @@
 ~/.config/hypr/card
 .config/hypr/card
 
+{{ if eq .chezmoi.hostname "hephaestus" }}
+~/.config/fish/completions/paru.fish
+{{- end }}
+
