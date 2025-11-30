@@ -36,6 +36,7 @@ alias cd z
 alias find fd
 alias vim nvim
 alias vi nvim
+alias zel 'zellij attach $(zellij ls -s | tv)'
 
 # back aliases 
 alias ..='cd ..'
