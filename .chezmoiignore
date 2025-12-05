@@ -9,7 +9,7 @@
 
 {{- if eq .chezmoi.osRelease.id "nixos" }}
 # Ignore all by default if on NixOS
-*
+**
 !.config/nvim/**
 !.config/fish/**
 !.config/starship.toml
