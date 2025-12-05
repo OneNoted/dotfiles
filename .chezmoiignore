@@ -21,8 +21,6 @@
 !.config/fastfetch/**
 !.config/atuin/
 !.config/atuin/**
-
-
+!.config/television/**
+!.config/zellij/**
 {{- end }}
-
-
