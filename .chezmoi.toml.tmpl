@@ -1,4 +1,7 @@
+sourceDir = "/home/notes/Chezmoi/Source/"
 
+{{- if ne .chezmoi.osRelease.id "nixos" }}
 [cd]
     command = "/usr/bin/fish"
+{{- end }}
 

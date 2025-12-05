@@ -40,6 +40,7 @@ source=custom/keybinds.conf
 ###################
 
 $terminal = kitty -1
+$term = kitty -1
 $fileManager = $terminal -e yazi
 $menu = vicinae
 $lockscreen = hyprlock
@@ -133,8 +134,8 @@ env = QT_QUICK_CONTROLS_STYLE,Material     # or Fusion/Universal/Imagine
 env = QT_QUICK_CONTROLS_MATERIAL_THEME,Dark
 
 ### Other Variables
-env = TERM,$terminal
-env = TERMINAL,$terminal
+env = TERM, $terminal
+env = TERMINAL, $terminal
 
 
 ###################
@@ -194,7 +195,7 @@ general {
 
 dwindle {
     preserve_split = false # "You probably want this" No, no I do not...
-    smart_split = true
+    smart_split = false
     smart_resizing = false
   force_split = 0
     precise_mouse_move = true
@@ -204,7 +205,7 @@ dwindle {
 # https://wiki.hypr.land/Configuring/Variables/#decoration
 decoration {
       active_opacity = 1.0
-    inactive_opacity = 0.97
+    inactive_opacity = 0.99777
       blur {
     enabled = false
     size = 6
