@@ -7,14 +7,20 @@
 ~/.config/fish/completions/paru.fish
 {{- end }}
 
-{{- if eq .chezmoi.osRelease.id "nixos" }}
+{{- if eq .chezmoi.hostname "nixos" }}
 # Ignore all by default if on NixOS
 **
+# Unignore following (why do I even bother making comments at this point)
+!.config/
+!.config/nvim/
 !.config/nvim/**
+!.config/fish/
 !.config/fish/**
 !.config/starship.toml
 !.config/yazi/**
 !.config/fastfetch/**
+!.config/atuin/
+!.config/atuin/**
 
 
 {{- end }}
