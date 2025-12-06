@@ -345,5 +345,9 @@
   "menus.dashboard.shortcuts.left.shortcut4.command": "vicinae toggle",
   "menus.media.displayTime": true,
   "menus.media.hideAuthor": false,
-  "bar.customModules.hyprsunset.temperature": "3000k"
+  "bar.customModules.hyprsunset.temperature": "3000k",
+  "menus.media.displayTimeTooltip": true,
+  "menus.dashboard.stats.enable_gpu": false,
+  "bar.media.rightClick": "spotify_player like",
+  "theme.bar.buttons.media.enableBorder": false
 }
