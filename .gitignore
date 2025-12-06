@@ -1,0 +1,12 @@
+# Local overrides
+*.local
+*.private
+
+# SSH / GPG
+.ssh/
+.gnupg/
+
+# Tokens / env
+.env
+.env.*
+
