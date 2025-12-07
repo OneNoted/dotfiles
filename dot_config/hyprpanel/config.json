@@ -300,7 +300,7 @@
   "bar.customModules.storage.paths": [
     "/"
   ],
-  "theme.bar.floating": true,
+  "theme.bar.floating": false,
   "menus.clock.time.military": true,
   "theme.bar.enableShadow": false,
   "bar.clock.format": "%F %a %b %d  %T",
@@ -349,5 +349,17 @@
   "menus.media.displayTimeTooltip": true,
   "menus.dashboard.stats.enable_gpu": false,
   "bar.media.rightClick": "spotify_player like",
-  "theme.bar.buttons.media.enableBorder": false
+  "theme.bar.buttons.media.enableBorder": false,
+  "theme.font.size": "11px",
+  "bar.autoHide": "fullscreen",
+  "theme.bar.border.width": "0.15em",
+  "theme.bar.border.location": "none",
+  "theme.bar.location": "top",
+  "menus.dashboard.powermenu.avatar.image": "/home/notes/Pictures/Personal/notes redpanda santa and text.jpg",
+  "theme.bar.menus.menu.dashboard.profile.radius": "4em",
+  "menus.dashboard.powermenu.confirmation": true,
+  "theme.bar.transparent": true,
+  "theme.bar.opacity": 100,
+  "theme.bar.buttons.style": "default",
+  "theme.bar.buttons.background_opacity": 80
 }

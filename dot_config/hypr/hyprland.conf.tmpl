@@ -163,11 +163,11 @@ env = TERMINAL, $terminal
 
 # https://wiki.hypr.land/Configuring/Variables/#general
 general {
-    gaps_in = 4
-    gaps_out = 6
+    gaps_in = 3
+    gaps_out = 3
     gaps_workspaces = 50
 
-    border_size = 3
+    border_size = 2
 
     # https://wiki.hypr.land/Configuring/Variables/#variable-types for info about colors
     col.active_border = rgba(89b4fa70)
@@ -226,7 +226,7 @@ decoration {
         render_power = 4
        offset = 0 2
     }
-    rounding = 17
+    rounding = 11
     dim_inactive = true
     dim_strength = 0.025
     dim_special = 0.07
@@ -405,17 +405,24 @@ misc {
 
 
 {{ if ne .chezmoi.hostname "hephaestus" }}
-layerrule { # I have 0 clue if this is working or not I am trying my best here okay :c
-    name = vicinae-layer
-    match:namespace = vicinae 
+# blur
+layerrule = blur,vicinae
+layerrule = ignorealpha 0, vicinae
 
-    blur = true
-    ignore_alpha = 0.5
-    no_anim = true
-}
+# disable fade animation for vicinae only
+layerrule = noanim, vicinae
+
+# layerrule { # I have 0 clue if this is working or not I am trying my best here okay :c
+#     name = vicinae-layer
+#     match:namespace = vicinae 
+#
+#     blur = true
+#     ignore_alpha = 0.5
+#     no_anim = true
+# }
 {{- end }}
 
-# Overview
+# Overview "yoinked and unnecessary for everything but hephaestus"
 plugin {
     hyprexpo {
         columns = 3
