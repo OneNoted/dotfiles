@@ -1,0 +1,62 @@
+# Created by newuser for 5.9
+# Zsh configuration file
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+[ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
+[ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+
+# Source / Load Zinit
+source "${ZINIT_HOME}/zinit.zsh"
+
+# zinit plugins and configurations
+zinit light zsh-users/zsh-completions
+zinit light zsh-users/zsh-syntax-highlighting
+zinit light zsh-users/zsh-autosuggestions
+
+# Load completions
+autoload -Uz compinit && compinit
+# Completions style
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' menu no
+
+
+
+
+##### Initializations #####
+
+# Starship Prompt
+eval "$(starship init zsh)"
+# Atuin History
+eval "$(atuin init zsh)"
+# Zoxide
+eval "$(zoxide init zsh)"
+# television
+eval "$(tv init zsh)"
+
+##### Initializations #####
+
+##### Aliases #####
+
+# general aliases
+alias yay paru
+alias pamcan pacman
+alias clear "printf '\033[2J\033[3J\033[1;1H'"
+alias cd z
+alias find fd
+alias vim nvim
+alias vi nvim
+alias zel 'zellij attach $(zellij ls -s | tv)'
+
+# eza aliases
+alias ls='eza -al --color=always --group-directories-first --icons' # preferred listing
+alias la='eza -a --color=always --group-directories-first --icons' # all files and dirs
+alias ll='eza -l --color=always --group-directories-first --icons' # long format
+alias lt='eza -aT --color=always --group-directories-first --icons' # tree listing
+alias l.="eza -a | grep -e '^\.'" # show only dotfiles
+
+# back aliases 
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
