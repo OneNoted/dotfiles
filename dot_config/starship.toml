@@ -146,7 +146,7 @@ show_always = false
 
 [directory]
 truncation_symbol = "••/"
-home_symbol = "⌂ "
+home_symbol = "⌂"
 truncation_length = 4
 read_only = " ◈"
 use_os_path_sep = true

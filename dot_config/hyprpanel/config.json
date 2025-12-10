@@ -300,7 +300,7 @@
   "bar.customModules.storage.paths": [
     "/"
   ],
-  "theme.bar.floating": false,
+  "theme.bar.floating": true,
   "menus.clock.time.military": true,
   "theme.bar.enableShadow": false,
   "bar.clock.format": "%F %a %b %d  %T",
@@ -350,7 +350,7 @@
   "menus.dashboard.stats.enable_gpu": false,
   "bar.media.rightClick": "spotify_player like",
   "theme.bar.buttons.media.enableBorder": false,
-  "theme.font.size": "11px",
+  "theme.font.size": "15px",
   "bar.autoHide": "fullscreen",
   "theme.bar.border.width": "0.15em",
   "theme.bar.border.location": "none",
@@ -361,5 +361,15 @@
   "theme.bar.transparent": true,
   "theme.bar.opacity": 100,
   "theme.bar.buttons.style": "default",
-  "theme.bar.buttons.background_opacity": 80
+  "theme.bar.buttons.background_opacity": 100,
+  "theme.bar.buttons.workspaces.active": "#caa6f7",
+  "theme.notification.border_radius": "14em",
+  "theme.bar.buttons.radius": "17px",
+  "theme.bar.buttons.media.text": "#caa6f7",
+  "theme.bar.buttons.media.icon": "#caa6f7",
+  "theme.bar.buttons.icon": "#caa6f7",
+  "theme.bar.buttons.monochrome": true,
+  "theme.bar.layer": "top",
+  "theme.bar.margin_top": "3px",
+  "theme.bar.margin_sides": "5px"
 }
