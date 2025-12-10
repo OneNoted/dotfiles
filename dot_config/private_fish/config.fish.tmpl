@@ -27,7 +27,7 @@ carapace _carapace | source
 # fzf
 fzf --fish | FZF_CTRL_R_COMMAND= FZF_CTRL_T_COMMAND= source
 
-##### Aliases #####
+#Aliases
 
 alias yay paru
 alias pamcan pacman
@@ -67,13 +67,6 @@ alias jctl="journalctl -p 3 -xb"
 # Recent installed packages
 alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl"
 
-{{- if ne .chezmoi.osRelease.id "nixos" }}
-##### Variables #####
-set -gx VISUAL /usr/bin/nvim
-set -gx EDITOR /usr/bin/nvim
-set -gx SUDO_EDITOR /usr/bin/nvim
-{{- end }}
-
 # Yazi Shell Wrapper
 function y
     set tmp (mktemp -t "yazi-cwd.XXXXXX")
@@ -83,3 +76,8 @@ function y
     end
     rm -f -- "$tmp"
 end
+
+# Variables
+set -gx VISUAL /usr/bin/nvim
+set -gx EDITOR /usr/bin/nvim
+set -gx SUDO_EDITOR /usr/bin/nvim
