@@ -67,8 +67,9 @@ input {
     follow_mouse = 1
     off_window_axis_events = 2
 
+{{ if ne .chezmoi.hostname "hephaestus" }}
     sensitivity = -0.5 # -1.0 - 1.0, 0 means no modification.
-
+{{- end }}  
     touchpad {
         natural_scroll = yes
         disable_while_typing = false
