@@ -15,7 +15,6 @@ palette = 'catppuccin_mocha'
 
 format = """($nix_shell$container$fill$git_metrics\n)$cmd_duration\
 $shlvl\
-$shell\
 $env_var\
 $jobs\
 $sudo\
@@ -94,7 +93,7 @@ $gcloud\
 $openstack\
 $azure\
 $crystal\
-$custom\
+$shell\
 $status\
 $os\
 $battery\
@@ -129,7 +128,7 @@ Redhat = "󱄛"
 
 [localip]
 ssh_only = true
-format = " ◯ [$localipv4](bold magenta)"
+format = " ◯ [$localipv4](bold magenta) "
 disabled = false
 
 [hostname]
@@ -449,3 +448,19 @@ surface0 = "#313244"
 base = "#1e1e2e"
 mantle = "#181825"
 crust = "#11111b"
+
+
+[shell]
+disabled = false
+style = "dimmed italic mauve"
+fish_indicator = ""
+elvish_indicator = "esh"
+tcsh_indicator = "tsh"
+bash_indicator = "bash"
+zsh_indicator = "zsh"
+powershell_indicator = "pwsh"
+ion_indicator = "ion"
+cmd_indicator = "cmd"
+nu_indicator = "nu"
+unknown_indicator = "shell"
+format = "[$indicator]($style) "
