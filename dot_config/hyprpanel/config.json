@@ -303,7 +303,7 @@
   "theme.bar.floating": true,
   "menus.clock.time.military": true,
   "theme.bar.enableShadow": false,
-  "bar.clock.format": "%F %a %b %d  %T",
+  "bar.clock.format": "%a %b %d  %T",
   "bar.launcher.icon": "󰣇",
   "menus.dashboard.shortcuts.left.shortcut1.command": "zen-browser",
   "bar.layouts": {
@@ -314,18 +314,13 @@
         "windowtitle"
       ],
       "middle": [
-        "media",
-        "cava"
+        "media"
       ],
       "right": [
         "systray",
-        "hyprsunset",
         "volume",
-        "bluetooth",
-        "ram",
         "clock",
-        "notifications",
-        "network"
+        "notifications"
       ]
     }
   },
@@ -350,7 +345,7 @@
   "menus.dashboard.stats.enable_gpu": false,
   "bar.media.rightClick": "spotify_player like",
   "theme.bar.buttons.media.enableBorder": false,
-  "theme.font.size": "15px",
+  "theme.font.size": "13px",
   "bar.autoHide": "fullscreen",
   "theme.bar.border.width": "0.15em",
   "theme.bar.border.location": "none",
@@ -371,5 +366,6 @@
   "theme.bar.buttons.monochrome": true,
   "theme.bar.layer": "top",
   "theme.bar.margin_top": "3px",
-  "theme.bar.margin_sides": "5px"
+  "theme.bar.margin_sides": "5px",
+  "bar.network.label": false
 }
