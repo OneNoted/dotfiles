@@ -211,7 +211,7 @@ keybinds clear-defaults=true {
     shared_except "normal" "locked" "entersearch" "renametab" "renamepane" {
         bind "esc" { SwitchToMode "normal"; }
     }
-    shared_except "normal" "locked" "scroll" {
+    shared_except  "locked" "scroll" { // "normal"
         bind "Alt left" { MoveFocusOrTab "left"; }
         bind "Alt down" { MoveFocus "down"; }
         bind "Alt up" { MoveFocus "up"; }

@@ -105,7 +105,7 @@ body {
 
     /* accent colors */
     --accent-1: var(--purple-1); /* links and other accent text */
-    --accent-2: var(--red-6); /* small accent elements */
+    --accent-2: var(--blue-6); /* small accent elements */
     --accent-3: var(--purple-3); /* accent buttons */
     --accent-4: var(--purple-4); /* accent buttons when hovered */
     --accent-5: var(--purple-5); /* accent buttons when clicked */
@@ -161,6 +161,7 @@ body {
     --purple-3: hsl(267deg, 84%, 81%);
     --purple-4: hsl(267deg, 84%, 76%);
     --purple-5: hsl(267deg, 84%, 71%);
+    --purple-6: hsla(267deg, 84%, 81%, 0.5);
 }
 :root {
     --ping-badge-color: var(--purple-4); 
