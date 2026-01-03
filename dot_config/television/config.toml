@@ -239,7 +239,7 @@ fallback_channel = "files"
   "gunzip",
   "xz",
 ]
-"dotfiles" = ["vim", "chezmoi edit", "chezmoi apply", "chezmoi re-add"]
+"dotfiles" = ["vim", "chezmoi edit", "chezmoi apply", "chezmoi re-add", "dc"]
 "git-diff" = ["git add", "git restore"]
 "git-branch" = [
   "git checkout",

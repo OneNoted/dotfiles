@@ -53,10 +53,10 @@ $screenshot = grimblast --freeze --notify cop area
 
 # https://wiki.hypr.land/Configuring/Variables/#input
 input {
-    kb_layout = us
+    kb_layout = us,se
     kb_variant = 
     kb_model =
-    kb_options =caps:escape
+    kb_options =caps:escape, grp:alt_space_toggle
     kb_rules =
 
     repeat_delay = 200 
@@ -100,8 +100,8 @@ gestures {
 ################
 ### Monitors ###
 ################
-# monitor=,preferred,auto,1
-cursor:default_monitor = DP-4
+monitor=,preferred,auto,1
+cursor:default_monitor = DP-3
 # See Source section above :D 
 
 #################
@@ -165,10 +165,11 @@ general {
     gaps_out = 5
     gaps_workspaces = 50
 
-    border_size = 1
+    border_size = 2
 
     # https://wiki.hypr.land/Configuring/Variables/#variable-types for info about colors
     col.active_border = rgba(89b4fa8f)
+    # col.active_border = rgba(cba6f7ff)
     col.inactive_border = rgba(181825ef)
 
 
