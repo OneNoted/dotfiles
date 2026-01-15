@@ -11,3 +11,9 @@ command = "ls -la --color=always '{}'"
 
 [keybindings]
 shortcut = "f2"
+enter = "actions:print_path"
+
+[actions.print_path]
+description = "Print the selected path to stdout"
+command = "echo '{}'"
+mode = "execute"
