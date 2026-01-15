@@ -68,7 +68,7 @@ input {
     off_window_axis_events = 2
 
 {{ if ne .chezmoi.hostname "hephaestus" }}
-    sensitivity = -0.5 # -1.0 - 1.0, 0 means no modification.
+    sensitivity = -0.75 # -1.0 - 1.0, 0 means no modification.
 {{- end }}  
     touchpad {
         natural_scroll = yes
@@ -115,6 +115,10 @@ exec-once = USE_LAYER_SHELL=0 vicinae server
 exec-once = systemctl --user start hyprpolkitagent
 exec-once = dbus-update-activation-environment --systemd --all
 exec-once = systemctl --user import-environment QT_QPA_PLATFORMTHEME QT_QUICK_CONTROLS_STYLE QT_QUICK_CONTROLS_MATERIAL_THEME
+
+
+exec-once = [workspace 2 silent] kitty
+exec-once = [workspace 3 silent] zen-browser 
 
 #############################
 ### ENVIRONMENT VARIABLES ###
@@ -432,6 +436,7 @@ layerrule { # I have 0 clue if this is working or not I am trying my best here o
 }
 {{- end }}
 
+
 # Overview "yoinked and unnecessary for everything but hephaestus"
 plugin {
     hyprexpo {
@@ -440,9 +445,9 @@ plugin {
         bg_col = rgb(000000)
         workspace_method = first 1 # [center/first] [workspace] e.g. first 1 or center m+1
 
-        enable_gesture = false # laptop touchpad, 4 fingers
-        gesture_distance = 300 # how far is the "max"
-        gesture_positive = false
+        enable_gesture = true # laptop touchpad, 4 fingers
+        # gesture_distance = 300 # how far is the "max"
+        # gesture_positive = false
     }
 }
 binds {
