@@ -2,6 +2,7 @@
 
 # Local overrides
 *.local
+.pre-commit-config.yaml
 *.private
 
 # SSH / GPG
