@@ -23,6 +23,10 @@ return {
       markdown = { "prettier" },
       json = { "prettier" },
       jsonc = { "prettier" },
+      javascript = { "prettier" },
+      typescript = { "prettier" },
+      javascriptreact = { "prettier" },
+      typescriptreact = { "prettier" },
     }
 
     for _, formatter_opts in pairs(formatters) do

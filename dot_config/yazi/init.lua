@@ -18,6 +18,14 @@ function Linemode:size_and_mtime()
 	return string.format("%s %s", size and ya.readable_size(size) or "-", time)
 end
 
+-- Whoosh bookmark manager
+require("whoosh"):setup({
+	-- Use only letters for keys since numbers are used by relative-motions
+	keys = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+	jump_notify = false,
+	home_alias_enabled = true,
+})
+
 require("restore"):setup({
 	-- Set the position for confirm and overwrite prompts.
 	-- Don't forget to set height: `h = xx`

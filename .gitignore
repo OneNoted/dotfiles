@@ -3,6 +3,7 @@
 # Local overrides
 *.local
 .pre-commit-config.yaml
+.github/workflows
 *.private
 
 # SSH / GPG

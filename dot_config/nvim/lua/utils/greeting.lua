@@ -33,10 +33,10 @@ function M.get_greeting()
   local main = {
     { icon, hl = "SnacksDashboardIcon" },
     { greeting .. " ", hl = "SnacksDashboardDesc" },
-    { user, hl = "SnacksDashboardKey" },
+    { user, hl = "Keyword" },
     { ", welcome to ", hl = "SnacksDashboardDesc" },
-    { hostname, hl = "SnacksDashboardKey" },
-    { " ", hl = "SnacksDashboardIcon" },
+    { hostname, hl = "Keyword" },
+    { " ", hl = "Keyword" },
   }
 
   local late = nil
