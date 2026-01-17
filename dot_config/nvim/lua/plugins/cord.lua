@@ -24,10 +24,9 @@ return {
         workspace = "",
       },
 
-      -- Thank you ChatGPT
       hooks = {
         post_activity = function(opts, activity)
-          activity.type = "watching" -- 'playing' | 'listening' | 'watching' | 'competing'
+          activity.type = "competing" -- 'playing' | 'listening' | 'watching' | 'competing'
           activity.status_display_type = "name" -- 'name' | 'state' | 'details'
           activity.details = activity.details or "wawa"
           activity.state = activity.state or "Neovim"

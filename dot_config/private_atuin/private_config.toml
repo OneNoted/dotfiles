@@ -262,7 +262,7 @@ enabled = true
 # tcp_port = 8889
 
 [theme]
-name = "catppuccin-mocha-peach"
+name = "catppuccin-mocha-mauve"
 
 ## Color theme to use for rendering in the terminal.
 ## There are some built-in themes, including the base theme ("default"),

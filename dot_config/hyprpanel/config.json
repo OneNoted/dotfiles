@@ -303,7 +303,7 @@
   "theme.bar.floating": true,
   "menus.clock.time.military": true,
   "theme.bar.enableShadow": false,
-  "bar.clock.format": "%a %b %d  %T",
+  "bar.clock.format": "%m/%d  %T",
   "bar.launcher.icon": "󰣇",
   "menus.dashboard.shortcuts.left.shortcut1.command": "zen-browser",
   "bar.layouts": {
@@ -314,13 +314,14 @@
         "windowtitle"
       ],
       "middle": [
-        "media"
+        "clock"
       ],
       "right": [
         "systray",
         "volume",
-        "clock",
-        "notifications"
+        "media",
+        "notifications",
+        "hyprsunset"
       ]
     }
   },
@@ -357,15 +358,21 @@
   "theme.bar.opacity": 100,
   "theme.bar.buttons.style": "default",
   "theme.bar.buttons.background_opacity": 100,
-  "theme.bar.buttons.workspaces.active": "#caa6f7",
-  "theme.notification.border_radius": "14em",
+  "theme.bar.buttons.workspaces.active": "#89b4fa",
+  "theme.notification.border_radius": "1em",
   "theme.bar.buttons.radius": "17px",
   "theme.bar.buttons.media.text": "#caa6f7",
   "theme.bar.buttons.media.icon": "#caa6f7",
-  "theme.bar.buttons.icon": "#caa6f7",
+  "theme.bar.buttons.icon": "#89b4fa",
   "theme.bar.buttons.monochrome": true,
   "theme.bar.layer": "top",
   "theme.bar.margin_top": "3px",
   "theme.bar.margin_sides": "5px",
-  "bar.network.label": false
+  "bar.network.label": false,
+  "menus.dashboard.shortcuts.right.shortcut3.command": "hyprsunset --temperature 3000",
+  "menus.dashboard.shortcuts.right.shortcut3.tooltip": "hyprsunset",
+  "bar.customModules.hyprsunset.onLabel": "",
+  "bar.customModules.hyprsunset.offLabel": "",
+  "bar.clock.icon": "",
+  "theme.bar.buttons.clock.spacing": "0em"
 }

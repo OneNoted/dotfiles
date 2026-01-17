@@ -24,6 +24,13 @@
       "keyColor": "cyan",
       "format": "Ex Astris, Scientia",
     },
+    "break",
+    {
+      "type": "command",
+      "key": "  ",
+      "keyColor": "yellow",
+      "text": "/home/notes/.config/fastfetch/scifi_quotes.sh"
+    },
     // {
     // "type": "title",
     // "key": "ホスト",
@@ -76,7 +83,7 @@
     // One entry for every partition
     {
       "type": "disk",
-      "key": "├─",
+      "key": "╭─",
       "keyColor": "green"
     },
     // {
@@ -111,7 +118,7 @@
     // },
     {
       "type": "terminal",
-      "key": "╭─",
+      "key": "├─",
       "keyColor": "green"
     },
     // {
