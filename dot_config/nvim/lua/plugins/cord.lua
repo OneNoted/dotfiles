@@ -24,7 +24,6 @@ return {
         workspace = "",
       },
 
-      -- Thank you ChatGPT
       hooks = {
         post_activity = function(opts, activity)
           activity.type = "competing" -- 'playing' | 'listening' | 'watching' | 'competing'
