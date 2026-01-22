@@ -73,12 +73,43 @@ return {
       vim.lsp.config("zls", { capabilities = capabilities })
       vim.lsp.config("taplo", { capabilities = capabilities })
 
+      -- TypeScript/JavaScript LSP
+      vim.lsp.config("ts_ls", {
+        capabilities = capabilities,
+        settings = {
+          typescript = {
+            inlayHints = {
+              includeInlayParameterNameHints = "all",
+              includeInlayPropertyDeclarationTypeHints = true,
+              includeInlayFunctionLikeReturnTypeHints = true,
+            },
+          },
+          javascript = {
+            inlayHints = {
+              includeInlayParameterNameHints = "all",
+              includeInlayPropertyDeclarationTypeHints = true,
+              includeInlayFunctionLikeReturnTypeHints = true,
+            },
+          },
+        },
+      })
+
+      -- JSON LSP (SchemaStore configured in lang/json.lua)
+      vim.lsp.config("jsonls", { capabilities = capabilities })
+
+      -- QML LSP (for Qt/Quickshell)
+      vim.lsp.config("qmlls", {
+        capabilities = capabilities,
+        cmd = { "qmlls6" }, -- Qt6 binary name on most distros
+        filetypes = { "qml", "qmljs" },
+      })
+
       -- Setup Mason
       require("mason").setup()
 
       -- Setup mason-lspconfig with Mason 2.0 automatic_enable
       require("mason-lspconfig").setup({
-        ensure_installed = { "lua_ls", "gopls", "nil_ls", "zls", "taplo" },
+        ensure_installed = { "lua_ls", "gopls", "nil_ls", "zls", "taplo", "ts_ls", "jsonls" },
         automatic_enable = {
           exclude = { "rust_analyzer" }, -- rustaceanvim handles Rust (Plan 03-09)
         },

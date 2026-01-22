@@ -31,13 +31,13 @@ return {
       -- Default mappings:
       -- sa = add, sd = delete, sr = replace, sf = find, sF = find left, sh = highlight
       mappings = {
-        add = "sa",            -- Add surrounding
-        delete = "sd",         -- Delete surrounding
-        find = "sf",           -- Find surrounding (right)
-        find_left = "sF",      -- Find surrounding (left)
-        highlight = "sh",      -- Highlight surrounding
-        replace = "sr",        -- Replace surrounding
-        update_n_lines = "sn", -- Update n_lines
+        add = "gsa", -- Add surrounding
+        delete = "gsd", -- Delete surrounding
+        find = "gsf", -- Find surrounding (right)
+        find_left = "gsF", -- Find surrounding (left)
+        highlight = "gsh", -- Highlight surrounding
+        replace = "gsr", -- Replace surrounding
+        update_n_lines = "gsn", -- Update n_lines
       },
     },
   },

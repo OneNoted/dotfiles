@@ -36,7 +36,7 @@ return {
         capabilities = vim.tbl_deep_extend("force", capabilities, cmp_lsp.default_capabilities())
       end
 
-      -- Configure yamlls with SchemaStore
+      -- Configure yamlls with SchemaStore (includes kubernetes schemas automatically)
       vim.lsp.config("yamlls", {
         capabilities = capabilities,
         settings = {
@@ -45,16 +45,19 @@ return {
               enable = false, -- Disable built-in schemaStore
               url = "", -- Avoid fetching from URL
             },
-            schemas = require("schemastore").yaml.schemas(),
+            schemas = require("schemastore").yaml.schemas({
+              extra = {
+                -- Add kubernetes schema for common k8s file patterns
+                {
+                  description = "Kubernetes",
+                  fileMatch = { "**/kubernetes/**/*.yaml", "**/k8s/**/*.yaml", "*.k8s.yaml" },
+                  name = "kubernetes",
+                  url = "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.29.0-standalone-strict/all.json",
+                },
+              },
+            }),
           },
         },
-        on_attach = function(client, bufnr)
-          -- Kubernetes file detection
-          local filename = vim.api.nvim_buf_get_name(bufnr)
-          if filename:match("kubernetes") or filename:match("k8s") then
-            client.config.settings.yaml.schemas["kubernetes"] = filename
-          end
-        end,
       })
     end,
   },

@@ -1,5 +1,4 @@
 -- Keymaps are loaded after plugins
--- Source: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 
 local map = vim.keymap.set
 
@@ -52,12 +51,12 @@ map("n", "<leader>|", "<C-W>v", { desc = "Split window right" })
 map("n", "<leader>wd", "<C-W>c", { desc = "Delete window" })
 
 -- Diagnostics (basic ones handled by lsp.lua, these are error-specific)
-map("n", "]e", function() vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.ERROR }) end, { desc = "Next error" })
-map("n", "[e", function() vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.ERROR }) end, { desc = "Prev error" })
+-- stylua: ignore
+map("n", "]e", function() vim.diagnostic.jump({ severity = vim.diagnostic.severity.ERROR }) end, { desc = "Next error" })
+-- stylua: ignore
+map("n", "[e", function() vim.diagnostic.jump({ severity = vim.diagnostic.severity.ERROR }) end, { desc = "Prev error" })
 
--- Quickfix
-map("n", "[q", vim.cmd.cprev, { desc = "Previous quickfix" })
-map("n", "]q", vim.cmd.cnext, { desc = "Next quickfix" })
+-- Note: Quickfix [q/]q handled by diagnostics.lua (Trouble-aware)
 
 -- New file
 map("n", "<leader>fn", "<cmd>enew<cr>", { desc = "New file" })

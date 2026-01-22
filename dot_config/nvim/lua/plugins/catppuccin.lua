@@ -1,5 +1,4 @@
 -- Colorscheme: Catppuccin
--- Mocha flavour with integrations for all UI plugins
 return {
   {
     "catppuccin/nvim",
@@ -8,7 +7,7 @@ return {
     priority = 1000,
     opts = {
       flavour = "mocha",
-      transparent_background = false,
+      transparent_background = true,
       term_colors = true,
       styles = {
         comments = { "italic" },

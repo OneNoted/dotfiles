@@ -1,4 +1,4 @@
--- Completion engine with nvim-cmp and mini.snippets integration
+-- Completions with nvim-cmp and mini.snippets
 -- Source order: nvim_lsp first, then snippets, then buffer (after 3 chars), then path
 
 return {
@@ -17,7 +17,7 @@ return {
     end,
   },
 
-  -- Completion engine
+  -- Completion nvim-cmp
   {
     "hrsh7th/nvim-cmp",
     event = "InsertEnter",
@@ -55,7 +55,9 @@ return {
           ["<C-e>"] = cmp.mapping.abort(),
           ["<CR>"] = cmp.mapping.confirm({ select = true }),
           ["<Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
+            if vim.lsp.inline_completion.get() then
+              vim.lsp.inline_completion.accept()
+            elseif cmp.visible() then
               cmp.select_next_item()
             else
               fallback()

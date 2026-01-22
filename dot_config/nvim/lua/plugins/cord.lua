@@ -33,6 +33,9 @@ return {
           return activity
         end,
       },
+      idle = {
+        enabled = false,
+      },
       assets = {},
     }
   end,

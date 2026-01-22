@@ -1,5 +1,6 @@
 -- Treesitter: AST-based syntax highlighting, indentation, and text objects
 -- Foundation for all code intelligence features
+-- Silly LLM written comments
 return {
   {
     "nvim-treesitter/nvim-treesitter",
@@ -10,7 +11,7 @@ return {
       "nvim-treesitter/nvim-treesitter-textobjects",
     },
     config = function()
-      -- IMPORTANT: Use treesitter.configs.setup(), NOT treesitter.setup()
+      -- Use treesitter.configs.setup(), NOT treesitter.setup()
       require("nvim-treesitter.configs").setup({
         ensure_installed = {
           -- Target languages
@@ -26,7 +27,7 @@ return {
           "git_rebase",
           "gitignore",
           "diff",
-          -- Core (always needed)
+          -- Core
           "lua",
           "vim",
           "vimdoc",

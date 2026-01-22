@@ -21,10 +21,10 @@ function M.get_greeting()
   local icon
   if hour >= 5 and hour < 12 then
     greeting = "Good morning"
-    icon = "🌤️ "
+    icon = " "
   elseif hour >= 12 and hour < 18 then
     greeting = "Good afternoon"
-    icon = "☀️ "
+    icon = "  "
   else
     greeting = "Good evening"
     icon = " "
@@ -33,10 +33,10 @@ function M.get_greeting()
   local main = {
     { icon, hl = "SnacksDashboardIcon" },
     { greeting .. " ", hl = "SnacksDashboardDesc" },
-    { user, hl = "SnacksDashboardKey" },
+    { user, hl = "Keyword" },
     { ", welcome to ", hl = "SnacksDashboardDesc" },
-    { hostname, hl = "SnacksDashboardKey" },
-    { " ", hl = "SnacksDashboardIcon" },
+    { hostname, hl = "Keyword" },
+    { "  ", hl = "Keyword" },
   }
 
   local late = nil
