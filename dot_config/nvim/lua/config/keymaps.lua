@@ -1,5 +1,4 @@
 -- Keymaps are loaded after plugins
--- Source: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 
 local map = vim.keymap.set
 

@@ -114,6 +114,12 @@ bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 #####^Binds^#####
 
+# Quickshell default config QML import path
+export QML_IMPORT_PATH="${QML_IMPORT_PATH:+$QML_IMPORT_PATH:}$HOME/.config/quickshell/default/lib"
+
+
 #########################
 ##### End of .zshrc #####
 #########################
+
+

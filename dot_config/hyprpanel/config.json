@@ -374,5 +374,28 @@
   "bar.customModules.hyprsunset.onLabel": "",
   "bar.customModules.hyprsunset.offLabel": "",
   "bar.clock.icon": "",
-  "theme.bar.buttons.clock.spacing": "0em"
+  "theme.bar.buttons.clock.spacing": "0em",
+  "scalingPriority": "gdk",
+  "tear": true,
+  "bar.windowtitle.custom_title": true,
+  "theme.bar.buttons.windowtitle.enableBorder": false,
+  "bar.workspaces.workspaceMask": false,
+  "bar.workspaces.showWsIcons": false,
+  "bar.workspaces.showApplicationIcons": false,
+  "bar.workspaces.show_numbered": false,
+  "bar.workspaces.show_icons": true,
+  "bar.workspaces.monitorSpecific": true,
+  "bar.workspaces.numbered_active_indicator": "color",
+  "bar.windowtitle.title_map": [
+    [
+      "kitty",
+      "󰄛",
+      "Kitty"
+    ],
+    [
+      "equibop",
+      "",
+      "Discord"
+    ]
+  ]
 }
