@@ -1,5 +1,4 @@
 -- Colorscheme: Catppuccin
--- Mocha flavour with integrations for all UI plugins
 return {
   {
     "catppuccin/nvim",

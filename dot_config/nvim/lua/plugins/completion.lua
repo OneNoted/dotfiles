@@ -55,9 +55,8 @@ return {
           ["<C-e>"] = cmp.mapping.abort(),
           ["<CR>"] = cmp.mapping.confirm({ select = true }),
           ["<Tab>"] = cmp.mapping(function(fallback)
-            local copilot_ok, copilot = pcall(require, "copilot.suggestion")
-            if copilot_ok and copilot.is_visible() then
-              copilot.accept()
+            if vim.lsp.inline_completion.get() then
+              vim.lsp.inline_completion.accept()
             elseif cmp.visible() then
               cmp.select_next_item()
             else

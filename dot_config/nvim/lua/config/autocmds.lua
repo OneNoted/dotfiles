@@ -1,5 +1,4 @@
 -- Autocmds are loaded after plugins
--- Source: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
 
 -- Helper function for creating augroups with clear = true
 local function augroup(name)
