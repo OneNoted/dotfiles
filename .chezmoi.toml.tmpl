@@ -1,7 +1,7 @@
-sourceDir = "/home/notes/Chezmoi/Source/"
+sourceDir = "{{ .chezmoi.homeDir }}/Chezmoi/Source/"
 
 {{- if ne .chezmoi.osRelease.id "nixos" }}
 [cd]
-    command = "/usr/bin/fish"
+    command = "fish"
 {{- end }}
 

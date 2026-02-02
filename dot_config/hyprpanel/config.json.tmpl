@@ -79,29 +79,29 @@
       "directories": {
         "left": {
           "directory1": {
-            "command": "xdg-open /home/notes",
+            "command": "xdg-open {{ .chezmoi.homeDir }}",
             "label": "     Home"
           },
           "directory2": {
-            "command": "xdg-open /home/notes/Documents",
+            "command": "xdg-open {{ .chezmoi.homeDir }}/Documents",
             "label": "󰲂     Documents"
           },
           "directory3": {
-            "command": "xdg-open /home/notes/Downloads",
+            "command": "xdg-open {{ .chezmoi.homeDir }}/Downloads",
             "label": "󰉍     Downloads"
           }
         },
         "right": {
           "directory1": {
-            "command": "xdg-open /home/notes/Desktop",
+            "command": "xdg-open {{ .chezmoi.homeDir }}/Desktop",
             "label": "     Desktop"
           },
           "directory2": {
-            "command": "xdg-open /home/notes/Videos",
+            "command": "xdg-open {{ .chezmoi.homeDir }}/Videos",
             "label": "     Videos"
           },
           "directory3": {
-            "command": "xdg-open /home/notes/Pictures",
+            "command": "xdg-open {{ .chezmoi.homeDir }}/Pictures",
             "label": "󰉏     Pictures"
           }
         }
@@ -325,7 +325,7 @@
       ]
     }
   },
-  "wallpaper.image": "/home/notes/Pictures/Wallpapers/night-fairycore-forest-desktop-wallpaper.jpg",
+  "wallpaper.image": "{{ .chezmoi.homeDir }}/Pictures/Wallpapers/night-fairycore-forest-desktop-wallpaper.jpg",
   "theme.bar.menus.monochrome": true,
   "bar.media.truncation_size": 100,
   "bar.battery.label": false,
@@ -351,7 +351,7 @@
   "theme.bar.border.width": "0.15em",
   "theme.bar.border.location": "none",
   "theme.bar.location": "top",
-  "menus.dashboard.powermenu.avatar.image": "/home/notes/Pictures/Personal/notes redpanda santa and text.jpg",
+  "menus.dashboard.powermenu.avatar.image": "{{ .chezmoi.homeDir }}/Pictures/Personal/notes redpanda santa and text.jpg",
   "theme.bar.menus.menu.dashboard.profile.radius": "4em",
   "menus.dashboard.powermenu.confirmation": true,
   "theme.bar.transparent": false,

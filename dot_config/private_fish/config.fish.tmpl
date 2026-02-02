@@ -82,8 +82,8 @@ function y
 end
 
 # Variables
-set -gx VISUAL /usr/bin/nvim
-set -gx EDITOR /usr/bin/nvim
-set -gx SUDO_EDITOR /usr/bin/nvim
+set -gx VISUAL nvim
+set -gx EDITOR nvim
+set -gx SUDO_EDITOR nvim
 set -g fish_key_bindings fish_vi_key_bindings
-set -gx OBSIDIAN_REST_API_KEY 0cc296ed5938d5fd13e038587b92b246c24d6392e28086335ca6dd65c36c284e
+test -f ~/.config/fish/secrets.fish; and source ~/.config/fish/secrets.fish

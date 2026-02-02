@@ -98,7 +98,7 @@ bindl = , XF86AudioPlay, exec, playerctl play-pause
 bindl = , XF86AudioPrev, exec, playerctl previous
 
 # Utility keybinds
-bind = Super+Shift, S, exec, sh -c "app=\$(hyprctl activewindow -j | jq -r .class); hyprshot --freeze --output-folder \"/home/notes/Pictures/Screenshots/Snippets\" --filename "$USER@$HOSTNAME-$(date +%Y-%m-%d_%H:%M:%S)-\${app}.png" --mode region"
+bind = Super+Shift, S, exec, sh -c "app=\$(hyprctl activewindow -j | jq -r .class); hyprshot --freeze --output-folder \"{{ .chezmoi.homeDir }}/Pictures/Screenshots/Snippets\" --filename "$USER@$HOSTNAME-$(date +%Y-%m-%d_%H:%M:%S)-\${app}.png" --mode region"
 
 # Hyprwhspr
 bindd = SUPER ALT, D, Speech-to-text, exec, /usr/lib/hyprwhspr/config/hyprland/hyprwhspr-tray.sh record
