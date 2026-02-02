@@ -6,3 +6,10 @@ debug
 foo.*
 *.log
 data
+
+# Neovim
+spell/
+plugin/
+
+# Jujutsu
+.jj/

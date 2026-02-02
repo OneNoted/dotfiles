@@ -32,7 +32,8 @@ return {
                 loadOutDirsFromCheck = true,
                 buildScripts = { enable = true },
               },
-              checkOnSave = {
+              checkOnSave = true,
+              check = {
                 command = "clippy",
               },
               procMacro = {
