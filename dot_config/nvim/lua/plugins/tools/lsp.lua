@@ -119,10 +119,12 @@ return {
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("user_lsp_attach", { clear = true }),
         callback = function(event)
+          local client = vim.lsp.get_client_by_id(event.data.client_id)
           local map = function(mode, lhs, rhs, desc)
             vim.keymap.set(mode, lhs, rhs, { buffer = event.buf, desc = desc })
           end
 
+          -- Common LSP keymaps
           map("n", "gd", vim.lsp.buf.definition, "Go to Definition")
           map("n", "gD", vim.lsp.buf.declaration, "Go to Declaration")
           map("n", "gr", vim.lsp.buf.references, "References")
@@ -136,6 +138,43 @@ return {
           map("n", "<leader>cd", vim.diagnostic.open_float, "Line Diagnostics")
           map("n", "]d", vim.diagnostic.goto_next, "Next Diagnostic")
           map("n", "[d", vim.diagnostic.goto_prev, "Prev Diagnostic")
+
+          -- Go-specific keymaps
+          if client and client.name == "gopls" then
+            map("n", "<leader>gt", function()
+              local file = vim.fn.expand("%:p")
+              local alt
+              if file:match("_test%.go$") then
+                alt = file:gsub("_test%.go$", ".go")
+              else
+                alt = file:gsub("%.go$", "_test.go")
+              end
+              if vim.fn.filereadable(alt) == 1 then
+                vim.cmd.edit(alt)
+              else
+                vim.notify("Alternate file not found: " .. alt, vim.log.levels.WARN)
+              end
+            end, "Toggle Test File")
+
+            map("n", "<leader>gi", function()
+              local params = vim.lsp.util.make_range_params()
+              params.context = { only = { "source.organizeImports" } }
+              local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, 3000)
+              for _, res in pairs(result or {}) do
+                for _, r in pairs(res.result or {}) do
+                  if r.edit then
+                    vim.lsp.util.apply_workspace_edit(r.edit, "utf-8")
+                  end
+                end
+              end
+            end, "Organize Imports")
+          end
+
+          -- Zig-specific keymaps
+          if client and client.name == "zls" then
+            map("n", "<leader>zb", "<cmd>!zig build<cr>", "Zig Build")
+            map("n", "<leader>zt", "<cmd>!zig build test<cr>", "Zig Test")
+          end
         end,
       })
     end,
