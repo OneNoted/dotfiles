@@ -19,8 +19,8 @@
 
 # General
 
-$env.config.buffer_editor = "/usr/bin/nvim"
-$env.EDITOR = "/usr/bin/nvim"
+$env.config.buffer_editor = "nvim"
+$env.EDITOR = "nvim"
 
 # Appearance
 source ~/.config/nushell/themes/catppuccin_mocha.nu

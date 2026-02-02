@@ -16,10 +16,13 @@ zinit load zsh-users/zsh-completions
 
 # 2. Fish Experience Stack 
 zinit load olets/zsh-abbr                         
-# zinit load "$HOME/Projects/zsh-fishy-deletions/"             
+# zinit load "$HOME/Projects/zsh-fishy-deletions/"
 zinit load OneNoted/zsh-fishy-deletions
 
 
+
+# Use history first, then completion engine as fallback
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
 zinit wait lucid for zsh-users/zsh-history-substring-search
 zinit wait lucid for zsh-users/zsh-autosuggestions
@@ -50,6 +53,10 @@ zstyle ':completion:*' group-name ''
 zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' verbose yes
+
+# Carapace completions (1000+ commands with descriptions)
+export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
+source <(carapace _carapace)
 
 #####^Zinit Plugin Manager^#####
 
@@ -82,14 +89,13 @@ export VISUAL='nvim'
 ##### Aliases #####
 
 # general aliases
-alias yay paru
-alias pamcan pacman
-alias clear "printf '\033[2J\033[3J\033[1;1H'"
-alias cd z
-alias find fd
-alias vim nvim
-alias vi nvim
-alias zel 'zellij attach $(zellij ls -s | tv)'
+alias yay='paru'
+alias clear="printf '\033[2J\033[3J\033[1;1H'"
+alias cd='z'
+alias find='fd'
+alias vim='nvim'
+alias vi='nvim'
+alias zel='zellij attach $(zellij ls -s | tv)'
 
 # eza aliases
 alias ls='eza -al --color=always --group-directories-first --icons' # preferred listing

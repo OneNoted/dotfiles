@@ -42,34 +42,34 @@ alias dc cd
 # fuzzy attach zellij via televison
 alias zel 'zellij attach $(zellij ls -s | tv)'
 
-# back aliases 
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias .....='cd ../../../..'
-alias ......='cd ../../../../..'
+# back aliases
+alias .. 'cd ..'
+alias ... 'cd ../..'
+alias .... 'cd ../../..'
+alias ..... 'cd ../../../..'
+alias ...... 'cd ../../../../..'
 
 # eza aliases
-alias ls='eza -al --color=always --group-directories-first --icons' # preferred listing
-alias la='eza -a --color=always --group-directories-first --icons' # all files and dirs
-alias ll='eza -l --color=always --group-directories-first --icons' # long format
-alias lt='eza -aT --color=always --group-directories-first --icons' # tree listing
-alias l.="eza -a | grep -e '^\.'" # show only dotfiles
+alias ls 'eza -al --color=always --group-directories-first --icons' # preferred listing
+alias la 'eza -a --color=always --group-directories-first --icons' # all files and dirs
+alias ll 'eza -l --color=always --group-directories-first --icons' # long format
+alias lt 'eza -aT --color=always --group-directories-first --icons' # tree listing
+alias l. "eza -a | grep -e '^\.'" # show only dotfiles
 
 # Grep aliases
-alias dir='dir --color=auto'
-alias vdir='vdir --color=auto'
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
+alias dir 'dir --color=auto'
+alias vdir 'vdir --color=auto'
+alias grep 'grep --color=auto'
+alias fgrep 'fgrep --color=auto'
+alias egrep 'egrep --color=auto'
 
-alias gitpkg='pacman -Q | grep -i "\-git" | wc -l' # count git packages
+alias gitpkg 'pacman -Q | grep -i "\-git" | wc -l' # count git packages
 
 # Get the error messages from journalctl
-alias jctl="journalctl -p 3 -xb"
+alias jctl "journalctl -p 3 -xb"
 
 # Recent installed packages
-alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl"
+alias rip "expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl"
 
 # Yazi Shell Wrapper
 function y
