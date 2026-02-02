@@ -1,4 +1,7 @@
-
+[[mgr.prepend_keymap]]
+on = ["<BackTab>"]
+run = "tab_switch 1 --relative"
+desc = "Switch to the next tab"
 
 # Whoosh bookmark manager
 [[mgr.prepend_keymap]]
@@ -12,102 +15,101 @@ run = "plugin whoosh jump_by_fzf"
 desc = "Fuzzy search bookmarks"
 
 [[mgr.prepend_keymap]]
-on = [ "]", "a" ]
+on = ["]", "a"]
 run = "plugin whoosh save"
 desc = "Add bookmark (hovered)"
 
 [[mgr.prepend_keymap]]
-on = [ "]", "A" ]
+on = ["]", "A"]
 run = "plugin whoosh save_cwd"
 desc = "Add bookmark (current dir)"
 
 [[mgr.prepend_keymap]]
-on = [ "]", "t" ]
+on = ["]", "t"]
 run = "plugin whoosh save_temp"
 desc = "Add temp bookmark (hovered)"
 
 [[mgr.prepend_keymap]]
-on = [ "]", "d" ]
+on = ["]", "d"]
 run = "plugin whoosh delete_by_key"
 desc = "Delete bookmark by key"
 
 [[mgr.prepend_keymap]]
-on = [ "]", "D" ]
+on = ["]", "D"]
 run = "plugin whoosh delete_by_fzf"
 desc = "Delete bookmarks by fzf"
 
 [[mgr.prepend_keymap]]
-on = [ "]", "r" ]
+on = ["]", "r"]
 run = "plugin whoosh rename_by_key"
 desc = "Rename bookmark by key"
 
 [[mgr.prepend_keymap]]
-on  = "M"
+on = "M"
 run = "plugin mount"
 
 [[mgr.prepend_keymap]]
-on = [ "1" ]
+on = ["1"]
 run = "plugin relative-motions 1"
 desc = "Move in relative steps"
 
 [[mgr.prepend_keymap]]
-on = [ "2" ]
+on = ["2"]
 run = "plugin relative-motions 2"
 desc = "Move in relative steps"
 
 [[mgr.prepend_keymap]]
-on = [ "3" ]
+on = ["3"]
 run = "plugin relative-motions 3"
 desc = "Move in relative steps"
 
 [[mgr.prepend_keymap]]
-on = [ "4" ]
+on = ["4"]
 run = "plugin relative-motions 4"
 desc = "Move in relative steps"
 
 [[mgr.prepend_keymap]]
-on = [ "5" ]
+on = ["5"]
 run = "plugin relative-motions 5"
 desc = "Move in relative steps"
 
 [[mgr.prepend_keymap]]
-on = [ "6" ]
+on = ["6"]
 run = "plugin relative-motions 6"
 desc = "Move in relative steps"
 
 [[mgr.prepend_keymap]]
-on = [ "7" ]
+on = ["7"]
 run = "plugin relative-motions 7"
 desc = "Move in relative steps"
 
 [[mgr.prepend_keymap]]
-on = [ "8" ]
+on = ["8"]
 run = "plugin relative-motions 8"
 desc = "Move in relative steps"
 
 [[mgr.prepend_keymap]]
-on = [ "9" ]
+on = ["9"]
 run = "plugin relative-motions 9"
 desc = "Move in relative steps"
 
 
 [[mgr.prepend_keymap]]
 on = "u"
-run = "plugin restore" 
+run = "plugin restore"
 desc = "Restore last deleted files/folders"
-  #   # or use "d + u" like me
-  #   { on = ["d", "u"], run = "plugin restore", desc = "Restore last deleted files/folders" },
-  #
-  #   # Select files/folders to restore. Input item index or range separated by comma:
-  #   # - Restore a trashed file:
-  #   #      What file to restore [0..4]: 4
-  #   # - Restore multiple trashed files separated by comma, also support range:
-  #   #      What file to restore [0..3]: 0-2, 3
-  #
-  #   # This will throw error when there is existed file/folder
-  #   { on = [ "d", "U" ], run = "plugin restore -- --interactive", desc = "Restore deleted files/folders (Interactive)" },
-  #   # Or auto overwrite existed file/folder
-  #   { on = [ "d", "U" ], run = "plugin restore -- --interactive --interactive-overwrite", desc = "Restore deleted files/folders (Interactive overwrite)" },
-  # ]
-  #
-
+#   # or use "d + u" like me
+#   { on = ["d", "u"], run = "plugin restore", desc = "Restore last deleted files/folders" },
+#
+#   # Select files/folders to restore. Input item index or range separated by comma:
+#   # - Restore a trashed file:
+#   #      What file to restore [0..4]: 4
+#   # - Restore multiple trashed files separated by comma, also support range:
+#   #      What file to restore [0..3]: 0-2, 3
+#
+#   # This will throw error when there is existed file/folder
+#   { on = [ "d", "U" ], run = "plugin restore -- --interactive", desc = "Restore deleted files/folders (Interactive)" },
+#   # Or auto overwrite existed file/folder
+#   { on = [ "d", "U" ], run = "plugin restore -- --interactive --interactive-overwrite", desc = "Restore deleted files/folders (Interactive overwrite)" },
+# ]
+#
