@@ -1,0 +1,187 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "source": "{{ .chezmoi.homeDir }}/.config/fastfetch/ascii-art/saturn_fastfetch.txt",
+    "type": "file",
+    "padding": {
+      "top": 2
+    },
+    "color": {
+      "1": "#c6a0f6",
+      "2": "white",
+    },
+  },
+  "display": {
+    "separator": " ",
+    "color": {
+      "title": "white"
+    }
+  },
+  "modules": [
+    {
+      "type": "custom",
+      "key": "  󰫣",
+      "keyColor": "cyan",
+      "format": "Ex Astris, Scientia",
+    },
+    "break",
+    {
+      "type": "command",
+      "key": "  ",
+      "keyColor": "yellow",
+      "text": "{{ .chezmoi.homeDir }}/.config/fastfetch/scifi_quotes.sh"
+    },
+    // {
+    // "type": "title",
+    // "key": "ホスト",
+    // "key": "  ",
+    // "keyColor": "cyan"
+    // },
+    "break",
+    {
+      "type": "title",
+      "key": "╭─",
+      "keyColor": "#c6a0f6"
+    },
+    {
+      "type": "kernel",
+      "key": "├─",
+      "format": "{1} {2}",
+      "keyColor": "#c6a0f6"
+    },
+    {
+      "type": "packages",
+      "key": "├─󰮯",
+      "keyColor": "#c6a0f6"
+    },
+    {
+      "type": "de",
+      "key": "├─",
+      "keyColor": "#c6a0f6"
+    },
+    {
+      "type": "wm",
+      "key": "├─",
+      "keyColor": "#c6a0f6"
+    },
+    // {
+    //   "type": "lm",
+    //   "key": "├─󰧨",
+    //   "keyColor": "magenta"
+    // },
+    {
+      "type": "theme",
+      "key": "├─󰉼",
+      "keyColor": "#c6a0f6"
+    },
+    {
+      "type": "icons",
+      "key": "╰─󰀻",
+      "keyColor": "#c6a0f6"
+    },
+    "break",
+    // One entry for every partition
+    {
+      "type": "disk",
+      "key": "╭─",
+      "keyColor": "green"
+    },
+    // {
+    // 	"type": "brightness",
+    // 	"key": "├─󰃞",
+    // 	"keyColor": "green"
+    // },
+    // {
+    // 	"type": "battery",
+    // 	"key": "├─",
+    // 	"keyColor": "green"
+    // },
+    // {
+    // 	"type": "poweradapter",
+    // 	"key": "├─",
+    // 	"keyColor": "green"
+    // },
+    // {
+    // 	"type": "gamepad",
+    // 	"key": "├─",
+    // 	"keyColor": "green"
+    // },
+    // {
+    // 	"type": "bluetooth",
+    // 	"key": "├─",
+    // 	"keyColor": "green"
+    // },
+    // {
+    // 	"type": "sound",
+    // 	"key": "╰─",
+    // 	"keyColor": "green"
+    // },
+    {
+      "type": "terminal",
+      "key": "├─",
+      "keyColor": "green"
+    },
+    // {
+    //   "type": "terminalfont",
+    //   "key": "├─",
+    //   "keyColor": "green"
+    // },
+    {
+      "type": "shell",
+      "key": "╰─",
+      "keyColor": "green"
+    },
+    "break",
+    {
+      "type": "board",
+      "format": "{1}",
+      "key": "╭─",
+      "keyColor": "blue"
+    },
+    {
+      "type": "cpu",
+      "key": "├─󰍛",
+      "keyColor": "blue"
+    },
+    {
+      "type": "gpu",
+      "key": "├─󰘚",
+      "keyColor": "blue"
+    },
+    // {
+    //   "type": "display",
+    //   "key": "├─󰍹",
+    //   "keyColor": "yellow"
+    // },
+    // {
+    // 	"type": "wallpaper",
+    // 	"key": "╰─󰸉",
+    // 	"keyColor": "yellow"
+    // },
+    {
+      "type": "disk",
+      "key": "├─",
+      "keyColor": "blue"
+    },
+    {
+      "type": "memory",
+      "key": "├─󰑭",
+      "keyColor": "blue"
+    },
+    {
+      "type": "swap",
+      "key": "├─󰓡",
+      "keyColor": "blue"
+    },
+    {
+      "type": "uptime",
+      "key": "╰─󰅐",
+      "keyColor": "blue"
+    },
+    "break",
+    {
+      "type": "custom",
+      "format": "\u001b[1m\u001b[31m  \u001b[1m\u001b[32m  \u001b[1m\u001b[33m  \u001b[1m\u001b[34m  \u001b[1m\u001b[35m  \u001b[1m\u001b[36m  \u001b[1m\u001b[37m  \u001b[1m\u001b[30m  \u001b[1m\u001b[91m  \u001b[1m\u001b[92m  \u001b[1m\u001b[93m  \u001b[1m\u001b[94m  \u001b[1m\u001b[95m  \u001b[1m\u001b[96m  \u001b[1m\u001b[97m  \u001b[1m\u001b[90m "
+    }
+  ]
+}

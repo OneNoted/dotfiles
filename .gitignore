@@ -1,0 +1,19 @@
+# Surely this will be useful one day
+
+# Local overrides
+*.local
+.pre-commit-config.yaml
+.github/workflows
+*.private
+
+# SSH / GPG
+.ssh/
+.gnupg/
+
+# Tokens / env
+.env
+.env.*
+
+# Machine-specific configs
+dot_config/hypr/monitors.conf
+

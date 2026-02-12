@@ -1,0 +1,10 @@
+sourceDir = "{{ .chezmoi.homeDir }}/Chezmoi/Source/"
+
+{{- if ne .chezmoi.osRelease.id "nixos" }}
+[cd]
+    command = "fish"
+{{- end }}
+
+[data]
+    atuin_sync_address = {{ promptStringOnce . "atuin_sync_address" "Atuin sync server address (leave empty to skip)" "" | quote }}
+

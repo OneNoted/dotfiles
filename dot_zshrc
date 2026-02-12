@@ -1,0 +1,131 @@
+##################################
+##### Zsh configuration file #####
+##################################
+
+
+##### Zinit Plugin Manager #####
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+[ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
+[ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+
+# Source / Load Zinit
+source "${ZINIT_HOME}/zinit.zsh"
+
+# 1. Core Completion 
+zinit load zsh-users/zsh-completions
+
+# 2. Fish Experience Stack 
+zinit load olets/zsh-abbr                         
+# zinit load "$HOME/Projects/zsh-fishy-deletions/"
+zinit load OneNoted/zsh-fishy-deletions
+
+
+
+# Use history first, then completion engine as fallback
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+
+zinit wait lucid for zsh-users/zsh-history-substring-search
+zinit wait lucid for zsh-users/zsh-autosuggestions
+zinit wait lucid for zsh-users/zsh-syntax-highlighting
+
+
+
+
+
+# Load completions 
+autoload -Uz compinit
+if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
+
+
+
+# Menu selection (arrow keys)
+zstyle ':completion:*' menu select
+
+# Fuzzy matching:
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+
+# Grouping and Descriptions
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' verbose yes
+
+# Carapace completions (1000+ commands with descriptions)
+export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
+source <(carapace _carapace)
+
+#####^Zinit Plugin Manager^#####
+
+
+
+##### Initializations #####
+
+# Starship Prompt
+eval "$(starship init zsh)"
+# Atuin command history
+eval "$(atuin init zsh)"
+# Zoxide cd history
+eval "$(zoxide init zsh)"
+# Television fuzzy finder
+eval "$(tv init zsh)"
+
+#####^Initializations^#####
+
+##### Environment Variables #####
+
+bindkey -v
+export KEYTIMEOUT=1
+
+
+export EDITOR='nvim'
+export VISUAL='nvim'
+
+#####^Environment Variables^#####
+
+##### Aliases #####
+
+# general aliases
+alias yay='paru'
+alias clear="printf '\033[2J\033[3J\033[1;1H'"
+alias cd='z'
+alias find='fd'
+alias vim='nvim'
+alias vi='nvim'
+alias zel='zellij attach $(zellij ls -s | tv)'
+
+# eza aliases
+alias ls='eza -al --color=always --group-directories-first --icons' # preferred listing
+alias la='eza -a --color=always --group-directories-first --icons' # all files and dirs
+alias ll='eza -l --color=always --group-directories-first --icons' # long format
+alias lt='eza -aT --color=always --group-directories-first --icons' # tree listing
+alias l.="eza -a | grep -e '^\.'" # show only dotfiles
+
+# back aliases 
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+
+#####^Aliases^#####
+
+
+
+##### Binds #####
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+#####^Binds^#####
+
+# Quickshell default config QML import path
+export QML_IMPORT_PATH="${QML_IMPORT_PATH:+$QML_IMPORT_PATH:}$HOME/.config/quickshell/default/lib"
+
+
+#########################
+##### End of .zshrc #####
+#########################
+
+

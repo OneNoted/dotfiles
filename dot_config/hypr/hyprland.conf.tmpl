@@ -1,0 +1,392 @@
+###################
+##### Source ######
+###################
+
+# Main Hyprland configuration. Keybinds are in keybinds.conf, monitors in monitors.conf.
+
+###################
+##### Chezmoi #####
+###################
+
+{{ if ne .chezmoi.hostname "hephaestus" }}
+source = ~/.config/hypr/monitors.conf
+source = ~/.config/hypr/keybinds.conf
+source = ~/.config/hypr/workspaces.conf
+{{- end }}
+
+{{- if eq .chezmoi.hostname "hephaestus" }}
+$qsConfig = ii
+
+exec = hyprctl dispatch submap global # DO NOT REMOVE THIS OR YOU WON'T BE ABLE TO USE ANY KEYBIND
+submap = global # This is required for catchall to work
+
+source=hyprland/env.conf
+source=hyprland/execs.conf
+# source=hyprland/general.conf
+source = ~/.config/hypr/monitors.conf
+source=hyprland/rules.conf
+source=hyprland/colors.conf
+source=hyprland/keybinds.conf
+
+source=custom/env.conf
+source=custom/execs.conf
+source=custom/general.conf
+source=custom/rules.conf
+source=custom/keybinds.conf
+{{- end }}
+
+###################
+#### Defaults #####
+###################
+
+$terminal = kitty -1
+$term = kitty -1
+$fileManager = $terminal -e yazi
+$menu = vicinae
+$lockscreen = hyprlock
+$screenshot = grimblast --freeze --notify cop area
+$taskmanager = $terminal -e btop
+
+
+#############
+### INPUT ###
+#############
+
+# https://wiki.hypr.land/Configuring/Variables/#input
+input {
+    kb_layout = us,se
+    kb_variant = 
+    kb_model =
+    kb_options =caps:escape, grp:alt_space_toggle
+    kb_rules =
+
+    repeat_delay = 200 
+    repeat_rate = 50 # I have no idea how people live without this
+
+    numlock_by_default = false
+
+    follow_mouse = 1
+    off_window_axis_events = 2
+
+{{ if ne .chezmoi.hostname "hephaestus" }}
+    sensitivity = -0.75 # -1.0 - 1.0, 0 means no modification.
+{{- end }}  
+    touchpad {
+        natural_scroll = yes
+        disable_while_typing = false
+        clickfinger_behavior = true
+        scroll_factor = 0.5
+    }
+}
+gesture = 3, swipe, move,
+gesture = 3, pinch, float
+gesture = 4, horizontal, workspace
+gesture = 4, up, dispatcher, global, {{ if ne .chezmoi.hostname "hephaestus" }}exec, vicinae toggle{{ end }}{{ if eq .chezmoi.hostname "hephaestus" }}global, quickshell:overviewToggle{{ end }}
+gesture = 4, down, dispatcher, {{ if ne .chezmoi.hostname "hephaestus" }}exec, vicinae toggle{{ end }}{{ if eq .chezmoi.hostname "hephaestus" }}global, quickshell:overviewClose {{ end }}
+gestures {
+    workspace_swipe_distance = 700
+    workspace_swipe_cancel_ratio = 0.2
+    workspace_swipe_min_speed_to_force = 5
+    workspace_swipe_direction_lock = true
+    workspace_swipe_direction_lock_threshold = 10
+    workspace_swipe_create_new = true
+}
+
+# See https://wiki.hypr.land/Configuring/Gestures
+# gesture = 3, horizontal, workspace
+
+
+
+
+################
+### Monitors ###
+################
+monitor=,preferred,auto,1
+cursor:default_monitor = DP-3
+# See Source section above :D 
+
+#################
+### Autostart ###
+#################
+
+# exec-once = hyprctl dispatch workspace 1
+exec-once = swww-daemon
+exec-once = hyprpanel
+exec-once = USE_LAYER_SHELL=0 vicinae server
+exec-once = systemctl --user start hyprpolkitagent
+exec-once = dbus-update-activation-environment --systemd --all
+exec-once = systemctl --user import-environment QT_QPA_PLATFORMTHEME QT_QUICK_CONTROLS_STYLE QT_QUICK_CONTROLS_MATERIAL_THEME
+
+exec-once = gnome-keyring-daemon --start --components=pkcs11,secrets
+env = SSH_AUTH_SOCK,$XDG_RUNTIME_DIR/gcr/ssh
+
+
+exec-once = [workspace 2 silent] kitty
+exec-once = [workspace 3 silent] zen-browser 
+
+#############################
+### ENVIRONMENT VARIABLES ###
+#############################
+
+# See https://wiki.hypr.land/Configuring/Environment-variables/
+{{ if eq .chezmoi.hostname "aeolus" }}
+### Stuff to mitigate Nvidia being deeply unpleasant
+# env = WLR_DRM_DEVICES,$HOME/.config/hypr/card # Use IGPU for window manager
+env = AQ_DRM_DEVICES,/dev/dri/gpu-5090:/dev/dri/igpu-amd
+env = GBM_BACKEND,nvidia-drm
+env = LIBVA_DRIVER_NAME,nvidia
+env = __GLX_VENDOR_LIBRARY_NAME,nvidia
+env = ELECTRON_OZONE_PLATFORM_HINT,auto
+{{ end }}
+### Cursor Variables
+env = XCURSOR_SIZE,24
+env = HYPRCURSOR_SIZE,24
+env = XCURSOR_THEME,rose-pine-cursor
+env = HYPRCURSOR_THEME,rose-pine-hyprcursor
+
+### Theme Variables
+env = QT_QPA_PLATFORMTHEME,qt6ct
+env = QT_QUICK_CONTROLS_STYLE,Material     # or Fusion/Universal/Imagine
+env = QT_QUICK_CONTROLS_MATERIAL_THEME,Dark
+
+### Other Variables
+env = TERM, $terminal
+env = TERMINAL, $terminal
+
+
+###################
+### PERMISSIONS ###
+###################
+
+# See https://wiki.hypr.land/Configuring/Permissions/
+# Please note permission changes here require a Hyprland restart and are not applied on-the-fly
+
+#####################
+### LOOK AND FEEL ###
+#####################
+
+# Refer to https://wiki.hypr.land/Configuring/Variables/
+
+# https://wiki.hypr.land/Configuring/Variables/#general
+general {
+    gaps_in = 3
+    gaps_out = 11
+    gaps_workspaces = 50
+
+    border_size = 2
+
+    # https://wiki.hypr.land/Configuring/Variables/#variable-types for info about colors
+    col.active_border = rgba(89b4fa8f)
+    # col.active_border = rgba(cba6f7ff)
+    col.inactive_border = rgba(181825ef)
+
+
+    no_focus_fallback = true
+
+    # Set to true enable resizing windows by clicking and dragging on borders and gaps
+    resize_on_border = true
+
+    # Please see https://wiki.hypr.land/Configuring/Tearing/ before you turn this on
+    allow_tearing = true
+
+    layout = dwindle
+
+
+    snap {
+    	enabled = true
+    	window_gap = 4
+    	monitor_gap = 5
+    	respect_gaps = true
+      
+    }
+
+}
+
+dwindle {
+    preserve_split = true 
+    smart_split = false
+    smart_resizing = false
+    # force_split = 0
+    # default_split_ratio = 1
+    # precise_mouse_move = true
+    # pseudotile = true 
+}
+
+# https://wiki.hypr.land/Configuring/Variables/#decoration
+decoration {
+      active_opacity = 1.0
+    inactive_opacity = 0.99777
+      blur {
+        enabled = true
+        xray = true
+        special = false
+        new_optimizations = true
+        size = 10
+        passes = 3
+        brightness = 1
+        noise = 0.01
+        contrast = 0.89
+        vibrancy = 0.3
+        vibrancy_darkness = 0.5
+        popups = false
+        popups_ignorealpha = 0.6
+        input_methods = true
+        input_methods_ignorealpha = 0.8
+    }
+
+
+
+    shadow {
+        enabled = true
+        range = 30
+        offset = 0 2
+        ignore_window = true
+        render_power = 4
+        color = rgba(00000010)
+    }
+    rounding = 9
+    dim_inactive = true
+    dim_strength = 0.015
+    dim_special = 0.07
+}
+
+    # https://wiki.hypr.landConfiguring/Variables/#blur
+
+
+# https://wiki.hypr.land/Configuring/Variables/#animations
+animations {
+    enabled = yes, please :) # Surely I eventually get to settings these up properly....
+
+    # Default curves, see https://wiki.hypr.land/Configuring/Animations/#curves
+    #        NAME,           X0,   Y0,   X1,   Y1
+    bezier = easeOutQuint,   0.23, 1,    0.32, 1
+    bezier = easeInOutCubic, 0.65, 0.05, 0.36, 1
+    bezier = linear,         0,    0,    1,    1
+    bezier = almostLinear,   0.5,  0.5,  0.75, 1
+    bezier = quick,          0.15, 0,    0.1,  1
+
+    # Default animations, see https://wiki.hypr.land/Configuring/Animations/
+    #           NAME,          ONOFF, SPEED, CURVE,        [STYLE]
+    animation = global,        1,     10,    default
+    animation = border,        1,     5.39,  easeOutQuint
+    animation = windows,       1,     1.79,  easeOutQuint
+    animation = windowsIn,     1,     1.5,   easeOutQuint, popin 87%
+    animation = windowsOut,    1,     0.49,  linear,       popin 87%
+    animation = fadeIn,        1,     0.01,  almostLinear
+    animation = fadeOut,       1,     2.16,  almostLinear
+    animation = fade,          1,     1.03,  quick
+    animation = layers,        1,     3.81,  easeOutQuint
+    animation = layersIn,      1,     4,     easeOutQuint, fade
+    animation = layersOut,     1,     1.5,   linear,       fade
+    animation = fadeLayersIn,  1,     1.79,  almostLinear
+    animation = fadeLayersOut, 1,     1.39,  almostLinear
+    animation = workspaces,    1,     1.94,  almostLinear, fade
+    animation = workspacesIn,  1,     1.21,  almostLinear, fade
+    animation = workspacesOut, 1,     1.94,  almostLinear, fade
+    animation = zoomFactor,    1,     7,     quick
+}
+
+# Ref https://wiki.hypr.land/Configuring/Workspace-Rules/
+# "Smart gaps" / "No gaps when only"
+# uncomment all if you wish to use that.
+# workspace = w[tv1], gapsout:0, gapsin:0
+# workspace = f[1], gapsout:0, gapsin:0
+# windowrule = bordersize 0, floating:0, onworkspace:w[tv1]
+# windowrule = rounding 0, floating:0, onworkspace:w[tv1]
+# windowrule = bordersize 0, floating:0, onworkspace:f[1]
+# windowrule = rounding 0, floating:0, onworkspace:f[1]
+
+# See https://wiki.hypr.land/Configuring/Dwindle-Layout/ for more
+
+# See https://wiki.hypr.land/Configuring/Master-Layout/ for more
+# master {
+#     new_status = master
+# }
+
+# https://wiki.hypr.land/Configuring/Variables/#misc
+misc {
+  force_default_wallpaper = 0 # Set to 0 or 1 to disable the anime mascot wallpapers
+  disable_hyprland_logo = true # If true disables the random hyprland logo / anime girl background. :(
+  disable_splash_rendering = true
+  vfr = 0 # Variable Frame Rate
+  vrr = 0 # Variable Refresh Rate
+
+  # mouse_move_enables_dpms = true
+  # key_press_enables_dpms = true
+
+  animate_manual_resizes = false
+  animate_mouse_windowdragging = false
+
+  # new_window_takes_over_fullscreen = 2
+  allow_session_lock_restore = true
+  initial_workspace_tracking = false
+  focus_on_activate = true
+  session_lock_xray = true
+
+  enable_swallow = false
+  swallow_regex = (foot|kitty|alacritty|Alacritty)
+}
+
+
+###################
+### KEYBINDINGS ###
+###################
+# See keybinds.conf (sourced above)
+
+##############################
+### WINDOWS AND WORKSPACES ###
+##############################
+
+# See https://wiki.hypr.land/Configuring/Window-Rules/ for more
+# See https://wiki.hypr.land/Configuring/Workspace-Rules/ for workspace rules
+
+# workspace=1,monitor:DP-3,default:true
+
+# Example windowrule
+# windowrule = float,class:^(kitty)$,title:^(kitty)$
+
+# Ignore maximize requests from apps. You'll probably like this.
+# windowrule = suppressevent maximize, class:.*
+
+# Fix some dragging issues with XWayland
+# windowrule = nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0
+
+
+{{ if ne .chezmoi.hostname "hephaestus" }}
+# # blur
+# layerrule = blur,vicinae
+# layerrule = ignorealpha 0, vicinae
+#
+# # disable fade animation for vicinae only
+# layerrule = noanim, vicinae
+
+layerrule { # I have 0 clue if this is working or not I am trying my best here okay :c
+    name = vicinae-layer
+    match:namespace = vicinae 
+
+    blur = true
+    ignore_alpha = 0.5
+    no_anim = true
+}
+{{- end }}
+
+
+# Overview "yoinked and unnecessary for everything but hephaestus"
+plugin {
+    hyprexpo {
+        columns = 3
+        gap_size = 5
+        bg_col = rgb(000000)
+        workspace_method = first 1 # [center/first] [workspace] e.g. first 1 or center m+1
+
+        enable_gesture = true # laptop touchpad, 4 fingers
+        # gesture_distance = 300 # how far is the "max"
+        # gesture_positive = false
+    }
+}
+binds {
+    scroll_event_delay = 0
+    hide_special_on_workspace_change = true
+}
+bindd = SUPER ALT, D, Speech-to-text, exec, /usr/lib/hyprwhspr/config/hyprland/hyprwhspr-tray.sh record
+
