@@ -5,3 +5,6 @@ sourceDir = "{{ .chezmoi.homeDir }}/Chezmoi/Source/"
     command = "fish"
 {{- end }}
 
+[data]
+    atuin_sync_address = {{ promptStringOnce . "atuin_sync_address" "Atuin sync server address (leave empty to skip)" "" | quote }}
+
