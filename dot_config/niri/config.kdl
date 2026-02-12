@@ -107,58 +107,32 @@ input {
     // automatically.
     position x=1280 y=0
 }
-output "DP-1" {
-
-    mode "3440x1440@174.963"
-
+output "HDMI-A-2" {
+    mode "2560x1440@59.951"
     scale 1
-
     transform "normal"
-
     position x=0 y=0
 }
 
-output "DP-1" {
-
-    mode "3440x1440@174.963"
-
-    scale 1
-
-    transform "normal"
-
-    position x=3440 y=0
-}
-
 output "DP-3" {
-
-    mode "5120x1440@239.761"
-
+    mode "3440x1440@174.963"
     scale 1
-
     transform "normal"
-
-    position x=-9120 y=0
+    position x=2560 y=0
 }
 
-output "HDMI-A-1" {
-
-    mode "2560x1440@59.951"
-
+output "DP-4" {
+    mode "3440x1440@174.963"
     scale 1
-    transform "90"
-
-    position x=-4000 y=0
+    transform "normal"
+    position x=6000 y=0
 }
 
 output "DP-5" {
-
-    mode "2560x1440@143.998"
-
+    mode "5120x1440@239.761"
     scale 1
-
     transform "normal"
-
-    position x=-2560 y=0
+    position x=1030 y=1440
 }
 
 
