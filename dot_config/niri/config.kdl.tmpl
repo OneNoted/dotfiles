@@ -107,6 +107,7 @@ input {
     // automatically.
     position x=1280 y=0
 }
+{{ if eq .chezmoi.hostname "aeolus" }}
 output "HDMI-A-2" {
     mode "2560x1440@59.951"
     scale 1
@@ -134,6 +135,7 @@ output "DP-5" {
     transform "normal"
     position x=1030 y=1440
 }
+{{ end }}
 
 
 // Settings that influence how windows are positioned and sized.
