@@ -6,7 +6,11 @@ app_launcher_cmd = "vicinae toggle"
 [modules]
 left = [ [ "appLauncher", "Updates", "Workspaces" ] ]
 center = [ "WindowTitle" ]
-right = [ "SystemInfo", [ "Tray", "Tempo", "Privacy", "Settings" ] ]
+right = [ "SystemInfo", [ "Tray", "Notifications", "Tempo", "Privacy", "Settings" ] ]
+
+[notifications]
+max_notifications = 50
+default_timeout = 5000
 
 [updates]
 check_cmd = "checkupdates; paru -Qua"
