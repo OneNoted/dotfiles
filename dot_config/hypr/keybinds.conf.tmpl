@@ -1,6 +1,6 @@
 #### Variables
 
-$mainMod = Super # Sets "Windows" key as main modifier
+$mainMod = Super
 $terminal = kitty -1
 $menu = vicinae toggle
 $fileManager = $terminal -e yazi
@@ -100,6 +100,6 @@ bindl = , XF86AudioPrev, exec, playerctl previous
 # Utility keybinds
 bind = Super+Shift, S, exec, sh -c "app=\$(hyprctl activewindow -j | jq -r .class); hyprshot --freeze --output-folder \"{{ .chezmoi.homeDir }}/Pictures/Screenshots/Snippets\" --filename "$USER@$HOSTNAME-$(date +%Y-%m-%d_%H:%M:%S)-\${app}.png" --mode region"
 
-# Hyprwhspr
-bindd = SUPER ALT, D, Speech-to-text, exec, /usr/lib/hyprwhspr/config/hyprland/hyprwhspr-tray.sh record
+# Speech-to-text (whspr-rs)
+bindd = SUPER ALT, D, Speech-to-text, exec, ~/.cargo/bin/whspr-rs
 
