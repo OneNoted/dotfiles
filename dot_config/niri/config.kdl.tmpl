@@ -71,8 +71,12 @@ input {
     focus-follows-mouse max-scroll-amount="0%"
 }
 
-cursor {
-    xcursor-theme "BreezeX-RosePine-Linux"
+// cursor {
+//     xcursor-theme "BreezeX-RosePine-Linux"
+// }
+
+debug {
+    disable-cursor-plane
 }
 
 // You can configure outputs by their name, which you can find
@@ -147,7 +151,7 @@ output "DP-5" {
 // https://yalter.github.io/niri/Configuration:-Layout
 layout {
     // Set gaps around windows in logical pixels.
-    gaps 4
+    gaps 10
 
     // When to center a column when changing focus, options are:
     // - "never", default behavior, focusing an off-screen column will keep at the left
@@ -305,6 +309,7 @@ layout {
 
 // This line starts waybar, a commonly used bar for Wayland compositors.
 spawn-sh-at-startup "vicinae server"
+spawn-sh-at-startup "~/.cargo/bin/nighterrors run"
 spawn-sh-at-startup "swww-daemon"
 spawn-sh-at-startup "~/.cargo/bin/ashell"
 
@@ -412,7 +417,7 @@ binds {
     // Note: the entire command goes as a single argument. It's passed verbatim to `sh -c`.
     // For example, this is a standard bind to toggle the screen reader (orca).
     Super+Alt+S allow-when-locked=true hotkey-overlay-title=null { spawn-sh "pkill orca || exec orca"; }
-    Mod+Alt+D repeat=false hotkey-overlay-title="Speech-to-text: whspr-rs" { spawn "/home/notes/.cargo/bin/whspr-rs"; }
+    Mod+Alt+D repeat=false hotkey-overlay-title="Speech-to-text: whspr-rs" { spawn "{{ .chezmoi.homeDir }}/.cargo/bin/whspr-rs"; }
 
     // Volume and brightness
     XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "-l" "1" "@DEFAULT_AUDIO_SINK@" "5%+"; }
@@ -635,9 +640,10 @@ binds {
     // Mod+Shift+Space { switch-layout "prev"; }
 
     Print { spawn "hyprshot" "-m" "region" "-z"; }
-    Ctrl+Print { spawn "hyprshot" "-m" "output" "-m" "active" "-z"; }
-    Alt+Print { spawn "hyprshot" "-m" "window" "-m" "active" "-z"; }
-    Mod+Shift+S repeat=false { spawn-sh "f=\"$USER@$HOSTNAME-$(date +%Y-%m-%d_%H:%M:%S)-$(niri msg focused-window | grep 'App ID' | awk '{print $NF}').png\"; hyprshot -m region -z -o \"/home/notes/Pictures/Screenshots/Snippets\" -f \"$f\""; }
+    Ctrl+Print { spawn "hyprshot" "--mode" "output" "--mode" "active" "-z"; }
+    Alt+Print { spawn "hyprshot" "--mode" "window" "--mode" "active" "-z"; }
+    Mod+Ctrl+S repeat=false { spawn-sh "dir=\"{{ .chezmoi.homeDir }}/Pictures/Screenshots/Snippets\"; f=\"$USER@$HOSTNAME-$(date +%Y-%m-%d_%H:%M:%S)-$(niri msg focused-window | grep 'App ID' | awk '{print $NF}').png\"; hp=\"\"; if command -v hyprpicker >/dev/null 2>&1; then hyprpicker -r -z >/dev/null 2>&1 & hp=$!; sleep 0.2; fi; g=\"$(slurp -d)\"; rc=$?; [ -n \"$hp\" ] && kill \"$hp\" >/dev/null 2>&1; [ $rc -eq 0 ] || exit 0; [ -n \"$g\" ] || exit 0; mkdir -p \"$dir\"; out=\"$dir/$f\"; grim -c -g \"$g\" \"$out\" && wl-copy --type image/png < \"$out\""; }
+    Ctrl+Alt+S repeat=false { spawn "{{ .chezmoi.homeDir }}/.cargo/bin/zoop"; }
 
     // Applications such as remote-desktop clients and software KVM switches may
     // request that niri stops processing the keyboard shortcuts defined here
