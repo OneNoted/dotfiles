@@ -642,7 +642,7 @@ binds {
     Print { spawn "hyprshot" "-m" "region" "-z"; }
     Ctrl+Print { spawn "hyprshot" "--mode" "output" "--mode" "active" "-z"; }
     Alt+Print { spawn "hyprshot" "--mode" "window" "--mode" "active" "-z"; }
-    Mod+Ctrl+S repeat=false { spawn-sh "dir=\"{{ .chezmoi.homeDir }}/Pictures/Screenshots/Snippets\"; f=\"$USER@$HOSTNAME-$(date +%Y-%m-%d_%H:%M:%S)-$(niri msg focused-window | grep 'App ID' | awk '{print $NF}').png\"; hp=\"\"; if command -v hyprpicker >/dev/null 2>&1; then hyprpicker -r -z >/dev/null 2>&1 & hp=$!; sleep 0.2; fi; g=\"$(slurp -d)\"; rc=$?; [ -n \"$hp\" ] && kill \"$hp\" >/dev/null 2>&1; [ $rc -eq 0 ] || exit 0; [ -n \"$g\" ] || exit 0; mkdir -p \"$dir\"; out=\"$dir/$f\"; grim -c -g \"$g\" \"$out\" && wl-copy --type image/png < \"$out\""; }
+    Mod+Ctrl+S repeat=false { spawn-sh "dir=\"{{ .chezmoi.homeDir }}/Pictures/Screenshots/Snippets\"; f=\"$USER@$HOSTNAME-$(date +%Y-%m-%d_%H:%M:%S)-$(niri msg focused-window | grep 'App ID' | awk '{print $NF}').png\"; mkdir -p \"$dir\"; niri msg action screenshot --show-pointer true --path \"$dir/$f\""; }
     Ctrl+Alt+S repeat=false { spawn "{{ .chezmoi.homeDir }}/.cargo/bin/zoop"; }
 
     // Applications such as remote-desktop clients and software KVM switches may
