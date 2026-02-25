@@ -69,7 +69,7 @@ eval "$(starship init zsh)"
 # Atuin command history
 eval "$(atuin init zsh)"
 # Zoxide cd history
-eval "$(zoxide init zsh)"
+eval "$(zoxide init zsh --cmd cd)"
 # Television fuzzy finder
 eval "$(tv init zsh)"
 
@@ -91,7 +91,6 @@ export VISUAL='nvim'
 # general aliases
 alias yay='paru'
 alias clear="printf '\033[2J\033[3J\033[1;1H'"
-alias cd='z'
 alias find='fd'
 alias vim='nvim'
 alias vi='nvim'

@@ -1,6 +1,6 @@
 # dotfiles
 
-Catppuccin Mocha themed Arch/Hyprland rice, managed with [chezmoi](https://www.chezmoi.io/) and templated for multi-host deployment.
+Arch Niri & Hyprland dotfiles, managed with [chezmoi](https://www.chezmoi.io/) and templated for multi-host deployment.
 
 <!-- TODO: Add a screenshot of the rice here -->
 > Screenshot coming soon
@@ -26,8 +26,6 @@ Catppuccin Mocha themed Arch/Hyprland rice, managed with [chezmoi](https://www.c
 
 - **Multi-host templating** -- Chezmoi `.tmpl` files use hostname conditionals to adapt configs across machines (currently `aeolus` on Arch with Nvidia and `hephaestus`).
 
-- **Catppuccin Mocha everywhere** -- Consistent theming across Hyprland borders, Kitty, Neovim, Yazi, Btop, Nushell, and HyprPanel.
-
 - **Organized Neovim config** -- Plugins are split into domain-based subdirectories under `lua/plugins/`: `editor/` (completion, harpoon, which-key), `lang/` (Go, Rust, Zig, YAML, JSON), `tools/` (LSP, treesitter, git, formatting, diagnostics, chezmoi integration), and `ui/` (catppuccin, lualine, bufferline, snacks).
 
 - **Kitty + Neovim integration** -- kitty-scrollback.nvim lets you browse terminal scrollback and last command output inside Neovim.
@@ -51,7 +49,7 @@ During `chezmoi init`, you will be prompted for an Atuin sync server address. Le
 
 - **Monitor setup** -- Create `~/.config/hypr/monitors.conf` with your display layout. See the [Hyprland wiki](https://wiki.hypr.land/Configuring/Monitors/) for syntax.
 
-- **Shell preference** -- Fish is the default (set in `.chezmoi.toml.tmpl` as the chezmoi `cd` command shell). Zsh config with Zinit is also included at `dot_zshrc`, and Nushell config lives under `dot_config/nushell/`.
+- **Shell preference** -- Fish is the default (set in `.chezmoi.toml.tmpl` as the chezmoi `cd` command shell). Zsh config is also included at `dot_zshrc`, and Nushell config lives under `dot_config/nushell/`.
 
 ## Structure
 
@@ -71,7 +69,7 @@ dot_config/
   nvim/                     # Neovim -- lazy.nvim, domain-based plugin dirs
     lua/plugins/
       editor/               #   Completion, harpoon, which-key, flash, mini
-      lang/                 #   Go, Rust, Zig, JSON, YAML language support
+      lang/                 #   Go, Rust, Zig, JSON, YAML, etc language support
       tools/                #   LSP, treesitter, git, formatting, linting, chezmoi
       ui/                   #   Catppuccin, lualine, bufferline, snacks, cord
   private_atuin/            # Atuin shell history (templated)

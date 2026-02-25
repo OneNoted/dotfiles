@@ -71,9 +71,10 @@ input {
     focus-follows-mouse max-scroll-amount="0%"
 }
 
-// cursor {
-//     xcursor-theme "BreezeX-RosePine-Linux"
-// }
+cursor {
+    xcursor-theme "rose-pine-cursor"
+    xcursor-size 24
+}
 
 debug {
     disable-cursor-plane
@@ -309,7 +310,6 @@ layout {
 
 // This line starts waybar, a commonly used bar for Wayland compositors.
 spawn-sh-at-startup "vicinae server"
-spawn-sh-at-startup "~/.cargo/bin/nighterrors run"
 spawn-sh-at-startup "swww-daemon"
 spawn-sh-at-startup "~/.cargo/bin/ashell"
 
