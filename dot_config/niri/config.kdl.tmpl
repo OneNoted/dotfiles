@@ -642,7 +642,8 @@ binds {
     Print { spawn "hyprshot" "-m" "region" "-z"; }
     Ctrl+Print { spawn "hyprshot" "--mode" "output" "--mode" "active" "-z"; }
     Alt+Print { spawn "hyprshot" "--mode" "window" "--mode" "active" "-z"; }
-    Mod+Shift+S repeat=false { spawn "hyprshot" "--mode" "region" "--freeze" "--clipboard-only"; }
+    // Toggle region recording to MP4 (no audio); on stop, copy the recording to clipboard.
+    Mod+Shift+S repeat=false { spawn-sh "runtime=\"${XDG_RUNTIME_DIR:-/tmp}\"; pidf=\"$runtime/niri-region-record.pid\"; pathf=\"$runtime/niri-region-record.path\"; if [ -s \"$pidf\" ] && kill -0 \"$(cat \"$pidf\")\" 2>/dev/null; then pid=\"$(cat \"$pidf\")\"; kill -INT \"$pid\"; while kill -0 \"$pid\" 2>/dev/null; do sleep 0.1; done; file=\"$(cat \"$pathf\" 2>/dev/null || true)\"; if [ -n \"$file\" ] && [ -s \"$file\" ] && command -v wl-copy >/dev/null 2>&1; then wl-copy --type video/mp4 < \"$file\"; fi; rm -f \"$pidf\" \"$pathf\"; else dir=\"{{ .chezmoi.homeDir }}/Videos/Recordings/Snippets\"; file=\"$dir/$USER@$HOSTNAME-$(date +%Y-%m-%d_%H:%M:%S)-region.mp4\"; mkdir -p \"$dir\"; geom=\"$(slurp)\"; [ -n \"$geom\" ] || exit 0; wf-recorder -g \"$geom\" -f \"$file\" >/dev/null 2>&1 & pid=$!; sleep 0.2; if kill -0 \"$pid\" 2>/dev/null; then printf '%s' \"$pid\" > \"$pidf\"; printf '%s' \"$file\" > \"$pathf\"; else rm -f \"$pidf\" \"$pathf\"; fi; fi"; }
     Mod+Ctrl+S repeat=false { spawn-sh "dir=\"{{ .chezmoi.homeDir }}/Pictures/Screenshots/Snippets\"; f=\"$USER@$HOSTNAME-$(date +%Y-%m-%d_%H:%M:%S)-$(niri msg focused-window | grep 'App ID' | awk '{print $NF}').png\"; mkdir -p \"$dir\"; niri msg action screenshot --show-pointer true --path \"$dir/$f\""; }
     Mod+Ctrl+C repeat=false { spawn "{{ .chezmoi.homeDir }}/.cargo/bin/zoop"; }
 
