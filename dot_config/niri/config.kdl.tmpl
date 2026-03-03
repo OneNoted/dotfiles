@@ -642,6 +642,7 @@ binds {
     Print { spawn "hyprshot" "-m" "region" "-z"; }
     Ctrl+Print { spawn "hyprshot" "--mode" "output" "--mode" "active" "-z"; }
     Alt+Print { spawn "hyprshot" "--mode" "window" "--mode" "active" "-z"; }
+    Mod+Shift+S repeat=false { spawn "hyprshot" "--mode" "region" "--freeze" "--clipboard-only"; }
     Mod+Ctrl+S repeat=false { spawn-sh "dir=\"{{ .chezmoi.homeDir }}/Pictures/Screenshots/Snippets\"; f=\"$USER@$HOSTNAME-$(date +%Y-%m-%d_%H:%M:%S)-$(niri msg focused-window | grep 'App ID' | awk '{print $NF}').png\"; mkdir -p \"$dir\"; niri msg action screenshot --show-pointer true --path \"$dir/$f\""; }
     Mod+Ctrl+C repeat=false { spawn "{{ .chezmoi.homeDir }}/.cargo/bin/zoop"; }
 
