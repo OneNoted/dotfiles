@@ -68,8 +68,6 @@ source <(carapace _carapace)
 eval "$(starship init zsh)"
 # Atuin command history
 eval "$(atuin init zsh)"
-# Zoxide cd history
-eval "$(zoxide init zsh --cmd cd)"
 # Television fuzzy finder
 eval "$(tv init zsh)"
 
@@ -122,6 +120,9 @@ bindkey '^[[B' history-substring-search-down
 # Quickshell default config QML import path
 export QML_IMPORT_PATH="${QML_IMPORT_PATH:+$QML_IMPORT_PATH:}$HOME/.config/quickshell/default/lib"
 
+
+# Zoxide cd history (must be last)
+eval "$(zoxide init zsh --cmd cd)"
 
 #########################
 ##### End of .zshrc #####
