@@ -12,32 +12,47 @@ notify() {
     fi
 }
 
-if [ -s "$pid_file" ] && kill -0 "$(cat "$pid_file")" 2>/dev/null; then
-    pid="$(cat "$pid_file")"
-    kill -INT "$pid"
-    while kill -0 "$pid" 2>/dev/null; do
-        sleep 0.1
-    done
+copy_recording() {
+    file="$1"
 
-    file="$(cat "$path_file" 2>/dev/null || true)"
-    if [ -n "$file" ] && [ -s "$file" ]; then
-        if command -v wl-copy >/dev/null 2>&1; then
-            wl-copy --type video/mp4 < "$file"
-            notify "Recording stopped; copied to clipboard."
-        else
-            notify "Recording stopped; wl-copy not found."
-        fi
-    else
-        notify "Recording stopped, but no output file was found."
+    if [ ! -s "$file" ]; then
+        notify "Recording stopped, but output file is empty."
+        return 1
     fi
 
-    rm -f "$pid_file" "$path_file"
+    if ! command -v wl-copy >/dev/null 2>&1; then
+        notify "Recording saved to $file (wl-copy not found)."
+        return 1
+    fi
+
+    if wl-copy --type video/mp4 < "$file"; then
+        notify "Recording stopped; copied video to clipboard."
+        return 0
+    fi
+
+    if printf 'file://%s\n' "$file" | wl-copy --type text/uri-list; then
+        notify "Recording stopped; copied file path to clipboard."
+        return 0
+    fi
+
+    notify "Recording saved to $file; clipboard copy failed."
+    return 1
+}
+
+if [ -s "$pid_file" ] && kill -0 "$(cat "$pid_file")" 2>/dev/null; then
+    pid="$(cat "$pid_file")"
+    kill -INT "$pid" 2>/dev/null || true
+    notify "Stopping recording..."
     exit 0
 fi
 
 if ! command -v slurp >/dev/null 2>&1 || ! command -v wf-recorder >/dev/null 2>&1; then
     notify "Missing dependency: slurp or wf-recorder."
     exit 1
+fi
+
+if [ -s "$pid_file" ]; then
+    rm -f "$pid_file" "$path_file"
 fi
 
 dir="$HOME/Videos/Recordings/Snippets"
@@ -61,3 +76,8 @@ else
     notify "Failed to start recording."
     exit 1
 fi
+
+wait "$pid" || true
+
+rm -f "$pid_file" "$path_file"
+copy_recording "$file" || true
