@@ -14,6 +14,7 @@ notify() {
 
 copy_recording() {
     file="$1"
+    uri="file://$file"
 
     if [ ! -s "$file" ]; then
         notify "Recording stopped, but output file is empty."
@@ -25,13 +26,19 @@ copy_recording() {
         return 1
     fi
 
-    if wl-copy --type video/mp4 < "$file"; then
-        notify "Recording stopped; copied video to clipboard."
+    # Prefer file-copy clipboard formats for better app compatibility on paste.
+    if printf 'copy\n%s\n' "$uri" | wl-copy --type x-special/gnome-copied-files; then
+        notify "Recording stopped; copied file to clipboard."
         return 0
     fi
 
-    if printf 'file://%s\n' "$file" | wl-copy --type text/uri-list; then
+    if printf '%s\n' "$uri" | wl-copy --type text/uri-list; then
         notify "Recording stopped; copied file path to clipboard."
+        return 0
+    fi
+
+    if wl-copy --type video/mp4 < "$file"; then
+        notify "Recording stopped; copied video bytes to clipboard."
         return 0
     fi
 
