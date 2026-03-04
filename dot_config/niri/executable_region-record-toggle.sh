@@ -15,6 +15,7 @@ notify() {
 copy_recording() {
     file="$1"
     uri="file://$file"
+    gif_file="${file%.mp4}.gif"
 
     if [ ! -s "$file" ]; then
         notify "Recording stopped, but output file is empty."
@@ -24,6 +25,17 @@ copy_recording() {
     if ! command -v wl-copy >/dev/null 2>&1; then
         notify "Recording saved to $file (wl-copy not found)."
         return 1
+    fi
+
+    # Discord on Linux commonly accepts pasted images, but not pasted video files.
+    # Convert to GIF and copy as image/gif for Ctrl+V uploads.
+    if command -v ffmpeg >/dev/null 2>&1; then
+        if ffmpeg -v error -y -i "$file" -vf "fps=12,scale='min(960,iw)':-1:flags=lanczos" -loop 0 "$gif_file"; then
+            if [ -s "$gif_file" ] && wl-copy --type image/gif < "$gif_file"; then
+                notify "Recording stopped; copied GIF to clipboard. MP4 saved in Snippets."
+                return 0
+            fi
+        fi
     fi
 
     # Prefer file-copy clipboard formats for better app compatibility on paste.
