@@ -15,6 +15,7 @@ notify() {
 copy_recording() {
     file="$1"
     uri="file://$file"
+    apng_file="${file%.mp4}.apng.png"
     gif_file="${file%.mp4}.gif"
 
     if [ ! -s "$file" ]; then
@@ -27,9 +28,16 @@ copy_recording() {
         return 1
     fi
 
-    # Discord on Linux commonly accepts pasted images, but not pasted video files.
-    # Convert to GIF and copy as image/gif for Ctrl+V uploads.
+    # Discord on Linux accepts image/png pastes more reliably than file/video clipboard payloads.
+    # Generate APNG and copy it as image/png so Ctrl+V works in Discord while keeping animation.
     if command -v ffmpeg >/dev/null 2>&1; then
+        if ffmpeg -v error -y -i "$file" -vf "fps=10,scale='min(960,iw)':-1:flags=lanczos" -plays 0 -f apng "$apng_file"; then
+            if [ -s "$apng_file" ] && wl-copy --type image/png < "$apng_file"; then
+                notify "Recording stopped; copied APNG to clipboard. MP4 saved in Snippets."
+                return 0
+            fi
+        fi
+
         if ffmpeg -v error -y -i "$file" -vf "fps=12,scale='min(960,iw)':-1:flags=lanczos" -loop 0 "$gif_file"; then
             if [ -s "$gif_file" ] && wl-copy --type image/gif < "$gif_file"; then
                 notify "Recording stopped; copied GIF to clipboard. MP4 saved in Snippets."
