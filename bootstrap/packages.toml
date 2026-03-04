@@ -1,0 +1,72 @@
+# Arch package manifest for this dotfiles repo.
+# Base install uses only [arch] packages.
+# Optional groups can be included with: bootstrap/bootstrap.sh --group <name> --install
+
+[arch]
+pacman = [
+  "chezmoi",
+  "jujutsu",
+  "fish",
+  "zsh",
+  "nushell",
+  "neovim",
+  "kitty",
+  "tmux",
+  "zellij",
+  "starship",
+  "eza",
+  "fd",
+  "ripgrep",
+  "fzf",
+  "zoxide",
+  "atuin",
+  "yazi",
+  "jq",
+  "wl-clipboard",
+  "ffmpeg",
+  "playerctl",
+  "brightnessctl",
+  "pre-commit",
+  "shellcheck",
+  "shfmt",
+  "stylua",
+  "taplo-cli",
+]
+aur = [
+  "carapace-bin",
+]
+
+[groups.wm]
+pacman = [
+  "hyprland",
+  "hyprpaper",
+  "hyprlock",
+  "swww",
+  "slurp",
+  "wf-recorder",
+  "hyprshot",
+]
+aur = []
+
+[groups.desktop]
+pacman = [
+  "niri",
+  "btop",
+  "fastfetch",
+]
+aur = [
+  "hyprpanel-git",
+  "zen-browser-bin",
+]
+
+[groups.nvim]
+pacman = [
+  "lua-language-server",
+  "yaml-language-server",
+  "gopls",
+  "rust-analyzer",
+  "taplo-cli",
+]
+aur = [
+  "qmlls6",
+]

@@ -1,0 +1,12 @@
+[metadata]
+name = "jj-log"
+description = "A channel to select from jj log entries"
+requirements = ["jj"]
+
+[source]
+command = "jj log --no-graph -n 60 --color=always -T 'commit_id.short(8) ++ \" \" ++ description.first_line() ++ \"\\n\"'"
+output = "{strip_ansi|split: :0}"
+ansi = true
+
+[preview]
+command = "jj show --color=always '{strip_ansi|split: :0}' | head -n 1000"

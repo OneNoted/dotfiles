@@ -24,7 +24,10 @@ zinit load OneNoted/zsh-fishy-deletions
 # Use history first, then completion engine as fallback
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
-zinit wait lucid for zsh-users/zsh-history-substring-search
+zinit wait lucid atload"
+  bindkey '^[[A' history-substring-search-up
+  bindkey '^[[B' history-substring-search-down
+" for zsh-users/zsh-history-substring-search
 zinit wait lucid for zsh-users/zsh-autosuggestions
 zinit wait lucid for zsh-users/zsh-syntax-highlighting
 
@@ -34,7 +37,7 @@ zinit wait lucid for zsh-users/zsh-syntax-highlighting
 
 # Load completions 
 autoload -Uz compinit
-if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
   compinit
 else
   compinit -C
@@ -56,7 +59,9 @@ zstyle ':completion:*' verbose yes
 
 # Carapace completions (1000+ commands with descriptions)
 export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
-source <(carapace _carapace)
+if command -v carapace >/dev/null 2>&1; then
+  source <(carapace _carapace)
+fi
 
 #####^Zinit Plugin Manager^#####
 
@@ -65,11 +70,17 @@ source <(carapace _carapace)
 ##### Initializations #####
 
 # Starship Prompt
-eval "$(starship init zsh)"
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+fi
 # Atuin command history
-eval "$(atuin init zsh)"
+if command -v atuin >/dev/null 2>&1; then
+  eval "$(atuin init zsh)"
+fi
 # Television fuzzy finder
-eval "$(tv init zsh)"
+if command -v tv >/dev/null 2>&1; then
+  eval "$(tv init zsh)"
+fi
 
 #####^Initializations^#####
 
@@ -79,27 +90,14 @@ bindkey -v
 export KEYTIMEOUT=1
 
 
-export EDITOR='nvim'
-export VISUAL='nvim'
+# Shared shell aliases/env vars from chezmoi data
+if [[ -f "$HOME/.config/shared/shell-core.zsh" ]]; then
+  source "$HOME/.config/shared/shell-core.zsh"
+fi
 
 #####^Environment Variables^#####
 
 ##### Aliases #####
-
-# general aliases
-alias yay='paru'
-alias clear="printf '\033[2J\033[3J\033[1;1H'"
-alias find='fd'
-alias vim='nvim'
-alias vi='nvim'
-alias zel='zellij attach $(zellij ls -s | tv)'
-
-# eza aliases
-alias ls='eza -al --color=always --group-directories-first --icons' # preferred listing
-alias la='eza -a --color=always --group-directories-first --icons' # all files and dirs
-alias ll='eza -l --color=always --group-directories-first --icons' # long format
-alias lt='eza -aT --color=always --group-directories-first --icons' # tree listing
-alias l.="eza -a | grep -e '^\.'" # show only dotfiles
 
 # back aliases 
 alias ..='cd ..'
@@ -113,8 +111,6 @@ alias ......='cd ../../../../..'
 
 
 ##### Binds #####
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
 #####^Binds^#####
 
 # Quickshell default config QML import path
@@ -122,10 +118,11 @@ export QML_IMPORT_PATH="${QML_IMPORT_PATH:+$QML_IMPORT_PATH:}$HOME/.config/quick
 
 
 # Zoxide cd history (must be last)
-eval "$(zoxide init zsh --cmd cd)"
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init zsh --cmd cd)"
+fi
 
 #########################
 ##### End of .zshrc #####
 #########################
-
 

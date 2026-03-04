@@ -1,0 +1,11 @@
+[metadata]
+name = "jj-status"
+description = "A channel to inspect jj working-copy status"
+requirements = ["jj"]
+
+[source]
+command = "jj status --color=always"
+ansi = true
+
+[preview]
+command = "jj status --color=always"

@@ -8,41 +8,48 @@ set fish_greeting
 ##### Inits #####
 
 # Television
-tv init fish | source
+if command -q tv
+    tv init fish | source
+end
 
 # Starship
-starship init fish | source
+if command -q starship
+    starship init fish | source
+end
 
 # Zoxide
-zoxide init fish | source
+if command -q zoxide
+    zoxide init fish | source
+end
 
-# Atuin 
-atuin init fish --disable-up-arrow | source
+# Atuin
+if command -q atuin
+    atuin init fish --disable-up-arrow | source
+end
 
 # Carapace
-set -Ux CARAPACE_BRIDGES 'zsh,fish,bash,inshellisense' # optional
-set -gx CARAPACE_EXCLUDES paru
-carapace _carapace | source
+if command -q carapace
+    set -Ux CARAPACE_BRIDGES 'zsh,fish,bash,inshellisense' # optional
+    set -gx CARAPACE_EXCLUDES paru
+    carapace _carapace | source
+end
 
 # fzf
-fzf --fish | FZF_CTRL_R_COMMAND= FZF_CTRL_T_COMMAND= source
+if command -q fzf
+    fzf --fish | FZF_CTRL_R_COMMAND= FZF_CTRL_T_COMMAND= source
+end
+
+# Shared shell aliases/env vars from chezmoi data
+test -f ~/.config/shared/shell-core.fish; and source ~/.config/shared/shell-core.fish
 
 #Aliases
 
-alias yay paru
 alias pamcan pacman
-alias clear "printf '\033[2J\033[3J\033[1;1H'"
-alias cd z
-alias find fd
-alias vim nvim
-alias vi nvim
 alias codex "codex --dangerously-bypass-approvals-and-sandbox"
 alias claude "claude --dangerously-skip-permissions"
 
 # dc for television fuzzy finding through .config/ files
 alias dc cd
-# fuzzy attach zellij via televison
-alias zel 'zellij attach $(zellij ls -s | tv)'
 
 # back aliases
 alias .. 'cd ..'
@@ -50,13 +57,6 @@ alias ... 'cd ../..'
 alias .... 'cd ../../..'
 alias ..... 'cd ../../../..'
 alias ...... 'cd ../../../../..'
-
-# eza aliases
-alias ls 'eza -al --color=always --group-directories-first --icons' # preferred listing
-alias la 'eza -a --color=always --group-directories-first --icons' # all files and dirs
-alias ll 'eza -l --color=always --group-directories-first --icons' # long format
-alias lt 'eza -aT --color=always --group-directories-first --icons' # tree listing
-alias l. "eza -a | grep -e '^\.'" # show only dotfiles
 
 # Grep aliases
 alias dir 'dir --color=auto'
@@ -84,8 +84,5 @@ function y
 end
 
 # Variables
-set -gx VISUAL nvim
-set -gx EDITOR nvim
-set -gx SUDO_EDITOR nvim
 set -g fish_key_bindings fish_vi_key_bindings
 test -f ~/.config/fish/secrets.fish; and source ~/.config/fish/secrets.fish

@@ -5,3 +5,45 @@ repos:
       - id: gitleaks
         name: gitleaks (staged)
         args: ["protect", "--staged", "--verbose"]
+  - repo: local
+    hooks:
+      - id: zsh-syntax
+        name: zsh syntax check
+        entry: zsh -n dot_zshrc
+        language: system
+        pass_filenames: false
+      - id: fish-syntax
+        name: fish syntax check
+        entry: fish -n dot_config/private_fish/config.fish.tmpl
+        language: system
+        pass_filenames: false
+      - id: nushell-load
+        name: nushell config load check
+        entry: bash -lc "nu --commands 'source dot_config/nushell/env.nu' && nu --commands 'source dot_config/nushell/config.nu'"
+        language: system
+        pass_filenames: false
+      - id: taplo-format-check
+        name: taplo format check
+        entry: taplo fmt --check
+        language: system
+        pass_filenames: false
+      - id: stylua-format-check
+        name: stylua format check
+        entry: stylua --check dot_config/nvim dot_config/yazi/init.lua dot_config/yazi/plugins/whoosh.yazi/main.lua dot_config/yazi/plugins/folder-rules.yazi/main.lua
+        language: system
+        pass_filenames: false
+      - id: shfmt-check
+        name: shfmt check
+        entry: shfmt -d dot_config/niri/executable_region-record-toggle.sh dot_config/hypr/executable_screenshot-region.sh bootstrap/bootstrap.sh
+        language: system
+        pass_filenames: false
+      - id: shellcheck-check
+        name: shellcheck
+        entry: shellcheck dot_config/niri/executable_region-record-toggle.sh dot_config/hypr/executable_screenshot-region.sh bootstrap/bootstrap.sh
+        language: system
+        pass_filenames: false
+      - id: bootstrap-plan-check
+        name: bootstrap plan check
+        entry: bash bootstrap/bootstrap.sh --plan
+        language: system
+        pass_filenames: false

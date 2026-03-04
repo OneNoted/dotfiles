@@ -11,6 +11,8 @@
 !.config/nvim/**
 !.config/fish/
 !.config/fish/**
+!.config/shared/
+!.config/shared/**
 !.config/starship.toml
 !.config/yazi/**
 !.config/fastfetch/**

@@ -1,0 +1,54 @@
+env:
+  - name: EDITOR
+    value: nvim
+  - name: VISUAL
+    value: nvim
+  - name: SUDO_EDITOR
+    value: nvim
+
+aliases:
+  core:
+    - name: cd
+      value: z
+    - name: find
+      value: fd
+    - name: vim
+      value: nvim
+    - name: vi
+      value: nvim
+    - name: yay
+      value: paru
+    - name: clear
+      value: "printf '\\033[2J\\033[3J\\033[1;1H'"
+
+  fish:
+    - name: ls
+      value: eza -al --color=always --group-directories-first --icons
+    - name: la
+      value: eza -a --color=always --group-directories-first --icons
+    - name: ll
+      value: eza -l --color=always --group-directories-first --icons
+    - name: lt
+      value: eza -aT --color=always --group-directories-first --icons
+    - name: l.
+      value: "eza -a | grep -e '^\\.'"
+    - name: zel
+      value: zellij attach $(zellij ls -s | tv)
+
+  zsh:
+    - name: ls
+      value: eza -al --color=always --group-directories-first --icons
+    - name: la
+      value: eza -a --color=always --group-directories-first --icons
+    - name: ll
+      value: eza -l --color=always --group-directories-first --icons
+    - name: lt
+      value: eza -aT --color=always --group-directories-first --icons
+    - name: l.
+      value: "eza -a | grep -e '^\\.'"
+    - name: zel
+      value: zellij attach $(zellij ls -s | tv)
+
+  nu:
+    - name: ls
+      value: eza --icons --all
