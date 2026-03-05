@@ -3,6 +3,7 @@
 set -gx {{ .name }} {{ .value | quote }}
 {{- end }}
 
+if status is-interactive
 {{- range .aliases.core }}
 alias {{ .name }} {{ .value | quote }}
 {{- end }}
@@ -10,3 +11,4 @@ alias {{ .name }} {{ .value | quote }}
 {{- range .aliases.fish }}
 alias {{ .name }} {{ .value | quote }}
 {{- end }}
+end
