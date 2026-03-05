@@ -32,8 +32,6 @@ aliases:
       value: eza -aT --color=always --group-directories-first --icons
     - name: l.
       value: "eza -a | grep -e '^\\.'"
-    - name: zel
-      value: zellij attach $(zellij ls -s | tv)
 
   zsh:
     - name: ls
@@ -46,8 +44,6 @@ aliases:
       value: eza -aT --color=always --group-directories-first --icons
     - name: l.
       value: "eza -a | grep -e '^\\.'"
-    - name: zel
-      value: zellij attach $(zellij ls -s | tv)
 
   nu:
     - name: ls

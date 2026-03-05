@@ -1,0 +1,6 @@
+[filechooser]
+cmd=yazi-wrapper.sh
+default_dir=$HOME
+env=TERMCMD=kitty --class termfilechooser --title termfilechooser -o remember_window_size=no -o initial_window_width=120c -o initial_window_height=36c
+open_mode=suggested
+save_mode=suggested

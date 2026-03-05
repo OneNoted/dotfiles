@@ -99,7 +99,10 @@ fi
 
 ##### Aliases #####
 
-# back aliases 
+# fuzzy attach zellij via television
+alias zel='zellij attach $(zellij ls -s | tv)'
+
+# back aliases
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
