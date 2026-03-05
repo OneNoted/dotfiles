@@ -2,6 +2,12 @@
 
 Commands are based on `bootstrap/packages.toml` and use `--needed` so they can be re-run safely.
 
+## All apps (one command)
+
+```bash
+sudo pacman -S --needed chezmoi jujutsu fish zsh nushell neovim kitty tmux zellij starship eza fd ripgrep fzf zoxide atuin yazi jq wl-clipboard ffmpeg playerctl brightnessctl pre-commit shellcheck shfmt stylua taplo-cli hyprland hyprpaper hyprlock swww slurp wf-recorder hyprshot niri btop fastfetch lua-language-server yaml-language-server gopls rust-analyzer && paru -S --needed carapace-bin hyprpanel-git zen-browser-bin qmlls6
+```
+
 ## Core tooling
 
 ```bash
