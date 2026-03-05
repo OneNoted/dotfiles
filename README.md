@@ -9,17 +9,16 @@ Arch Niri & Hyprland dotfiles, managed with [chezmoi](https://www.chezmoi.io/) a
 
 | Category | Tool(s) |
 |---|---|
-| WM / Desktop | Hyprland, Niri, HyprPanel |
+| WM / Desktop | Hyprland, Niri, ashell |
 | Terminal | Kitty |
 | Multiplexer | Zellij, Tmux |
 | Shell | Fish (primary), Nushell, Zsh |
-| Editor | Neovim (lazy.nvim) |
-| Theme | Catppuccin Mocha |
+| Editor | Neovim |
 | File Manager | Yazi |
-| Prompt | Starship |
+| Shell Prompt | Starship |
 | Fuzzy Finder | Television, fzf |
 | Shell History | Atuin |
-| System Info | Fastfetch, Btop |
+| System Info | Fastfetch, Btop, Onefetch |
 | Misc | Eza, Zoxide, Topgrade, Equibop |
 
 ## Features
