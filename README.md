@@ -44,6 +44,43 @@ During `chezmoi init`, you will be prompted for an Atuin sync server address. Le
 
 **Note:** `monitors.conf` is sourced by the Hyprland config but is not tracked in this repo -- it is machine-specific. Create your own at `~/.config/hypr/monitors.conf` after applying.
 
+## Bootstrapping (Arch)
+
+A package manifest and bootstrap helper are included for Arch hosts:
+
+```sh
+# print install plan (default mode)
+bash bootstrap/bootstrap.sh --plan
+
+# install only the Neovim component
+bash bootstrap/nvim.sh --plan
+
+# include optional groups
+bash bootstrap/bootstrap.sh --group wm --group nvim --plan
+
+# install on Arch
+bash bootstrap/bootstrap.sh --group wm --group nvim --install
+
+# install only Neovim and its config dependencies
+bash bootstrap/nvim.sh --install
+```
+
+Package data lives in `bootstrap/packages.toml`.
+
+## Validation
+
+Run strict local checks before committing:
+
+```sh
+just check
+```
+
+To run all configured hooks:
+
+```sh
+pre-commit run --all-files
+```
+
 ## Customization
 
 - **Hostname conditionals** -- Search `.tmpl` files for `.chezmoi.hostname` to find host-specific blocks. The main hosts are `aeolus` (Arch + Nvidia GPU setup) and `hephaestus`. Adjust or remove these for your machine. *sorry!*

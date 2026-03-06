@@ -3,7 +3,10 @@ return {
   -- Copilot via native LSP inline completion
   {
     "neovim/nvim-lspconfig",
-    opts = function()
+    config = function()
+      if vim.fn.executable("copilot-language-server") ~= 1 then
+        return
+      end
       -- Configure copilot LSP
       vim.lsp.config("copilot", {
         cmd = { "copilot-language-server", "--stdio" },
@@ -15,18 +18,22 @@ return {
       vim.lsp.enable("copilot")
 
       -- Enable native inline completion
-      vim.schedule(function()
-        vim.lsp.inline_completion.enable(true)
-      end)
+      if vim.lsp.inline_completion and vim.lsp.inline_completion.enable then
+        vim.schedule(function()
+          vim.lsp.inline_completion.enable(true)
+        end)
+      end
 
       -- Keymaps for cycling suggestions
-      vim.keymap.set({ "i", "n" }, "<M-]>", function()
-        vim.lsp.inline_completion.select({ count = 1 })
-      end, { desc = "Next Copilot Suggestion" })
+      if vim.lsp.inline_completion and vim.lsp.inline_completion.select then
+        vim.keymap.set({ "i", "n" }, "<M-]>", function()
+          vim.lsp.inline_completion.select({ count = 1 })
+        end, { desc = "Next Copilot Suggestion" })
 
-      vim.keymap.set({ "i", "n" }, "<M-[>", function()
-        vim.lsp.inline_completion.select({ count = -1 })
-      end, { desc = "Prev Copilot Suggestion" })
+        vim.keymap.set({ "i", "n" }, "<M-[>", function()
+          vim.lsp.inline_completion.select({ count = -1 })
+        end, { desc = "Prev Copilot Suggestion" })
+      end
     end,
   },
   -- 99

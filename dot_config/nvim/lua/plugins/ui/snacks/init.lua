@@ -16,8 +16,10 @@ return {
       end
 
       -- Check if in a git repo
+      local has_git = vim.fn.executable("git") == 1
       local is_git_repo = vim.fn.isdirectory(".git") == 1
-        or vim.fn.system("git rev-parse --is-inside-work-tree 2>/dev/null"):match("true")
+        or (has_git and vim.fn.system("git rev-parse --is-inside-work-tree 2>/dev/null"):match("true"))
+      local has_onefetch = vim.fn.executable("onefetch") == 1
 
       -- Check window width for layout (threshold: 160 columns for side-by-side)
       local is_wide_window = vim.o.columns >= 160
@@ -60,7 +62,7 @@ return {
 
       -- final dashboard sections
       local dashboard_sections
-      if is_git_repo and is_wide_window then
+      if is_git_repo and has_onefetch and is_wide_window then
         -- Wide window + git repo: Two-pane layout (header left, onefetch right)
         dashboard_sections = {
           { pane = 1, section = "header" },
@@ -81,7 +83,7 @@ return {
           height = 25,
           padding = 1,
         })
-      elseif is_git_repo then
+      elseif is_git_repo and has_onefetch then
         -- Narrow window + git repo: onefetch replaces header
         dashboard_sections = {
           { section = "terminal", cmd = "onefetch --no-color-palette", ttl = 0, width = 80, height = 20, padding = 1 },
