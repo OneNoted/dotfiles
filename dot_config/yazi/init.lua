@@ -8,7 +8,7 @@ require("bookmarks"):setup({
   last_directory = { enable = false, persist = false, mode = "dir" },
   persist = "vim",
   desc_format = "full",
-  file_pick_mode = "hover",
+  file_pick_mode = "parent",
   custom_desc_input = false,
   show_keys = true,
   notify = {

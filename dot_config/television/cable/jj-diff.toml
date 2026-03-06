@@ -1,0 +1,10 @@
+[metadata]
+name = "jj-diff"
+description = "A channel to select files from jj diff"
+requirements = ["jj"]
+
+[source]
+command = "jj diff --name-only"
+
+[preview]
+command = "jj diff --color=always -- '{}' | head -n 1000"

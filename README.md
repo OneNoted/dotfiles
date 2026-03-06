@@ -89,9 +89,11 @@ pre-commit run --all-files
 
 - **Shell preference** -- Fish is the default (set in `.chezmoi.toml.tmpl` as the chezmoi `cd` command shell). Zsh config with Zinit is also included at `dot_zshrc`, and Nushell config lives under `dot_config/nushell/`.
 
+- **Shared shell core** -- Common aliases and editor environment variables are defined once in `.chezmoidata/shell_core.yaml` and rendered to shell adapters in `dot_config/shared/`.
+
 ## Structure
 
-```
+```text
 .chezmoi.toml.tmpl          # Chezmoi config -- source dir, shell, data prompts
 .chezmoiignore              # Per-host ignore rules
 dot_zshrc                   # Zsh config (Zinit plugin manager)
