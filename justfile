@@ -3,7 +3,7 @@ set shell := ["bash", "-euo", "pipefail", "-c"]
 default:
     @just --list
 
-check: check-shell check-format check-scripts check-bootstrap
+check: check-shell check-format check-scripts check-bootstrap check-yazi
 
 check-shell:
     zsh -n dot_zshrc
@@ -22,6 +22,9 @@ check-scripts:
 check-bootstrap:
     bash bootstrap/bootstrap.sh --plan >/dev/null
     bash bootstrap/nvim.sh --plan >/dev/null
+
+check-yazi:
+    python3 bootstrap/check_yazi_plugins.py
 
 precommit:
     pre-commit run --all-files

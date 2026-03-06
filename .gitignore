@@ -13,7 +13,8 @@
 # Tokens / env
 .env
 .env.*
+__pycache__/
+*.pyc
 
 # Machine-specific configs
 dot_config/hypr/monitors.conf
-
