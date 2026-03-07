@@ -1,8 +1,8 @@
-local EXTERNAL_PLUGINS = {
-  { id = "yazi-rs/plugins:mount", name = "mount" },
-  { id = "dedukun/relative-motions", name = "relative-motions" },
-  { id = "boydaihungst/restore", name = "restore" },
-  { id = "dedukun/bookmarks", name = "bookmarks" },
+local EXTERNAL_PACKAGES = {
+  { id = "yazi-rs/plugins:mount", entry = "plugins/mount.yazi/main.lua" },
+  { id = "dedukun/relative-motions", entry = "plugins/relative-motions.yazi/main.lua" },
+  { id = "boydaihungst/restore", entry = "plugins/restore.yazi/main.lua" },
+  { id = "dedukun/bookmarks", entry = "plugins/bookmarks.yazi/main.lua" },
 }
 
 local function file_exists(path)
@@ -29,14 +29,14 @@ local function yazi_config_dir()
   return os.getenv("HOME") .. "/.config/yazi"
 end
 
-local function ensure_external_plugins()
+local function ensure_external_packages()
   local config_dir = yazi_config_dir()
   local missing = {}
 
-  for _, plugin in ipairs(EXTERNAL_PLUGINS) do
-    local entry = string.format("%s/plugins/%s.yazi/main.lua", config_dir, plugin.name)
+  for _, package in ipairs(EXTERNAL_PACKAGES) do
+    local entry = string.format("%s/%s", config_dir, package.entry)
     if not file_exists(entry) then
-      table.insert(missing, plugin.id)
+      table.insert(missing, package.id)
     end
   end
 
@@ -47,11 +47,11 @@ local function ensure_external_plugins()
   local cmd = "ya pkg add " .. table.concat(missing, " ")
   local ok, why, code = os.execute(cmd)
   if ok ~= true and ok ~= 0 then
-    error(string.format("Failed to install Yazi plugins via `%s` (%s: %s)", cmd, tostring(why), tostring(code)))
+    error(string.format("Failed to install Yazi packages via `%s` (%s: %s)", cmd, tostring(why), tostring(code)))
   end
 end
 
-ensure_external_plugins()
+ensure_external_packages()
 
 -- Relative Vim Motions
 require("relative-motions"):setup({ show_numbers = "relative", show_motion = true, enter_mode = "first" })

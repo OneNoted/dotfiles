@@ -25,7 +25,7 @@ Arch/Hyprland/Niri dotfiles, managed with [chezmoi](https://www.chezmoi.io/) and
 
 - **Multi-host templating** -- Chezmoi `.tmpl` files use hostname conditionals to adapt configs across machines (currently `aeolus` on Arch with Nvidia and `hephaestus`).
 
-- **Catppuccin Mocha everywhere** -- Consistent theming across Hyprland borders, Kitty, Neovim, Yazi, Btop, Nushell, and HyprPanel.
+- **Catppuccin + Ashen theming** -- Catppuccin Mocha stays the default across Hyprland, Kitty, Neovim, Btop, Nushell, and HyprPanel, while Yazi uses the Ashen flavor.
 
 - **Organized Neovim config** -- Plugins are split into domain-based subdirectories under `lua/plugins/`: `editor/` (completion, harpoon, which-key), `lang/` (Go, Rust, Zig, YAML, JSON), `tools/` (LSP, treesitter, git, formatting, diagnostics, chezmoi integration), and `ui/` (catppuccin, lualine, bufferline, snacks).
 
