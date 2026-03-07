@@ -42,6 +42,8 @@ chezmoi apply
 
 During `chezmoi init`, you will be prompted for an Atuin sync server address. Leave it empty if you do not use a self-hosted Atuin server.
 
+Yazi installs its external plugins on first launch from `init.lua`, so there is no separate plugin bootstrap step.
+
 **Note:** `monitors.conf` is sourced by the Hyprland config but is not tracked in this repo -- it is machine-specific. Create your own at `~/.config/hypr/monitors.conf` after applying.
 
 ## Bootstrapping (Arch)

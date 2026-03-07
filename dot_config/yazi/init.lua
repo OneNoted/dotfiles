@@ -1,3 +1,58 @@
+local EXTERNAL_PLUGINS = {
+  { id = "yazi-rs/plugins:mount", name = "mount" },
+  { id = "dedukun/relative-motions", name = "relative-motions" },
+  { id = "boydaihungst/restore", name = "restore" },
+  { id = "dedukun/bookmarks", name = "bookmarks" },
+}
+
+local function file_exists(path)
+  local file = io.open(path, "r")
+  if file == nil then
+    return false
+  end
+
+  file:close()
+  return true
+end
+
+local function yazi_config_dir()
+  local direct = os.getenv("YAZI_CONFIG_HOME")
+  if direct ~= nil and direct ~= "" then
+    return direct
+  end
+
+  local xdg = os.getenv("XDG_CONFIG_HOME")
+  if xdg ~= nil and xdg ~= "" then
+    return xdg .. "/yazi"
+  end
+
+  return os.getenv("HOME") .. "/.config/yazi"
+end
+
+local function ensure_external_plugins()
+  local config_dir = yazi_config_dir()
+  local missing = {}
+
+  for _, plugin in ipairs(EXTERNAL_PLUGINS) do
+    local entry = string.format("%s/plugins/%s.yazi/main.lua", config_dir, plugin.name)
+    if not file_exists(entry) then
+      table.insert(missing, plugin.id)
+    end
+  end
+
+  if #missing == 0 then
+    return
+  end
+
+  local cmd = "ya pkg add " .. table.concat(missing, " ")
+  local ok, why, code = os.execute(cmd)
+  if ok ~= true and ok ~= 0 then
+    error(string.format("Failed to install Yazi plugins via `%s` (%s: %s)", cmd, tostring(why), tostring(code)))
+  end
+end
+
+ensure_external_plugins()
+
 -- Relative Vim Motions
 require("relative-motions"):setup({ show_numbers = "relative", show_motion = true, enter_mode = "first" })
 
