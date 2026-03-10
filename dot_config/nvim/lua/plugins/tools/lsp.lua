@@ -109,9 +109,9 @@ return {
 
       -- Setup mason-lspconfig with Mason 2.0 automatic_enable
       require("mason-lspconfig").setup({
-        ensure_installed = { "lua_ls", "gopls", "nil_ls", "zls", "taplo", "ts_ls", "jsonls" },
+        ensure_installed = { "lua_ls", "gopls", "nil_ls", "zls", "taplo", "ts_ls", "jsonls", "jdtls" },
         automatic_enable = {
-          exclude = { "rust_analyzer" }, -- rustaceanvim handles Rust (Plan 03-09)
+          exclude = { "rust_analyzer", "jdtls" }, -- rustaceanvim/nvim-jdtls handle these
         },
       })
 

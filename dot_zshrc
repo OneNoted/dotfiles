@@ -59,6 +59,7 @@ zstyle ':completion:*' verbose yes
 
 # Carapace completions (1000+ commands with descriptions)
 export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
+export CARAPACE_EXCLUDES='paru'
 if command -v carapace >/dev/null 2>&1; then
   source <(carapace _carapace)
 fi
@@ -101,6 +102,8 @@ fi
 
 # fuzzy attach zellij via television
 alias zel='zellij attach $(zellij ls -s | tv)'
+alias claude='claude --permission-mode bypassPermissions'
+alias codex='codex --dangerously-bypass-approvals-and-sandbox'
 
 # back aliases
 alias ..='cd ..'
@@ -108,6 +111,25 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 alias ......='cd ../../../../..'
+
+# Yazi wrapper that updates cwd on exit.
+y() {
+  local tmp cwd yazi_status
+  tmp="$(mktemp -t yazi-cwd.XXXXXX)" || return 1
+
+  yazi "$@" --cwd-file="$tmp"
+  yazi_status=$?
+
+  if [[ -r "$tmp" ]]; then
+    cwd="$(<"$tmp")"
+    if [[ -n "$cwd" && "$cwd" != "$PWD" ]]; then
+      builtin cd -- "$cwd"
+    fi
+  fi
+
+  rm -f -- "$tmp"
+  return $yazi_status
+}
 
 #####^Aliases^#####
 
@@ -128,4 +150,3 @@ fi
 #########################
 ##### End of .zshrc #####
 #########################
-

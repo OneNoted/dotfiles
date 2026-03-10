@@ -9,6 +9,7 @@ return {
       -- Adapters
       "rouge8/neotest-rust",
       "fredrikaverpil/neotest-golang",
+      "rcasia/neotest-java",
     },
     keys = {
       { "<leader>tt", function() require("neotest").run.run() end, desc = "Run Nearest Test" },
@@ -34,6 +35,7 @@ return {
             go_test_args = { "-v", "-race", "-count=1" },
             dap_go_enabled = false, -- No DAP for now
           }),
+          require("neotest-java"),
         },
         status = {
           virtual_text = true,

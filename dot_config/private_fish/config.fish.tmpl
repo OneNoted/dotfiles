@@ -42,7 +42,6 @@ if status is-interactive
     end
 
     #Aliases
-    alias pamcan pacman
     # dc for television fuzzy finding through .config/ files
     alias dc cd
     # fuzzy attach zellij via television
@@ -63,14 +62,6 @@ if status is-interactive
     alias grep 'grep --color=auto'
     alias fgrep 'fgrep --color=auto'
     alias egrep 'egrep --color=auto'
-
-    alias gitpkg 'pacman -Q | grep -i "\-git" | wc -l' # count git packages
-
-    # Get the error messages from journalctl
-    alias jctl "journalctl -p 3 -xb"
-
-    # Recent installed packages
-    alias rip "expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl"
 
     # Yazi Shell Wrapper
     function y

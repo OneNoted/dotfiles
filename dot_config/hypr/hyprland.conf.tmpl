@@ -129,7 +129,7 @@ exec-once = [workspace 3 silent] zen-browser
 {{ if eq .chezmoi.hostname "aeolus" }}
 ### Stuff to mitigate Nvidia being deeply unpleasant
 # env = WLR_DRM_DEVICES,$HOME/.config/hypr/card # Use IGPU for window manager
-env = AQ_DRM_DEVICES,/dev/dri/gpu-5090:/dev/dri/igpu-amd
+env = AQ_DRM_DEVICES,/dev/dri/gpu-5090 # :/dev/dri/igpu-amd
 env = GBM_BACKEND,nvidia-drm
 env = LIBVA_DRIVER_NAME,nvidia
 env = __GLX_VENDOR_LIBRARY_NAME,nvidia
@@ -173,7 +173,7 @@ general {
     border_size = 2
 
     # https://wiki.hypr.land/Configuring/Variables/#variable-types for info about colors
-    col.active_border = rgba(89b4fa8f)
+    col.active_border = rgba(eba0ac2f)
     # col.active_border = rgba(cba6f7ff)
     col.inactive_border = rgba(181825ef)
 
@@ -184,7 +184,7 @@ general {
     resize_on_border = true
 
     # Please see https://wiki.hypr.land/Configuring/Tearing/ before you turn this on
-    allow_tearing = true
+    allow_tearing = false
 
     layout = scrolling
 
@@ -218,7 +218,7 @@ decoration {
         xray = true
         special = false
         new_optimizations = true
-        size = 10
+        size = 3
         passes = 3
         brightness = 1
         noise = 0.01
@@ -264,22 +264,22 @@ animations {
 
     # Default animations, see https://wiki.hypr.land/Configuring/Animations/
     #           NAME,          ONOFF, SPEED, CURVE,        [STYLE]
-    animation = global,        1,     10,    default
-    animation = border,        1,     5.39,  easeOutQuint
+    animation = global,        1,     2,    default
+    animation = border,        1,     1.39,  linear
     animation = windows,       1,     1.79,  easeOutQuint
-    animation = windowsIn,     1,     1.5,   easeOutQuint, popin 87%
-    animation = windowsOut,    1,     0.49,  linear,       popin 87%
+    animation = windowsIn,     1,     3.5,   easeOutQuint#,  popin 87%
+    animation = windowsOut,    1,     0.49,  linear#,       popin 87%
     animation = fadeIn,        1,     0.01,  almostLinear
     animation = fadeOut,       1,     2.16,  almostLinear
     animation = fade,          1,     1.03,  quick
     animation = layers,        1,     3.81,  easeOutQuint
-    animation = layersIn,      1,     4,     easeOutQuint, fade
-    animation = layersOut,     1,     1.5,   linear,       fade
+    animation = layersIn,      1,     4,     easeOutQuint#, fade
+    animation = layersOut,     1,     1.5,   linear#,       fade
     animation = fadeLayersIn,  1,     1.79,  almostLinear
     animation = fadeLayersOut, 1,     1.39,  almostLinear
-    animation = workspaces,    1,     1.94,  almostLinear, fade
-    animation = workspacesIn,  1,     1.21,  almostLinear, fade
-    animation = workspacesOut, 1,     1.94,  almostLinear, fade
+    animation = workspaces,    1,     1.94,  almostLinear#, fade
+    animation = workspacesIn,  1,     1.21,  almostLinear#, fade
+    animation = workspacesOut, 1,     1.94,  almostLinear#, fade
     animation = zoomFactor,    1,     7,     quick
 }
 
@@ -305,7 +305,7 @@ misc {
   force_default_wallpaper = 0 # Set to 0 or 1 to disable the anime mascot wallpapers
   disable_hyprland_logo = true # If true disables the random hyprland logo / anime girl background. :(
   disable_splash_rendering = true
-  vfr = 0 # Variable Frame Rate
+  vfr = 1 # Variable Frame Rate
   vrr = 0 # Variable Refresh Rate
 
   # mouse_move_enables_dpms = true

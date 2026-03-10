@@ -20,6 +20,18 @@ aliases:
       value: paru
     - name: clear
       value: "printf '\\033[2J\\033[3J\\033[1;1H'"
+    - name: pamcan
+      value: pacman
+    - name: tree
+      value: eza --tree --all --icons --group-directories-first
+    - name: cat
+      value: bat --paging=never --style=plain
+    - name: gitpkg
+      value: "pacman -Q | grep -i \"\\-git\" | wc -l"
+    - name: jctl
+      value: journalctl -p 3 -xb
+    - name: rip
+      value: "expac --timefmt='%Y-%m-%d %T' '%l\\t%n %v' | sort | tail -200 | nl"
 
   fish:
     - name: ls
