@@ -26,26 +26,26 @@ bind = Control+Tab, escape, exec, kitty -e btop
 # Window Management
 bind = $mainMod+Shift, U, swapsplit
 bind = $mainMod, F, fullscreen,
-bind = $mainMod, h, movefocus, l
-bind = $mainMod, l, movefocus, r
+bind = $mainMod, h, layoutmsg, focus l
+bind = $mainMod, l, layoutmsg, focus r
 bind = $mainMod, k, movefocus, u
 bind = $mainMod, j, movefocus, d
 
-bind = $mainMod, left, movefocus, l
-bind = $mainMod, right, movefocus, r
+bind = $mainMod, left, layoutmsg, focus l
+bind = $mainMod, right, layoutmsg, focus r
 bind = $mainMod, up, movefocus, u
 bind = $mainMod, down, movefocus, d
 
 unbind = $mainMod+Shift, H
-bind = $mainMod+Shift, H, movewindow, l
-bind = $mainMod+Shift, L, movewindow, r
-bind = $mainMod+Shift, k, movewindow, u
-bind = $mainMod+Shift, J, movewindow, d
+bind = $mainMod+Shift, H, layoutmsg, swapcol l
+bind = $mainMod+Shift, L, layoutmsg, swapcol r
+bind = $mainMod+Shift, k, swapwindow, u
+bind = $mainMod+Shift, J, swapwindow, d
 
-bind = Super+Shift, Left, movewindow, l # [hidden]
-bind = Super+Shift, Right, movewindow, r # [hidden]
-bind = Super+Shift, Up, movewindow, u # [hidden]
-bind = Super+Shift, Down, movewindow, d # [hidden]
+bind = Super+Shift, Left, layoutmsg, swapcol l # [hidden]
+bind = Super+Shift, Right, layoutmsg, swapcol r # [hidden]
+bind = Super+Shift, Up, swapwindow, u # [hidden]
+bind = Super+Shift, Down, swapwindow, d # [hidden]
 
 # Switch workspaces with mainMod + [0-9]
 bind = $mainMod, 1, workspace, 1
