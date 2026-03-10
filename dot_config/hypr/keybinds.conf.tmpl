@@ -26,13 +26,13 @@ bind = Control+Tab, escape, exec, kitty -e btop
 # Window Management
 bind = $mainMod+Shift, U, swapsplit
 bind = $mainMod, F, fullscreen,
-bind = $mainMod, h, layoutmsg, focus l
-bind = $mainMod, l, layoutmsg, focus r
+bind = $mainMod, h, exec, ~/.config/hypr/focus-column-or-monitor.sh l
+bind = $mainMod, l, exec, ~/.config/hypr/focus-column-or-monitor.sh r
 bind = $mainMod, k, movefocus, u
 bind = $mainMod, j, movefocus, d
 
-bind = $mainMod, left, layoutmsg, focus l
-bind = $mainMod, right, layoutmsg, focus r
+bind = $mainMod, left, exec, ~/.config/hypr/focus-column-or-monitor.sh l
+bind = $mainMod, right, exec, ~/.config/hypr/focus-column-or-monitor.sh r
 bind = $mainMod, up, movefocus, u
 bind = $mainMod, down, movefocus, d
 
