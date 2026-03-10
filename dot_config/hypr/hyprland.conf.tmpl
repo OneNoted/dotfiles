@@ -186,7 +186,7 @@ general {
     # Please see https://wiki.hypr.land/Configuring/Tearing/ before you turn this on
     allow_tearing = true
 
-    layout = dwindle
+    layout = scrolling
 
 
     snap {
@@ -339,8 +339,11 @@ misc {
 
 # workspace=1,monitor:DP-3,default:true
 
-# Example windowrule
-# windowrule = float,class:^(kitty)$,title:^(kitty)$
+# Open terminal file chooser windows as floating, similar to the Niri rule.
+windowrule = float on, match:class ^(termfilechooser)$
+windowrule = size (monitor_w*0.35) (monitor_h*0.70), match:class ^(termfilechooser)$
+windowrule = max_size 1400 1000, match:class ^(termfilechooser)$
+windowrule = move ((monitor_w-window_w)/2) 60, match:class ^(termfilechooser)$
 
 # Ignore maximize requests from apps. You'll probably like this.
 # windowrule = suppressevent maximize, class:.*
