@@ -274,7 +274,8 @@ bind=NONE,Print,spawn,sh -c 'grim -g "$(slurp)" - | wl-copy'
 bind=CTRL,Print,spawn,sh -c 'grim - | wl-copy'
 bind=SUPER+CTRL,s,spawn,sh -c 'grim -g "$(slurp)" - | wl-copy'
 bind=SUPER+CTRL+SHIFT,s,spawn,{{ .chezmoi.homeDir }}/.config/niri/region-record-toggle.sh
-bind=SUPER+ALT,d,spawn,{{ .chezmoi.homeDir }}/.cargo/bin/whspr-rs
+bind=SUPER+ALT,d,spawn,{{ .chezmoi.homeDir }}/.cargo/bin/whispers
+bind=SUPER+ALT,v,spawn,{{ .chezmoi.homeDir }}/.cargo/bin/whispers voice
 bind=SUPER+CTRL,c,spawn,{{ .chezmoi.homeDir }}/.cargo/bin/zoop
 
 
