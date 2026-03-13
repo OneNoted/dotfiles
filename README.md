@@ -44,7 +44,7 @@ During `chezmoi init`, you will be prompted for an Atuin sync server address. Le
 
 Yazi installs its external plugins on first launch from `init.lua`, so there is no separate plugin bootstrap step.
 
-**Note:** `monitors.conf` is sourced by the Hyprland config but is not tracked in this repo -- it is machine-specific. Create your own at `~/.config/hypr/monitors.conf` after applying.
+**Note:** `aeolus` tracks its Hyprland monitor layout in `dot_config/hypr/monitors.conf.tmpl`. Other hosts can keep a machine-specific `~/.config/hypr/monitors.conf`.
 
 ## Bootstrapping (Arch)
 
@@ -87,7 +87,7 @@ pre-commit run --all-files
 
 - **Hostname conditionals** -- Search `.tmpl` files for `.chezmoi.hostname` to find host-specific blocks. The main hosts are `aeolus` (Arch + Nvidia GPU setup) and `hephaestus`. Adjust or remove these for your machine. *sorry!*
 
-- **Monitor setup** -- Create `~/.config/hypr/monitors.conf` with your display layout. See the [Hyprland wiki](https://wiki.hypr.land/Configuring/Monitors/) for syntax.
+- **Monitor setup** -- `aeolus` manages its Hyprland layout in `dot_config/hypr/monitors.conf.tmpl`. For other hosts, either add a hostname branch there or keep a machine-specific `~/.config/hypr/monitors.conf`. See the [Hyprland wiki](https://wiki.hypr.land/Configuring/Monitors/) for syntax.
 
 - **Shell preference** -- Fish is the default (set in `.chezmoi.toml.tmpl` as the chezmoi `cd` command shell). Zsh config with Zinit is also included at `dot_zshrc`, and Nushell config lives under `dot_config/nushell/`.
 
