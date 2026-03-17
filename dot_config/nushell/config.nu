@@ -7,7 +7,7 @@
 # (or import) custom commands, or run any other startup tasks.
 # See https://www.nushell.sh/book/configuration.html
 #
-# Nushell sets "sensible defaults" for most configuration settings, 
+# Nushell sets "sensible defaults" for most configuration settings,
 # so your `config.nu` only needs to override these defaults if desired.
 #
 # You can open this file in your default editor using:
@@ -20,30 +20,18 @@
 # General
 
 $env.config.buffer_editor = "nvim"
-$env.EDITOR = "nvim"
 
 # Appearance
 source ~/.config/nushell/themes/catppuccin_mocha.nu
 $env.config.show_banner = false
 
+# Shared shell aliases/env vars from chezmoi data
+source ../shared/shell-core.nu
+
 # Initialize
 
 # Zoxide
 source ~/.config/nushell/inits/.zoxide.nu
-
-# Starship
-mkdir ($nu.data-dir | path join "vendor/autoload")
-starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")
-
-# Carapace
-source $"($nu.cache-dir)/carapace.nu"
-
-# Atuin
-source ~/.local/share/atuin/init.nu
-
-# Aliases
-alias cd = z
-alias ls = eza --icons --all
-alias find = fd
-alias yay = paru
-
+source ~/.config/nushell/inits/starship.nu
+source ~/.config/nushell/inits/carapace.nu
+source ~/.config/nushell/inits/atuin.nu

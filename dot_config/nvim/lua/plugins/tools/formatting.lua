@@ -27,6 +27,7 @@ return {
       typescript = { "prettier" },
       javascriptreact = { "prettier" },
       typescriptreact = { "prettier" },
+      java = { lsp_format = "fallback" },
     }
 
     for _, formatter_opts in pairs(formatters) do

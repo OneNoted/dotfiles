@@ -1,3 +1,7 @@
+{{ if ne .chezmoi.hostname "aeolus" }}
+~/.config/hypr/monitors.conf
+{{- end }}
+
 {{ if eq .chezmoi.hostname "hephaestus" }}
 ~/.config/fish/completions/paru.fish
 {{- end }}
@@ -11,6 +15,8 @@
 !.config/nvim/**
 !.config/fish/
 !.config/fish/**
+!.config/shared/
+!.config/shared/**
 !.config/starship.toml
 !.config/yazi/**
 !.config/fastfetch/**

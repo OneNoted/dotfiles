@@ -9,6 +9,7 @@ return {
       -- Note: Rust linting via rust-analyzer/clippy (rustaceanvim)
       -- Note: Lua linting via lua_ls
       -- Note: Nix linting via nil_ls
+      -- Note: Java linting via jdtls
     }
 
     -- Create autocmd to run linting

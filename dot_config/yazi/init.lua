@@ -1,3 +1,58 @@
+local EXTERNAL_PACKAGES = {
+  { id = "yazi-rs/plugins:mount", entry = "plugins/mount.yazi/main.lua" },
+  { id = "dedukun/relative-motions", entry = "plugins/relative-motions.yazi/main.lua" },
+  { id = "boydaihungst/restore", entry = "plugins/restore.yazi/main.lua" },
+  { id = "dedukun/bookmarks", entry = "plugins/bookmarks.yazi/main.lua" },
+}
+
+local function file_exists(path)
+  local file = io.open(path, "r")
+  if file == nil then
+    return false
+  end
+
+  file:close()
+  return true
+end
+
+local function yazi_config_dir()
+  local direct = os.getenv("YAZI_CONFIG_HOME")
+  if direct ~= nil and direct ~= "" then
+    return direct
+  end
+
+  local xdg = os.getenv("XDG_CONFIG_HOME")
+  if xdg ~= nil and xdg ~= "" then
+    return xdg .. "/yazi"
+  end
+
+  return os.getenv("HOME") .. "/.config/yazi"
+end
+
+local function ensure_external_packages()
+  local config_dir = yazi_config_dir()
+  local missing = {}
+
+  for _, package in ipairs(EXTERNAL_PACKAGES) do
+    local entry = string.format("%s/%s", config_dir, package.entry)
+    if not file_exists(entry) then
+      table.insert(missing, package.id)
+    end
+  end
+
+  if #missing == 0 then
+    return
+  end
+
+  local cmd = "ya pkg add " .. table.concat(missing, " ")
+  local ok, why, code = os.execute(cmd)
+  if ok ~= true and ok ~= 0 then
+    error(string.format("Failed to install Yazi packages via `%s` (%s: %s)", cmd, tostring(why), tostring(code)))
+  end
+end
+
+ensure_external_packages()
+
 -- Relative Vim Motions
 require("relative-motions"):setup({ show_numbers = "relative", show_motion = true, enter_mode = "first" })
 
@@ -8,7 +63,7 @@ require("bookmarks"):setup({
   last_directory = { enable = false, persist = false, mode = "dir" },
   persist = "vim",
   desc_format = "full",
-  file_pick_mode = "hover",
+  file_pick_mode = "parent",
   custom_desc_input = false,
   show_keys = true,
   notify = {

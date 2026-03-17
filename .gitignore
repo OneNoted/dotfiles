@@ -14,6 +14,12 @@
 .env
 .env.*
 
+# Yazi installs these at runtime
+dot_config/yazi/package.toml
+dot_config/yazi/plugins/bookmarks.yazi/
+dot_config/yazi/plugins/mount.yazi/
+dot_config/yazi/plugins/relative-motions.yazi/
+dot_config/yazi/plugins/restore.yazi/
+
 # Machine-specific configs
 dot_config/hypr/monitors.conf
-
