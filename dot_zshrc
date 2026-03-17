@@ -2,6 +2,11 @@
 ##### Zsh configuration file #####
 ##################################
 
+##### Line Editor #####
+bindkey -v
+export KEYTIMEOUT=1
+
+#####^Line Editor^#####
 
 ##### Zinit Plugin Manager #####
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
@@ -11,31 +16,14 @@ ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 # Source / Load Zinit
 source "${ZINIT_HOME}/zinit.zsh"
 
+ZSH_IN_TASKERS=0
+[[ ${TASKERS_EMBEDDED:-0} == 1 || ${TERM_PROGRAM:-} == taskers ]] && ZSH_IN_TASKERS=1
+
 # 1. Core Completion 
 zinit load zsh-users/zsh-completions
 
-# 2. Fish Experience Stack 
-zinit load olets/zsh-abbr                         
-# zinit load "$HOME/Projects/zsh-fishy-deletions/"
-zinit load OneNoted/zsh-fishy-deletions
-
-
-
-# Use history first, then completion engine as fallback
-ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-
-zinit wait lucid atload"
-  bindkey '^[[A' history-substring-search-up
-  bindkey '^[[B' history-substring-search-down
-" for zsh-users/zsh-history-substring-search
-zinit wait lucid for zsh-users/zsh-autosuggestions
-zinit wait lucid for zsh-users/zsh-syntax-highlighting
-
-
-
-
-
-# Load completions 
+# Load completions before binding editor widgets so later plugins see the
+# final completion functions and we don't rely on zinit's deferred scheduler.
 autoload -Uz compinit
 if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
   compinit
@@ -43,7 +31,25 @@ else
   compinit -C
 fi
 
+# 2. Fish Experience Stack 
+zinit load olets/zsh-abbr                         
+# zinit load "$HOME/Projects/zsh-fishy-deletions/"
+zinit load OneNoted/zsh-fishy-deletions
 
+# Keep autosuggestions stable once widgets are bound; rebinding on every
+# precmd is unnecessary after we make the load order deterministic.
+ZSH_AUTOSUGGEST_MANUAL_REBIND=1
+
+
+# Use history first, then completion engine as fallback
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+
+zinit load zsh-users/zsh-history-substring-search
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+if (( ! ZSH_IN_TASKERS )); then
+  zinit load zsh-users/zsh-autosuggestions
+fi
 
 # Menu selection (arrow keys)
 zstyle ':completion:*' menu select
@@ -86,9 +92,6 @@ fi
 #####^Initializations^#####
 
 ##### Environment Variables #####
-
-bindkey -v
-export KEYTIMEOUT=1
 
 
 # Shared shell aliases/env vars from chezmoi data
@@ -145,6 +148,12 @@ export QML_IMPORT_PATH="${QML_IMPORT_PATH:+$QML_IMPORT_PATH:}$HOME/.config/quick
 # Zoxide cd history (must be last)
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init zsh)"
+fi
+
+# zsh-syntax-highlighting must be sourced after every other widget, keybinding,
+# completion, and prompt init so it sees the final editor state.
+if (( ! ZSH_IN_TASKERS )); then
+  zinit load zsh-users/zsh-syntax-highlighting
 fi
 
 #########################
