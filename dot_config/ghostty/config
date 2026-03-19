@@ -52,8 +52,8 @@
 
 # Shell
 shell-integration = detect
-# command = /usr/bin/nu
-command = /usr/bin/fish
+# command = nu
+command = fish
 font-family = JetBrains Mono Nerd Font
 font-size = 11
 # Appearance
