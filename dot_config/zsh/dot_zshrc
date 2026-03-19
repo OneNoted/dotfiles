@@ -95,8 +95,8 @@ fi
 
 
 # Shared shell aliases/env vars from chezmoi data
-if [[ -f "$HOME/.config/shared/shell-core.zsh" ]]; then
-  source "$HOME/.config/shared/shell-core.zsh"
+if [[ -f "$XDG_CONFIG_HOME/shared/shell-core.zsh" ]]; then
+  source "$XDG_CONFIG_HOME/shared/shell-core.zsh"
 fi
 
 #####^Environment Variables^#####
@@ -142,7 +142,7 @@ y() {
 #####^Binds^#####
 
 # Quickshell default config QML import path
-export QML_IMPORT_PATH="${QML_IMPORT_PATH:+$QML_IMPORT_PATH:}$HOME/.config/quickshell/default/lib"
+export QML_IMPORT_PATH="${QML_IMPORT_PATH:+$QML_IMPORT_PATH:}$XDG_CONFIG_HOME/quickshell/default/lib"
 
 
 # Zoxide cd history (must be last)

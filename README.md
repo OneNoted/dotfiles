@@ -13,7 +13,7 @@ Arch/Hyprland/Niri dotfiles, managed with [chezmoi](https://www.chezmoi.io/) and
 | Terminal | Kitty |
 | Multiplexer | Zellij, Tmux |
 | Shell | Fish (primary), Nushell, Zsh |
-| Editor | Neovim |
+| Editor | Neovim, Doom Emacs |
 | File Manager | Yazi |
 | Shell Prompt | Starship |
 | Fuzzy Finder | Television, fzf |
@@ -35,3 +35,5 @@ You'll be prompted for an Atuin sync server address during init — leave empty 
 - [Bootstrapping](docs/dotfiles/bootstrapping.md) — Arch package install, validation
 - [Customization](docs/dotfiles/customization.md) — host conditionals, monitors, shell choice
 - [Structure](docs/dotfiles/structure.md) — directory layout, feature notes
+
+The user session exports XDG base directories through `.config/environment.d/60-xdg.conf`, Doom's user config is managed at `.config/doom/`, and Zsh uses a minimal `.zshenv` bootstrap with its main config in `.config/zsh/`.

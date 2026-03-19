@@ -26,7 +26,7 @@ source ~/.config/nushell/themes/catppuccin_mocha.nu
 $env.config.show_banner = false
 
 # Shared shell aliases/env vars from chezmoi data
-source ../shared/shell-core.nu
+source ~/.config/shared/shell-core.nu
 
 # Initialize
 

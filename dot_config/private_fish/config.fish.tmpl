@@ -1,10 +1,23 @@
+# Keep shell-only launches aligned with the user session XDG environment.
+set -q XDG_CONFIG_HOME; or set -gx XDG_CONFIG_HOME $HOME/.config
+set -q XDG_DATA_HOME; or set -gx XDG_DATA_HOME $HOME/.local/share
+set -q XDG_STATE_HOME; or set -gx XDG_STATE_HOME $HOME/.local/state
+set -q XDG_CACHE_HOME; or set -gx XDG_CACHE_HOME $HOME/.cache
+set -q XDG_BIN_HOME; or set -gx XDG_BIN_HOME $HOME/.local/bin
+set -q EMACSDIR; or set -gx EMACSDIR $XDG_CONFIG_HOME/emacs
+set -q DOOMDIR; or set -gx DOOMDIR $XDG_CONFIG_HOME/doom
+set -q DOOMPROFILE; or set -gx DOOMPROFILE default
+
+contains -- $XDG_BIN_HOME $PATH; or set -gx PATH $XDG_BIN_HOME $PATH
+contains -- $EMACSDIR/bin $PATH; or set -gx PATH $EMACSDIR/bin $PATH
+
 # Fastfetch Greeting
 set fish_greeting
 
 # Shared shell aliases/env vars from chezmoi data
-test -f ~/.config/shared/shell-core.fish; and source ~/.config/shared/shell-core.fish
+test -f $XDG_CONFIG_HOME/shared/shell-core.fish; and source $XDG_CONFIG_HOME/shared/shell-core.fish
 
-test -f ~/.config/fish/secrets.fish; and source ~/.config/fish/secrets.fish
+test -f $XDG_CONFIG_HOME/fish/secrets.fish; and source $XDG_CONFIG_HOME/fish/secrets.fish
 
 if status is-interactive
     ##### Inits #####

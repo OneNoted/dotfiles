@@ -1,0 +1,24 @@
+##### Minimal Zsh bootstrap for XDG layout #####
+: "${XDG_CONFIG_HOME:=$HOME/.config}"
+: "${XDG_DATA_HOME:=$HOME/.local/share}"
+: "${XDG_STATE_HOME:=$HOME/.local/state}"
+: "${XDG_CACHE_HOME:=$HOME/.cache}"
+: "${XDG_BIN_HOME:=$HOME/.local/bin}"
+: "${ZDOTDIR:=$XDG_CONFIG_HOME/zsh}"
+: "${EMACSDIR:=$XDG_CONFIG_HOME/emacs}"
+: "${DOOMDIR:=$XDG_CONFIG_HOME/doom}"
+: "${DOOMPROFILE:=default}"
+export XDG_CONFIG_HOME XDG_DATA_HOME XDG_STATE_HOME XDG_CACHE_HOME XDG_BIN_HOME
+export ZDOTDIR EMACSDIR DOOMDIR DOOMPROFILE
+
+case ":$PATH:" in
+  *":$XDG_BIN_HOME:"*) ;;
+  *) PATH="$XDG_BIN_HOME${PATH:+:$PATH}" ;;
+esac
+
+case ":$PATH:" in
+  *":$EMACSDIR/bin:"*) ;;
+  *) PATH="$EMACSDIR/bin${PATH:+:$PATH}" ;;
+esac
+
+export PATH
