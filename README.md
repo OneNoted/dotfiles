@@ -36,4 +36,4 @@ You'll be prompted for an Atuin sync server address during init — leave empty 
 - [Customization](docs/dotfiles/customization.md) — host conditionals, monitors, shell choice
 - [Structure](docs/dotfiles/structure.md) — directory layout, feature notes
 
-The user session exports XDG base directories through `.config/environment.d/60-xdg.conf`, Doom's user config is managed at `.config/doom/`, and Zsh uses a minimal `.zshenv` bootstrap with its main config in `.config/zsh/`.
+The user session exports XDG base directories through `.config/environment.d/60-xdg.conf`, Doom's user config is managed at `.config/doom/` with handwritten behavior centered in `config.el`, and Zsh uses a minimal `.zshenv` bootstrap with its main config in `.config/zsh/`.

@@ -38,7 +38,7 @@ dot_config/
 - **Multi-host templating** — `.tmpl` files use hostname conditionals to adapt configs across machines.
 - **Catppuccin + Ashen theming** — Catppuccin Mocha is the default everywhere; Yazi uses the Ashen flavor.
 - **XDG-first shell environment** — Session-wide XDG vars live in `environment.d`, with matching shell fallbacks and a `ZDOTDIR` bootstrap for Zsh.
-- **Managed Doom user config** — Doom user files live in `dot_config/doom/`, while the upstream framework stays external.
+- **Managed Doom user config** — Doom user files live in `dot_config/doom/`, with handwritten behavior centered in `config.el` while the upstream framework stays external.
 - **Organized Neovim config** — Plugins split into domain-based subdirectories under `lua/plugins/`.
 - **Kitty + Neovim integration** — kitty-scrollback.nvim for terminal scrollback in Neovim.
 - **Fish shell setup** — Vi keybindings, Television hotkeys (`Ctrl+T` file search, `Ctrl+G` dir jump), `zel` for fuzzy Zellij session attach, Yazi `cwd` tracking, eza aliases, zoxide, Atuin history, Carapace completions.

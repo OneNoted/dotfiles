@@ -16,6 +16,10 @@ Fish is the default (set in `.chezmoi.toml.tmpl` as the chezmoi `cd` command she
 
 Base XDG variables are exported session-wide from `dot_config/environment.d/60-xdg.conf` and mirrored in shell startup for non-systemd launches. Doom uses `EMACSDIR=~/.config/emacs`, `DOOMDIR=~/.config/doom`, and the `default` Doom profile for XDG `share`/`cache`/`state` directories. Current Doom 3 pre-release builds still keep straight package repos and build artifacts under `~/.config/emacs/.local/straight`, so that tree should not be treated as removable yet.
 
+## Doom layout
+
+The Doom config stays intentionally monolithic: `init.el` selects modules, `packages.el` declares extra packages when needed, and `config.el` is the main handwritten config file. Emacs Customize output should live in `custom.el` under `doom-state-dir`, not inside `config.el`.
+
 ## Shared shell core
 
 Common aliases and editor environment variables are defined once in `.chezmoidata/shell_core.yaml` and rendered to shell adapters in `dot_config/shared/`. Dynamic XDG and PATH logic stays in the shell-specific startup files and `environment.d`.
