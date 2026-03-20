@@ -20,11 +20,14 @@
 
 ;;; UI and Appearance
 
+;; Use the official Catppuccin theme package with the Mocha flavor.
+(setq catppuccin-flavor 'mocha)
+
 ;; Uncomment and adjust when you want to pin fonts explicitly.
 ;; (setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
 
-(setq doom-theme 'doom-one
+(setq doom-theme 'catppuccin
       display-line-numbers-type t)
 
 ;;; Editing Behavior

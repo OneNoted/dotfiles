@@ -18,7 +18,7 @@ Base XDG variables are exported session-wide from `dot_config/environment.d/60-x
 
 ## Doom layout
 
-The Doom config stays intentionally monolithic: `init.el` selects modules, `packages.el` declares extra packages when needed, and `config.el` is the main handwritten config file. Emacs Customize output should live in `custom.el` under `doom-state-dir`, not inside `config.el`.
+The Doom config stays intentionally monolithic: `init.el` selects modules, `packages.el` declares extra packages when needed, and `config.el` is the main handwritten config file. Emacs Customize output should live in `custom.el` under `doom-state-dir`, not inside `config.el`. The default Doom theme is Catppuccin Mocha via the official `catppuccin-theme` package, without an extra layer of local theme overrides.
 
 ## Shared shell core
 
