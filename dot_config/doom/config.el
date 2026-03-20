@@ -16,19 +16,48 @@
 ;;       user-mail-address "john@doe.com")
 
 (setq org-directory "~/org/"
-      custom-file (expand-file-name "custom.el" doom-state-dir))
+      custom-file (expand-file-name "custom.el" doom-state-dir)
+      projectile-project-search-path '(("~/Projects/" . 3)))
 
 ;;; UI and Appearance
 
 ;; Use the official Catppuccin theme package with the Mocha flavor.
 (setq catppuccin-flavor 'mocha)
 
-;; Uncomment and adjust when you want to pin fonts explicitly.
-;; (setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
-;;       doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
-
-(setq doom-theme 'catppuccin
+(setq doom-font (font-spec :family "JetBrainsMono Nerd Font")
+      doom-theme 'catppuccin
       display-line-numbers-type t)
+
+(defun my/dashboard-pacman-banner ()
+  "Return the PacMan banner used by the Neovim dashboard."
+  (propertize
+   (mapconcat
+    #'identity
+    '(""
+      "                      ██████                     "
+      "                  ████▒▒▒▒▒▒████                 "
+      "                ██▒▒▒▒▒▒▒▒▒▒▒▒▒▒██               "
+      "              ██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██             "
+      "            ██▒▒▒▒▒▒▒▒    ▒▒▒▒▒▒▒▒               "
+      "            ██▒▒▒▒▒▒  ▒▒▓▓▒▒▒▒▒▒  ▓▓▓▓           "
+      "            ██▒▒▒▒▒▒  ▒▒▓▓▒▒▒▒▒▒  ▒▒▓▓           "
+      "          ██▒▒▒▒▒▒▒▒▒▒    ▒▒▒▒▒▒▒▒    ██         "
+      "          ██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██         "
+      "          ██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██         "
+      "          ██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██         "
+      "          ██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██         "
+      "          ██▒▒██▒▒▒▒▒▒██▒▒▒▒▒▒▒▒██▒▒▒▒██         "
+      "          ████  ██▒▒██  ██▒▒▒▒██  ██▒▒██         "
+      "          ██      ██      ████      ████         "
+      "                                                 "
+      "")
+    "\n")
+   'face '+dashboard-banner))
+
+;; Reuse the Neovim dashboard banner and suppress Doom's image splash so the
+;; ASCII art is the only logo shown in terminal and GUI sessions.
+(setq +dashboard-ascii-banner-fn #'my/dashboard-pacman-banner
+      fancy-splash-image 'ignore)
 
 ;;; Editing Behavior
 
@@ -45,6 +74,9 @@
 ;;; Tools and Integrations
 
 ;; Keep external tooling and workflow integrations here.
+
+(after! magit
+  (setq magit-repository-directories projectile-project-search-path))
 
 ;;; Keybindings
 
