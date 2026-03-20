@@ -30,7 +30,7 @@ truncate_title_after_length = 100
 
 [settings]
 lock_cmd = "playerctl --all-players pause; hyprlock &"
-logout_cmd = "niri msg action quit"
+logout_cmd = "niri msg action quit --skip-confirmation"
 shutdown_cmd = "shutdown now"
 reboot_cmd = "systemctl reboot"
 suspend_cmd = "systemctl suspend"

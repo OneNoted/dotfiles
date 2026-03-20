@@ -669,9 +669,9 @@ binds {
     // which ensures niri always processes them, even when an inhibitor is active.
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
-    // The quit action will show a confirmation dialog to avoid accidental exits.
-    Mod+Shift+Ctrl+M { quit; }
-    Ctrl+Alt+Delete { quit; }
+    // The built-in quit confirmation isn't reliably accepting Enter here.
+    Mod+Shift+Ctrl+M { spawn "niri" "msg" "action" "quit" "--skip-confirmation"; }
+    Ctrl+Alt+Delete { spawn "niri" "msg" "action" "quit" "--skip-confirmation"; }
 
     // Powers off the monitors. To turn them back on, do any input like
     // moving the mouse or pressing any other key.
