@@ -652,11 +652,11 @@ binds {
     // Mod+Space       { switch-layout "next"; }
     // Mod+Shift+Space { switch-layout "prev"; }
 
-    Print { spawn "hyprshot" "-m" "region" "-z"; }
-    Ctrl+Print { spawn "hyprshot" "--mode" "output" "--mode" "active" "-z"; }
+    Print { spawn "{{ .chezmoi.homeDir }}/.cargo/bin/snappers" "area"; }
+    Ctrl+Print { spawn "{{ .chezmoi.homeDir }}/.cargo/bin/snappers" "screen"; }
     Alt+Print { spawn "hyprshot" "--mode" "window" "--mode" "active" "-z"; }
-    Mod+Ctrl+S repeat=false { spawn-sh "dir=\"{{ .chezmoi.homeDir }}/Pictures/Screenshots/Snippets\"; f=\"$USER@$HOSTNAME-$(date +%Y-%m-%d_%H:%M:%S)-$(niri msg focused-window | grep 'App ID' | awk '{print $NF}').png\"; mkdir -p \"$dir\"; niri msg action screenshot --show-pointer true --path \"$dir/$f\""; }
-    Mod+Ctrl+Shift+S repeat=false { spawn "{{ .chezmoi.homeDir }}/.config/niri/region-record-toggle.sh"; }
+    Mod+Ctrl+S repeat=false { spawn-sh "dir=\"{{ .chezmoi.homeDir }}/Pictures/Screenshots/Snippets\"; user=$(id -un 2>/dev/null || printf '%s' \"${USER:-unknown-user}\"); host=$(uname -n 2>/dev/null || cat /etc/hostname 2>/dev/null || printf '%s' \"${HOSTNAME:-unknown-host}\"); app=$(niri msg focused-window | awk -F'\"' '/App ID:/ {print $2; exit}'); [ -n \"$app\" ] || app=unknown; f=\"$user@$host-$(date +%Y-%m-%d_%H:%M:%S)-$app.png\"; mkdir -p \"$dir\"; {{ .chezmoi.homeDir }}/.cargo/bin/snappers area --path \"$dir/$f\""; }
+    Mod+Ctrl+Shift+S repeat=false { spawn "{{ .chezmoi.homeDir }}/.config/niri/snappers-record-toggle.sh"; }
     Mod+Ctrl+C repeat=false { spawn "{{ .chezmoi.homeDir }}/.cargo/bin/zoop"; }
 
     // Applications such as remote-desktop clients and software KVM switches may
