@@ -24,6 +24,7 @@ $env.XDG_DATA_HOME = ($env.XDG_DATA_HOME? | default ($home | path join ".local" 
 $env.XDG_STATE_HOME = ($env.XDG_STATE_HOME? | default ($home | path join ".local" "state"))
 $env.XDG_CACHE_HOME = ($env.XDG_CACHE_HOME? | default ($home | path join ".cache"))
 $env.XDG_BIN_HOME = ($env.XDG_BIN_HOME? | default ($home | path join ".local" "bin"))
+$env.BASH_ENV = ($env.BASH_ENV? | default ($env.XDG_CONFIG_HOME | path join "bash" "bashenv"))
 $env.CARGO_HOME = ($env.CARGO_HOME? | default ($env.XDG_DATA_HOME | path join "cargo"))
 $env.RUSTUP_HOME = ($env.RUSTUP_HOME? | default ($env.XDG_DATA_HOME | path join "rustup"))
 $env.BUN_INSTALL = ($env.BUN_INSTALL? | default ($env.XDG_DATA_HOME | path join "bun"))

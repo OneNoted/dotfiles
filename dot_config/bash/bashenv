@@ -1,10 +1,9 @@
-##### XDG-managed Zsh environment #####
+# Shared bash environment under XDG config.
 : "${XDG_CONFIG_HOME:=$HOME/.config}"
 : "${XDG_DATA_HOME:=$HOME/.local/share}"
 : "${XDG_STATE_HOME:=$HOME/.local/state}"
 : "${XDG_CACHE_HOME:=$HOME/.cache}"
 : "${XDG_BIN_HOME:=$HOME/.local/bin}"
-: "${BASH_ENV:=$XDG_CONFIG_HOME/bash/bashenv}"
 : "${CARGO_HOME:=$XDG_DATA_HOME/cargo}"
 : "${RUSTUP_HOME:=$XDG_DATA_HOME/rustup}"
 : "${BUN_INSTALL:=$XDG_DATA_HOME/bun}"
@@ -14,15 +13,16 @@
 : "${NPM_CONFIG_PREFIX:=$XDG_DATA_HOME/npm}"
 : "${PUB_CACHE:=$XDG_DATA_HOME/pub-cache}"
 : "${DOCKER_CONFIG:=$XDG_CONFIG_HOME/docker}"
-: "${ZDOTDIR:=$XDG_CONFIG_HOME/zsh}"
 : "${EMACSDIR:=$XDG_CONFIG_HOME/emacs}"
 : "${DOOMDIR:=$XDG_CONFIG_HOME/doom}"
 : "${DOOMPROFILE:=default}"
+: "${BASH_ENV:=$XDG_CONFIG_HOME/bash/bashenv}"
+HISTFILE="$XDG_STATE_HOME/bash/history"
 export XDG_CONFIG_HOME XDG_DATA_HOME XDG_STATE_HOME XDG_CACHE_HOME XDG_BIN_HOME
-export BASH_ENV
 export CARGO_HOME RUSTUP_HOME BUN_INSTALL GRADLE_USER_HOME
 export NPM_CONFIG_USERCONFIG NPM_CONFIG_CACHE NPM_CONFIG_PREFIX PUB_CACHE DOCKER_CONFIG
-export ZDOTDIR EMACSDIR DOOMDIR DOOMPROFILE
+export EMACSDIR DOOMDIR DOOMPROFILE BASH_ENV HISTFILE
+export EDITOR=nvim VISUAL=nvim SUDO_EDITOR=nvim
 
 case ":$PATH:" in
   *":$NPM_CONFIG_PREFIX/bin:"*) ;;

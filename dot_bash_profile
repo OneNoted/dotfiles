@@ -1,0 +1,6 @@
+# Home-level bash login bootstrap.
+: "${XDG_CONFIG_HOME:=$HOME/.config}"
+
+if [[ -r "$XDG_CONFIG_HOME/bash/profile" ]]; then
+  . "$XDG_CONFIG_HOME/bash/profile"
+fi

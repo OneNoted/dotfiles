@@ -3,15 +3,19 @@
 ```text
 .chezmoi.toml.tmpl          # Chezmoi config -- source dir, shell, data prompts
 .chezmoiignore              # Per-host ignore rules
+dot_bash_profile            # Home-level bash login bootstrap -- sources .config/bash/profile
+dot_bashrc                  # Home-level bash interactive bootstrap -- sources .config/bash/bashrc
+dot_bash_logout             # Home-level bash logout bootstrap -- sources .config/bash/logout
 dot_zshenv                  # Home-level Zsh bootstrap -- sets ZDOTDIR, then sources .config/zsh/.zshenv
 dot_local/bin/
   xdg-dev-home-migrate      # Preview/apply supported dev-tool home moves into XDG targets
 .profiles/
   nvim/                     # Extra Neovim profile sources (server/default/nightly)
 dot_config/
+  bash/                     # Bash startup files under XDG config (bashenv, profile, bashrc, logout)
   doom/                     # Doom user config + profiles
-  environment.d/            # User session environment exports
   btop/                     # Btop system monitor
+  environment.d/            # User session environment exports
   eza/                      # Eza (ls replacement) theme
   fastfetch/                # System info fetch (templated)
   hypr/                     # Hyprland WM -- main config, keybinds, workspaces
@@ -43,6 +47,7 @@ dot_config/
 - **Multi-host templating** — `.tmpl` files use hostname conditionals to adapt configs across machines.
 - **Catppuccin + Ashen theming** — Catppuccin Mocha is the default everywhere; Yazi uses the Ashen flavor.
 - **XDG-first shell environment** — Session-wide XDG vars live in `environment.d`, with matching shell fallbacks and a `ZDOTDIR` bootstrap for Zsh.
+- **Home shims for classic shells** — Bash and Zsh keep only the startup files that their executables must discover in `$HOME`; the real shell logic lives under `~/.config/`.
 - **Relocated dev-tool homes** — Cargo, Rustup, Bun, Gradle, npm, Dart pub, and Docker are redirected away from top-level dotdirs, with `xdg-dev-home-migrate` available to move existing data safely.
 - **Managed Doom user config** — Doom user files live in `dot_config/doom/`, with handwritten behavior centered in `config.el` while the upstream framework stays external.
 - **Organized Neovim config** — Plugins split into domain-based subdirectories under `lua/plugins/`.

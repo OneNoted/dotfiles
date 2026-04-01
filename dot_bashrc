@@ -1,0 +1,6 @@
+# Home-level bash interactive bootstrap.
+: "${XDG_CONFIG_HOME:=$HOME/.config}"
+
+if [[ -r "$XDG_CONFIG_HOME/bash/bashrc" ]]; then
+  . "$XDG_CONFIG_HOME/bash/bashrc"
+fi

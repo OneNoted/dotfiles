@@ -1,0 +1,15 @@
+# XDG-managed bash interactive config.
+if [[ -r "${XDG_CONFIG_HOME:-$HOME/.config}/bash/bashenv" ]]; then
+  . "${XDG_CONFIG_HOME:-$HOME/.config}/bash/bashenv"
+fi
+
+# If not running interactively, don't do anything else.
+[[ $- != *i* ]] && return
+
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+PS1='[\u@\h \W]\$ '
+
+if [[ -r "${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions/whispers" ]]; then
+  source "${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions/whispers"
+fi

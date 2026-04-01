@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Taskers
+Comment=Agent-first terminal workspace
+Exec=taskers-gtk
+TryExec=taskers-gtk
+Icon=taskers
+Terminal=false
+Categories=Development;
+Keywords=taskers;terminal;workspace;agent;
+StartupNotify=true
+StartupWMClass=dev.taskers.app
+X-GNOME-UsesNotifications=true
