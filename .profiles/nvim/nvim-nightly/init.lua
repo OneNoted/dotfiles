@@ -75,13 +75,10 @@ vim.pack.add({
   gh("neovim/nvim-lspconfig"),
 
   -- Completion
-
-  -- Vibe
-  gh("OneNoted/avante.nvim"),
+  { src = gh("yetone/avante.nvim"), name = "avante.nvim" },
 
   -- Editing & navigation
-  gh("nvim-mini/mini.ai"),
-  gh("nvim-mini/mini.pairs"),
+  gh("echasnovski/mini.nvim"),
 
 
   -- Diagnostics
@@ -94,6 +91,7 @@ vim.pack.add({
   gh("mikesmithgh/kitty-scrollback.nvim"),
   gh("nvim-lua/plenary.nvim"),
   gh("MunifTanjim/nui.nvim"),
+  gh("rafamadriz/friendly-snippets"),
 
 })
 
@@ -128,47 +126,78 @@ vim.api.nvim_create_autocmd("PackChanged", {
   end,
 })
 
-
-------------------------------------------------------------
--- avante.nvim
-------------------------------------------------------------
-require("avante").setup({
-  provider = "openai_oauth",
-  auto_suggestions_provider = "openai_oauth",
-  providers = {
-    openai_oauth = {
-      model = "gpt-5.3-codex-spark",
-      use_response_api = true,
-      extra_request_body = {
-        reasoning_effort = "low",
-      },
-    },
-  },
-
-  acp_providers = {
-    codex = {
-      command = "codex-acp",
-      env = {
-        HOME = os.getenv("HOME"),
-        PATH = os.getenv("PATH"),
-      },
-    },
-  },
-  behaviour = {
-    auto_suggestions = true,
-    auto_set_keymaps = false,
-  },
-  suggestion = {
-    debounce = 100,
-    throttle = 150,
-  },
-})
-
-
 ------------------------------------------------------------
 -- kitty-scrollback.nvim
 ------------------------------------------------------------
 require('kitty-scrollback').setup()
+
+------------------------------------------------------------
+-- Mini plugins
+------------------------------------------------------------
+require("mini.comment").setup()
+require("mini.pairs").setup()
+
+require("mini.surround").setup({
+  mappings = {
+    add = "gsa",
+    delete = "gsd",
+    replace = "gsr",
+    find = "gsf",
+    find_left = "gsF",
+    highlight = "gsh",
+    update_n_lines = "gsn",
+  },
+})
+
+local ai = require("mini.ai")
+ai.setup({
+  n_lines = 500,
+  custom_textobjects = {
+    o = ai.gen_spec.treesitter({
+      a = { "@block.outer", "@conditional.outer", "@loop.outer" },
+      i = { "@block.inner", "@conditional.inner", "@loop.inner" },
+    }, {}),
+    f = ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }, {}),
+    c = ai.gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }, {}),
+  },
+})
+
+require("mini.move").setup({
+  mappings = {
+    left = "<M-h>",
+    right = "<M-l>",
+    down = "<M-j>",
+    up = "<M-k>",
+    line_left = "<M-h>",
+    line_right = "<M-l>",
+    line_down = "<M-j>",
+    line_up = "<M-k>",
+  },
+})
+
+require("mini.diff").setup({
+  view = {
+    style = "sign",
+    signs = { add = "+", change = "~", delete = "-" },
+  },
+})
+
+local hipatterns = require("mini.hipatterns")
+hipatterns.setup({
+  highlighters = {
+    fixme = { pattern = "%f[%w]()FIXME()%f[%W]", group = "MiniHipatternsFixme" },
+    hack = { pattern = "%f[%w]()HACK()%f[%W]", group = "MiniHipatternsHack" },
+    todo = { pattern = "%f[%w]()TODO()%f[%W]", group = "MiniHipatternsTodo" },
+    note = { pattern = "%f[%w]()NOTE()%f[%W]", group = "MiniHipatternsNote" },
+    hex_color = hipatterns.gen_highlighter.hex_color(),
+  },
+})
+
+require("mini.snippets").setup({
+  snippets = {
+    require("mini.snippets").gen_loader.from_lang(),
+  },
+})
 
 
 ------------------------------------------------------------
@@ -187,22 +216,40 @@ require('kitty-scrollback').setup()
 -- Colorscheme
 ------------------------------------------------------------
 
+require("catppuccin").setup({
+  flavour = "mocha",
+  styles = {
+    comments = { "italic" },
+    conditionals = { "italic" },
+  },
+  integrations = {
+    mini = { enabled = true },
+  },
+})
+
 vim.cmd.colorscheme("catppuccin")
 
-vim.api.nvim_set_hl(0, "AvanteSuggestion", {
-  fg = "#7f849c",
-  italic = true,
-})
+------------------------------------------------------------
+-- avante.nvim
+------------------------------------------------------------
 
-vim.api.nvim_set_hl(0, "AvanteToBeDeleted", {
-  fg = "#f38ba8",
-  bg = "NONE",
-  strikethrough = true,
-})
-
-vim.api.nvim_set_hl(0, "AvanteToBeDeletedWOStrikethrough", {
-  fg = "#f38ba8",
-  bg = "NONE",
+require("avante").setup({
+  provider = "codex",
+  behaviour = {
+    -- ACP-backed suggestions are noisy and expensive in a tiny nightly config.
+    auto_suggestions = false,
+  },
+  acp_providers = {
+    codex = {
+      command = "codex-acp",
+      env = {
+        HOME = os.getenv("HOME"),
+        PATH = os.getenv("PATH"),
+        OPENAI_API_KEY = os.getenv("OPENAI_API_KEY"),
+        CODEX_API_KEY = os.getenv("CODEX_API_KEY"),
+      },
+    },
+  },
 })
 
 ------------------------------------------------------------

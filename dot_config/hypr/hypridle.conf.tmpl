@@ -10,17 +10,17 @@ general {
 }
 
 listener {
-    timeout = 300
+    timeout = 1800
     on-timeout = $lock_cmd
 }
 
 listener {
-    timeout = 315
+    timeout = 3600
     on-timeout = $display_power_cmd off
     on-resume = $display_power_cmd on
 }
 
 listener {
-    timeout = 1800
+    timeout = 129600
     on-timeout = systemctl suspend
 }
