@@ -311,7 +311,7 @@ layout {
 // This line starts waybar, a commonly used bar for Wayland compositors.
 spawn-sh-at-startup "vicinae server"
 spawn-sh-at-startup "awww-daemon"
-spawn-sh-at-startup "~/.cargo/bin/ashell"
+spawn-sh-at-startup "ashell"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
@@ -429,8 +429,8 @@ binds {
     // Note: the entire command goes as a single argument. It's passed verbatim to `sh -c`.
     // For example, this is a standard bind to toggle the screen reader (orca).
     Super+Alt+S allow-when-locked=true hotkey-overlay-title=null { spawn-sh "pkill orca || exec orca"; }
-    Mod+Alt+D repeat=false hotkey-overlay-title="Speech-to-text: whispers" { spawn "{{ .chezmoi.homeDir }}/.cargo/bin/whispers"; }
-    Mod+Alt+V repeat=false hotkey-overlay-title="Speech-to-text: whispers voice" { spawn "{{ .chezmoi.homeDir }}/.cargo/bin/whispers" "voice"; }
+    Mod+Alt+D repeat=false hotkey-overlay-title="Speech-to-text: whispers" { spawn "whispers"; }
+    Mod+Alt+V repeat=false hotkey-overlay-title="Speech-to-text: whispers voice" { spawn "whispers" "voice"; }
 
     // Volume and brightness
     XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "-l" "1" "@DEFAULT_AUDIO_SINK@" "5%+"; }
@@ -652,12 +652,12 @@ binds {
     // Mod+Space       { switch-layout "next"; }
     // Mod+Shift+Space { switch-layout "prev"; }
 
-    Print { spawn "{{ .chezmoi.homeDir }}/.cargo/bin/snappers" "area"; }
-    Ctrl+Print { spawn "{{ .chezmoi.homeDir }}/.cargo/bin/snappers" "screen"; }
+    Print { spawn "snappers" "area"; }
+    Ctrl+Print { spawn "snappers" "screen"; }
     Alt+Print { spawn "hyprshot" "--mode" "window" "--mode" "active" "-z"; }
-    Mod+Ctrl+S repeat=false { spawn-sh "dir=\"{{ .chezmoi.homeDir }}/Pictures/Screenshots/Snippets\"; user=$(id -un 2>/dev/null || printf '%s' \"${USER:-unknown-user}\"); host=$(uname -n 2>/dev/null || cat /etc/hostname 2>/dev/null || printf '%s' \"${HOSTNAME:-unknown-host}\"); app=$(niri msg focused-window | awk -F'\"' '/App ID:/ {print $2; exit}'); [ -n \"$app\" ] || app=unknown; f=\"$user@$host-$(date +%Y-%m-%d_%H:%M:%S)-$app.png\"; mkdir -p \"$dir\"; {{ .chezmoi.homeDir }}/.cargo/bin/snappers area --path \"$dir/$f\""; }
+    Mod+Ctrl+S repeat=false { spawn-sh "dir=\"{{ .chezmoi.homeDir }}/Pictures/Screenshots/Snippets\"; user=$(id -un 2>/dev/null || printf '%s' \"${USER:-unknown-user}\"); host=$(uname -n 2>/dev/null || cat /etc/hostname 2>/dev/null || printf '%s' \"${HOSTNAME:-unknown-host}\"); app=$(niri msg focused-window | awk -F'\"' '/App ID:/ {print $2; exit}'); [ -n \"$app\" ] || app=unknown; f=\"$user@$host-$(date +%Y-%m-%d_%H:%M:%S)-$app.png\"; mkdir -p \"$dir\"; snappers area --path \"$dir/$f\""; }
     Mod+Ctrl+Shift+S repeat=false { spawn "{{ .chezmoi.homeDir }}/.config/niri/snappers-record-toggle.sh"; }
-    Mod+Ctrl+C repeat=false { spawn "{{ .chezmoi.homeDir }}/.cargo/bin/zoop"; }
+    Mod+Ctrl+C repeat=false { spawn "zoop"; }
 
     // Applications such as remote-desktop clients and software KVM switches may
     // request that niri stops processing the keyboard shortcuts defined here

@@ -48,7 +48,7 @@ mkdir -p "$dir"
 out="$dir/Recording from $(date +%Y-%m-%d\ %H-%M-%S).mp4"
 log="$state_dir/$(basename "$out").log"
 
-/home/notes/.cargo/bin/snappers record area --path "$out" >"$log" 2>&1 &
+snappers record area --path "$out" >"$log" 2>&1 &
 pid="$!"
 sleep 0.2
 

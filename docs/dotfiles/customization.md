@@ -10,11 +10,15 @@ Search `.tmpl` files for `.chezmoi.hostname` to find host-specific blocks. The m
 
 ## Shell preference
 
-Fish is the default (set in `.chezmoi.toml.tmpl` as the chezmoi `cd` command shell). Zsh uses a minimal `dot_zshenv` bootstrap and keeps its main Zinit config at `dot_config/zsh/dot_zshrc`, and Nushell config lives under `dot_config/nushell/`.
+Fish is the default (set in `.chezmoi.toml.tmpl` as the chezmoi `cd` command shell). Zsh keeps its real startup files under `dot_config/zsh/`, with `dot_zshenv` reduced to the required home-level bootstrap that sets `ZDOTDIR` and hands off to `dot_config/zsh/dot_zshenv`. Nushell config lives under `dot_config/nushell/`.
 
 ## XDG session env
 
-Base XDG variables are exported session-wide from `dot_config/environment.d/60-xdg.conf` and mirrored in shell startup for non-systemd launches. Doom uses `EMACSDIR=~/.config/emacs`, `DOOMDIR=~/.config/doom`, and the `default` Doom profile for XDG `share`/`cache`/`state` directories. Current Doom 3 pre-release builds still keep straight package repos and build artifacts under `~/.config/emacs/.local/straight`, so that tree should not be treated as removable yet.
+Base XDG variables are exported session-wide from `dot_config/environment.d/60-xdg.conf` and mirrored in shell startup for non-systemd launches. For Zsh, only the tiny home-level bootstrap remains in `~/.zshenv`; the actual environment logic lives in `dot_config/zsh/dot_zshenv` under `ZDOTDIR`. Doom uses `EMACSDIR=~/.config/emacs`, `DOOMDIR=~/.config/doom`, and the `default` Doom profile for XDG `share`/`cache`/`state` directories. Current Doom 3 pre-release builds still keep straight package repos and build artifacts under `~/.config/emacs/.local/straight`, so that tree should not be treated as removable yet.
+
+The same early startup layer also relocates several dev-tool homes away from top-level dotdirs: `CARGO_HOME`, `RUSTUP_HOME`, `BUN_INSTALL`, `GRADLE_USER_HOME`, npm's config/cache/prefix trio, `PUB_CACHE`, and `DOCKER_CONFIG`. GUI launchers and compositor binds are expected to resolve `ashell`, `whispers`, `snappers`, and `zoop` from `PATH`, not from `~/.cargo/bin`.
+
+To migrate existing directories safely, run `xdg-dev-home-migrate --plan` first and then `xdg-dev-home-migrate --migrate` once the new environment has been applied. The helper copies supported directories into their XDG targets and renames the originals into dated backups under `~/.local/state/xdg-dev-home-migrate/backups/`.
 
 ## Doom layout
 

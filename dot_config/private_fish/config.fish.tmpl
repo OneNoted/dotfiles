@@ -4,10 +4,22 @@ set -q XDG_DATA_HOME; or set -gx XDG_DATA_HOME $HOME/.local/share
 set -q XDG_STATE_HOME; or set -gx XDG_STATE_HOME $HOME/.local/state
 set -q XDG_CACHE_HOME; or set -gx XDG_CACHE_HOME $HOME/.cache
 set -q XDG_BIN_HOME; or set -gx XDG_BIN_HOME $HOME/.local/bin
+set -q CARGO_HOME; or set -gx CARGO_HOME $XDG_DATA_HOME/cargo
+set -q RUSTUP_HOME; or set -gx RUSTUP_HOME $XDG_DATA_HOME/rustup
+set -q BUN_INSTALL; or set -gx BUN_INSTALL $XDG_DATA_HOME/bun
+set -q GRADLE_USER_HOME; or set -gx GRADLE_USER_HOME $XDG_DATA_HOME/gradle
+set -q NPM_CONFIG_USERCONFIG; or set -gx NPM_CONFIG_USERCONFIG $XDG_CONFIG_HOME/npm/npmrc
+set -q NPM_CONFIG_CACHE; or set -gx NPM_CONFIG_CACHE $XDG_CACHE_HOME/npm
+set -q NPM_CONFIG_PREFIX; or set -gx NPM_CONFIG_PREFIX $XDG_DATA_HOME/npm
+set -q PUB_CACHE; or set -gx PUB_CACHE $XDG_DATA_HOME/pub-cache
+set -q DOCKER_CONFIG; or set -gx DOCKER_CONFIG $XDG_CONFIG_HOME/docker
 set -q EMACSDIR; or set -gx EMACSDIR $XDG_CONFIG_HOME/emacs
 set -q DOOMDIR; or set -gx DOOMDIR $XDG_CONFIG_HOME/doom
 set -q DOOMPROFILE; or set -gx DOOMPROFILE default
 
+contains -- $NPM_CONFIG_PREFIX/bin $PATH; or set -gx PATH $NPM_CONFIG_PREFIX/bin $PATH
+contains -- $BUN_INSTALL/bin $PATH; or set -gx PATH $BUN_INSTALL/bin $PATH
+contains -- $CARGO_HOME/bin $PATH; or set -gx PATH $CARGO_HOME/bin $PATH
 contains -- $XDG_BIN_HOME $PATH; or set -gx PATH $XDG_BIN_HOME $PATH
 contains -- $EMACSDIR/bin $PATH; or set -gx PATH $EMACSDIR/bin $PATH
 

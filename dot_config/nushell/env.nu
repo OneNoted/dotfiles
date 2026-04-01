@@ -24,18 +24,29 @@ $env.XDG_DATA_HOME = ($env.XDG_DATA_HOME? | default ($home | path join ".local" 
 $env.XDG_STATE_HOME = ($env.XDG_STATE_HOME? | default ($home | path join ".local" "state"))
 $env.XDG_CACHE_HOME = ($env.XDG_CACHE_HOME? | default ($home | path join ".cache"))
 $env.XDG_BIN_HOME = ($env.XDG_BIN_HOME? | default ($home | path join ".local" "bin"))
+$env.CARGO_HOME = ($env.CARGO_HOME? | default ($env.XDG_DATA_HOME | path join "cargo"))
+$env.RUSTUP_HOME = ($env.RUSTUP_HOME? | default ($env.XDG_DATA_HOME | path join "rustup"))
+$env.BUN_INSTALL = ($env.BUN_INSTALL? | default ($env.XDG_DATA_HOME | path join "bun"))
+$env.GRADLE_USER_HOME = ($env.GRADLE_USER_HOME? | default ($env.XDG_DATA_HOME | path join "gradle"))
+$env.NPM_CONFIG_USERCONFIG = ($env.NPM_CONFIG_USERCONFIG? | default ($env.XDG_CONFIG_HOME | path join "npm" "npmrc"))
+$env.NPM_CONFIG_CACHE = ($env.NPM_CONFIG_CACHE? | default ($env.XDG_CACHE_HOME | path join "npm"))
+$env.NPM_CONFIG_PREFIX = ($env.NPM_CONFIG_PREFIX? | default ($env.XDG_DATA_HOME | path join "npm"))
+$env.PUB_CACHE = ($env.PUB_CACHE? | default ($env.XDG_DATA_HOME | path join "pub-cache"))
+$env.DOCKER_CONFIG = ($env.DOCKER_CONFIG? | default ($env.XDG_CONFIG_HOME | path join "docker"))
 $env.EMACSDIR = ($env.EMACSDIR? | default ($env.XDG_CONFIG_HOME | path join "emacs"))
 $env.DOOMDIR = ($env.DOOMDIR? | default ($env.XDG_CONFIG_HOME | path join "doom"))
 $env.DOOMPROFILE = ($env.DOOMPROFILE? | default "default")
 
-let xdg_bin = $env.XDG_BIN_HOME
-if not ($env.PATH | any {|entry| $entry == $xdg_bin }) {
-    $env.PATH = ($env.PATH | prepend $xdg_bin)
-}
-
-let emacs_bin = ($env.EMACSDIR | path join "bin")
-if not ($env.PATH | any {|entry| $entry == $emacs_bin }) {
-    $env.PATH = ($env.PATH | prepend $emacs_bin)
+for entry in [
+    ($env.NPM_CONFIG_PREFIX | path join "bin")
+    ($env.BUN_INSTALL | path join "bin")
+    ($env.CARGO_HOME | path join "bin")
+    $env.XDG_BIN_HOME
+    ($env.EMACSDIR | path join "bin")
+] {
+    if not ($env.PATH | any {|path_entry| $path_entry == $entry }) {
+        $env.PATH = ($env.PATH | prepend $entry)
+    }
 }
 
 let inits_dir = ($env.XDG_CONFIG_HOME | path join "nushell" "inits")

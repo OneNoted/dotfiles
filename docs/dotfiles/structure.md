@@ -3,7 +3,9 @@
 ```text
 .chezmoi.toml.tmpl          # Chezmoi config -- source dir, shell, data prompts
 .chezmoiignore              # Per-host ignore rules
-dot_zshenv                  # Zsh bootstrap -- XDG defaults + ZDOTDIR
+dot_zshenv                  # Home-level Zsh bootstrap -- sets ZDOTDIR, then sources .config/zsh/.zshenv
+dot_local/bin/
+  xdg-dev-home-migrate      # Preview/apply supported dev-tool home moves into XDG targets
 .profiles/
   nvim/                     # Extra Neovim profile sources (server/default/nightly)
 dot_config/
@@ -26,13 +28,14 @@ dot_config/
   private_atuin/            # Atuin shell history (templated)
   private_equibop/          # Equibop (Discord client) themes
   private_fish/             # Fish shell config (templated)
+  npm/                      # npm user config pinned to XDG cache/prefix
   starship.toml             # Starship prompt
   television/               # Television fuzzy finder
   tmux/                     # Tmux config (templated)
   topgrade/                 # Topgrade system updater
   yazi/                     # Yazi file manager + plugins
   zellij/                   # Zellij multiplexer (templated)
-  zsh/                      # Zsh interactive config (Zinit plugin manager)
+  zsh/                      # Zsh startup files under ZDOTDIR (.zshenv, .zshrc, etc.)
 ```
 
 ## Feature notes
@@ -40,6 +43,7 @@ dot_config/
 - **Multi-host templating** — `.tmpl` files use hostname conditionals to adapt configs across machines.
 - **Catppuccin + Ashen theming** — Catppuccin Mocha is the default everywhere; Yazi uses the Ashen flavor.
 - **XDG-first shell environment** — Session-wide XDG vars live in `environment.d`, with matching shell fallbacks and a `ZDOTDIR` bootstrap for Zsh.
+- **Relocated dev-tool homes** — Cargo, Rustup, Bun, Gradle, npm, Dart pub, and Docker are redirected away from top-level dotdirs, with `xdg-dev-home-migrate` available to move existing data safely.
 - **Managed Doom user config** — Doom user files live in `dot_config/doom/`, with handwritten behavior centered in `config.el` while the upstream framework stays external.
 - **Organized Neovim config** — Plugins split into domain-based subdirectories under `lua/plugins/`.
 - **Selectable Neovim profiles** — `nvim-profile` persists the active profile in chezmoi config and syncs either `dot_config/nvim/` or one of the `.profiles/nvim/*` trees into `~/.config/nvim`.
