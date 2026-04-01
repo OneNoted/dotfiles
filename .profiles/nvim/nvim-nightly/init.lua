@@ -63,6 +63,9 @@ local gh = function(x)
 	return "https://github.com/" .. x
 end
 
+local avante_local_src = "/home/notes/Projects/plugins/neovim/avante.nvim"
+local avante_src = (vim.uv or vim.loop).fs_stat(avante_local_src) and avante_local_src or gh("OneNoted/avante.nvim")
+
 vim.pack.add({
   -- Colorscheme
   { src = gh("catppuccin/nvim"), name = "catppuccin" },
@@ -76,6 +79,9 @@ vim.pack.add({
 
   -- Completion
 
+  -- Vibe
+  { src = avante_src, name = "avante.nvim" },
+
   -- Editing & navigation
 
   -- Diagnostics
@@ -85,16 +91,83 @@ vim.pack.add({
   -- Formatting
 
   -- Dependencies
+  gh("mikesmithgh/kitty-scrollback.nvim"),
   gh("nvim-lua/plenary.nvim"),
+  gh("MunifTanjim/nui.nvim"),
 
+})
+
+------------------------------------------------------------
+-- Plugin hooks
+------------------------------------------------------------
+local function build_avante(path)
+  if vim.fn.executable("make") ~= 1 then
+    vim.schedule(function()
+      vim.notify("avante.nvim needs `make` to build", vim.log.levels.WARN)
+    end)
+    return
+  end
+
+  local result = vim.system({ "make" }, { cwd = path, text = true }):wait()
+  if result.code == 0 then
+    return
+  end
+
+  local output = (result.stderr and result.stderr ~= "") and result.stderr or (result.stdout or "")
+  vim.schedule(function()
+    vim.notify("Failed to build avante.nvim\n" .. output, vim.log.levels.ERROR)
+  end)
+end
+
+vim.api.nvim_create_autocmd("PackChanged", {
+  callback = function(ev)
+    if ev.data.spec.name == "avante.nvim" and (ev.data.kind == "install" or ev.data.kind == "update") then
+      build_avante(ev.data.path)
+    end
+  end,
 })
 
 
 ------------------------------------------------------------
 -- avante.nvim
 ------------------------------------------------------------
+require("avante").setup({
+  provider = "openai_oauth",
+  auto_suggestions_provider = "openai_oauth",
+  providers = {
+    openai_oauth = {
+      model = "gpt-5.3-codex-spark",
+      use_response_api = true,
+      extra_request_body = {
+        reasoning_effort = "low",
+      },
+    },
+  },
+
+  acp_providers = {
+    codex = {
+      command = "codex-acp",
+      env = {
+        HOME = os.getenv("HOME"),
+        PATH = os.getenv("PATH"),
+      },
+    },
+  },
+  behaviour = {
+    auto_suggestions = true,
+    auto_set_keymaps = false,
+  },
+  suggestion = {
+    debounce = 100,
+    throttle = 150,
+  },
+})
 
 
+------------------------------------------------------------
+-- kitty-scrollback.nvim
+------------------------------------------------------------
+require('kitty-scrollback').setup()
 
 
 ------------------------------------------------------------
@@ -114,6 +187,22 @@ vim.pack.add({
 ------------------------------------------------------------
 
 vim.cmd.colorscheme("catppuccin")
+
+vim.api.nvim_set_hl(0, "AvanteSuggestion", {
+  fg = "#7f849c",
+  italic = true,
+})
+
+vim.api.nvim_set_hl(0, "AvanteToBeDeleted", {
+  fg = "#f38ba8",
+  bg = "NONE",
+  strikethrough = true,
+})
+
+vim.api.nvim_set_hl(0, "AvanteToBeDeletedWOStrikethrough", {
+  fg = "#f38ba8",
+  bg = "NONE",
+})
 
 ------------------------------------------------------------
 -- Autocommands
