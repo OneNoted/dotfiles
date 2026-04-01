@@ -14,7 +14,6 @@ local opt = vim.opt
 
 -- UI
 opt.number = true
-opt.relativenumber = true
 opt.cursorline = true
 opt.signcolumn = "yes"
 opt.termguicolors = true
@@ -59,12 +58,10 @@ opt.splitright = true
 ------------------------------------------------------------
 -- Packages
 ------------------------------------------------------------
+
 local gh = function(x)
 	return "https://github.com/" .. x
 end
-
-local avante_local_src = "/home/notes/Projects/plugins/neovim/avante.nvim"
-local avante_src = (vim.uv or vim.loop).fs_stat(avante_local_src) and avante_local_src or gh("OneNoted/avante.nvim")
 
 vim.pack.add({
   -- Colorscheme
@@ -80,9 +77,12 @@ vim.pack.add({
   -- Completion
 
   -- Vibe
-  { src = avante_src, name = "avante.nvim" },
+  gh("OneNoted/avante.nvim"),
 
   -- Editing & navigation
+  gh("nvim-mini/mini.ai"),
+  gh("nvim-mini/mini.pairs"),
+
 
   -- Diagnostics
 
@@ -100,6 +100,7 @@ vim.pack.add({
 ------------------------------------------------------------
 -- Plugin hooks
 ------------------------------------------------------------
+
 local function build_avante(path)
   if vim.fn.executable("make") ~= 1 then
     vim.schedule(function()
