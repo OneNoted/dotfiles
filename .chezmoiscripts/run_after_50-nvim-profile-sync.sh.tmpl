@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+helper={{ print (joinPath .chezmoi.homeDir ".local" "bin" "nvim-profile") | quote }}
+if [[ -x "$helper" ]]; then
+  "$helper" --sync
+fi

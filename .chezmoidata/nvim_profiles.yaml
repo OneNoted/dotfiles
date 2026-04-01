@@ -1,0 +1,11 @@
+nvim_profiles:
+  default: nvim-lazy
+  profiles:
+    - name: nvim
+      source: .profiles/nvim/nvim
+    - name: nvim-lazy
+      source: dot_config/nvim
+    - name: nvim-nightly
+      source: .profiles/nvim/nvim-nightly
+    - name: nvim-server
+      source: .profiles/nvim/nvim-server

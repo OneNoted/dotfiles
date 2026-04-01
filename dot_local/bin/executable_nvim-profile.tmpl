@@ -1,0 +1,192 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+
+CONFIG_PATH="$XDG_CONFIG_HOME/chezmoi/chezmoi.toml"
+DEST_DIR="$XDG_CONFIG_HOME/nvim"
+STATE_ROOT="$XDG_STATE_HOME/chezmoi"
+ACTIVE_PROFILE_FILE="$STATE_ROOT/nvim-profile-active"
+BACKUP_ROOT="$STATE_ROOT/backups"
+SOURCE_ROOT={{ .chezmoi.sourceDir | quote }}
+DEFAULT_PROFILE={{ .nvim_profiles.default | quote }}
+
+PROFILES=(
+{{- range .nvim_profiles.profiles }}
+  {{ .name | quote }}
+{{- end }}
+)
+
+profile_source() {
+  case "$1" in
+{{- range .nvim_profiles.profiles }}
+    {{ .name | quote }}) printf '%s\n' "$SOURCE_ROOT/{{ .source }}" ;;
+{{- end }}
+    *) return 1 ;;
+  esac
+}
+
+print_profiles() {
+  printf '%s\n' "${PROFILES[@]}"
+}
+
+validate_profile() {
+  local candidate="$1"
+  local profile
+  for profile in "${PROFILES[@]}"; do
+    if [[ "$profile" == "$candidate" ]]; then
+      return 0
+    fi
+  done
+  printf 'Unknown profile: %s\n' "$candidate" >&2
+  printf 'Available profiles:\n' >&2
+  print_profiles | sed 's/^/  - /' >&2
+  return 1
+}
+
+current_profile() {
+  local value
+  value="$(chezmoi --config "$CONFIG_PATH" data --format json | python3 -c 'import json,sys; data=json.load(sys.stdin); print(data.get("nvim_profile") or "")')"
+  if [[ -n "$value" ]]; then
+    printf '%s\n' "$value"
+  else
+    printf '%s\n' "$DEFAULT_PROFILE"
+  fi
+}
+
+set_profile_in_config() {
+  local profile="$1"
+  mkdir -p "$(dirname "$CONFIG_PATH")"
+  PROFILE="$profile" CONFIG_PATH="$CONFIG_PATH" python3 - <<'PY2'
+from pathlib import Path
+import os
+import re
+
+path = Path(os.environ['CONFIG_PATH'])
+profile = os.environ['PROFILE']
+text = path.read_text() if path.exists() else ''
+lines = text.splitlines()
+
+if not lines:
+    path.write_text(f'[data]\n    nvim_profile = "{profile}"\n')
+    raise SystemExit
+
+out = []
+in_data = False
+inserted = False
+saw_data = False
+for line in lines:
+    stripped = line.strip()
+    is_section = stripped.startswith('[') and stripped.endswith(']')
+    if is_section:
+        if in_data and not inserted:
+            out.append(f'    nvim_profile = "{profile}"')
+            inserted = True
+        in_data = stripped == '[data]'
+        saw_data = saw_data or in_data
+        out.append(line)
+        continue
+    if in_data and re.match(r'\s*nvim_profile\s*=', line):
+        if not inserted:
+            out.append(f'    nvim_profile = "{profile}"')
+            inserted = True
+        continue
+    out.append(line)
+
+if saw_data and not inserted:
+    out.append(f'    nvim_profile = "{profile}"')
+    inserted = True
+
+if not saw_data:
+    if out and out[-1] != '':
+        out.append('')
+    out.append('[data]')
+    out.append(f'    nvim_profile = "{profile}"')
+
+path.write_text('\n'.join(out) + '\n')
+PY2
+}
+
+backup_live_tree_if_needed() {
+  if [[ -d "$DEST_DIR/.git" || -d "$DEST_DIR/.jj" ]]; then
+    mkdir -p "$BACKUP_ROOT"
+    local backup_dir="$BACKUP_ROOT/nvim-live-$(date +%Y%m%d-%H%M%S)"
+    mkdir -p "$backup_dir"
+    rsync -a "$DEST_DIR/" "$backup_dir/"
+    printf 'Backed up existing ~/.config/nvim repo to %s\n' "$backup_dir"
+  fi
+}
+
+cleanup_runtime_artifacts() {
+  local path
+  for path in \
+    "$HOME/.local/share/nvim/lazy" \
+    "$HOME/.local/share/nvim/lazy-rocks" \
+    "$HOME/.local/share/nvim/site/pack" \
+    "$HOME/.local/share/nvim/site/parser" \
+    "$HOME/.local/share/nvim/site/parser-info" \
+    "$HOME/.local/share/nvim/site/queries" \
+    "$HOME/.local/state/nvim/lazy" \
+    "$HOME/.cache/nvim/luac" \
+    "$HOME/.cache/nvim/catppuccin"
+  do
+    rm -rf "$path"
+  done
+}
+
+sync_profile() {
+  local profile="${1:-$(current_profile)}"
+  validate_profile "$profile"
+  local source_dir
+  source_dir="$(profile_source "$profile")"
+  if [[ ! -d "$source_dir" ]]; then
+    printf 'Profile source missing: %s\n' "$source_dir" >&2
+    return 1
+  fi
+
+  mkdir -p "$STATE_ROOT"
+  local previous=''
+  if [[ -f "$ACTIVE_PROFILE_FILE" ]]; then
+    previous="$(<"$ACTIVE_PROFILE_FILE")"
+  fi
+
+  if [[ "$previous" != "$profile" ]]; then
+    backup_live_tree_if_needed
+    cleanup_runtime_artifacts
+  fi
+
+  mkdir -p "$DEST_DIR"
+  rsync -a --delete "$source_dir/" "$DEST_DIR/"
+  rm -rf "$DEST_DIR/.git" "$DEST_DIR/.jj"
+  printf '%s\n' "$profile" > "$ACTIVE_PROFILE_FILE"
+  printf 'Active Neovim profile synced: %s\n' "$profile"
+}
+
+show_status() {
+  local profile
+  profile="$(current_profile)"
+  printf 'Current profile: %s\n' "$profile"
+  printf 'Available profiles:\n'
+  print_profiles | sed 's/^/  - /'
+}
+
+case "${1:-}" in
+  "")
+    show_status
+    ;;
+  list)
+    print_profiles
+    ;;
+  current)
+    current_profile
+    ;;
+  --sync)
+    sync_profile
+    ;;
+  *)
+    validate_profile "$1"
+    set_profile_in_config "$1"
+    sync_profile "$1"
+    ;;
+esac

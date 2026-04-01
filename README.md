@@ -30,6 +30,10 @@ chezmoi apply
 
 You'll be prompted for an Atuin sync server address during init — leave empty if not self-hosting.
 
+## Neovim Profiles
+
+Neovim profile selection is persisted in chezmoi data as `nvim_profile`. Use `nvim-profile <name>` to switch the active profile and sync it into `~/.config/nvim`. The current profiles are `nvim-lazy`, `nvim-server`, `nvim`, and `nvim-nightly`.
+
 ## Docs
 
 - [Bootstrapping](docs/dotfiles/bootstrapping.md) — Arch package install, validation

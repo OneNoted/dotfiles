@@ -23,3 +23,7 @@ The Doom config stays intentionally monolithic: `init.el` selects modules, `pack
 ## Shared shell core
 
 Common aliases and editor environment variables are defined once in `.chezmoidata/shell_core.yaml` and rendered to shell adapters in `dot_config/shared/`. Dynamic XDG and PATH logic stays in the shell-specific startup files and `environment.d`.
+
+## Neovim profiles
+
+The active Neovim config is selected via the chezmoi data key `nvim_profile`. `nvim-lazy` uses the source tree in `dot_config/nvim/`, while `nvim-server`, `nvim`, and `nvim-nightly` live under `.profiles/nvim/`. Use `nvim-profile <name>` to update the stored selection and sync the chosen profile into `~/.config/nvim`.

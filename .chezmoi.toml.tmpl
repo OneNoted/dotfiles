@@ -7,4 +7,4 @@ sourceDir = "{{ .chezmoi.homeDir }}/Chezmoi/Source/"
 
 [data]
     atuin_sync_address = {{ promptStringOnce . "atuin_sync_address" "Atuin sync server address (leave empty to skip)" "" | quote }}
-
+    nvim_profile = {{ promptStringOnce . "nvim_profile" "Active Neovim profile" "nvim-lazy" | quote }}
