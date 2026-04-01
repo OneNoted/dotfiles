@@ -12,6 +12,13 @@ return {
       mode = "cursor",
       separator = nil,
       zindex = 20,
+      on_attach = function(buf)
+        if vim.bo[buf].buftype == "help" then
+          return false
+        end
+        local readme_help_dir = vim.fn.stdpath("state") .. "/lazy/readme/doc/"
+        return not vim.api.nvim_buf_get_name(buf):find("^" .. vim.pesc(readme_help_dir))
+      end,
     },
     keys = {
       {

@@ -1,6 +1,12 @@
 -- Treesitter: AST-based syntax highlighting, indentation, and text objects
 -- Foundation for all code intelligence features
 -- Silly LLM written comments
+local function is_lazy_readme_help(bufnr)
+  local path = vim.api.nvim_buf_get_name(bufnr)
+  local readme_help_dir = vim.fn.stdpath("state") .. "/lazy/readme/doc/"
+  return path:find("^" .. vim.pesc(readme_help_dir)) ~= nil
+end
+
 return {
   {
     "nvim-treesitter/nvim-treesitter",
@@ -42,6 +48,9 @@ return {
         },
         highlight = {
           enable = true,
+          disable = function(_, bufnr)
+            return is_lazy_readme_help(bufnr)
+          end,
         },
         indent = {
           enable = true,
