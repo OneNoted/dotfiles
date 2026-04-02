@@ -86,6 +86,7 @@ vim.pack.add({
   -- Git
   
   -- Formatting
+  gh("stevearc/conform.nvim"),
 
   -- Dependencies
   gh("mikesmithgh/kitty-scrollback.nvim"),
@@ -134,21 +135,8 @@ require('kitty-scrollback').setup()
 ------------------------------------------------------------
 -- Mini plugins
 ------------------------------------------------------------
-require("mini.comment").setup()
-require("mini.pairs").setup()
 
-require("mini.surround").setup({
-  mappings = {
-    add = "gsa",
-    delete = "gsd",
-    replace = "gsr",
-    find = "gsf",
-    find_left = "gsF",
-    highlight = "gsh",
-    update_n_lines = "gsn",
-  },
-})
-
+-- Text editing
 local ai = require("mini.ai")
 ai.setup({
   n_lines = 500,
@@ -161,6 +149,9 @@ ai.setup({
     c = ai.gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }, {}),
   },
 })
+require("mini.align").setup()
+
+require("mini.comment").setup()
 
 require("mini.move").setup({
   mappings = {
@@ -174,6 +165,34 @@ require("mini.move").setup({
     line_up = "<M-k>",
   },
 })
+
+require("mini.operators").setup()
+
+require("mini.pairs").setup()
+
+require("mini.snippets").setup({
+  snippets = {
+    require("mini.snippets").gen_loader.from_lang(),
+  },
+})
+
+require("mini.splitjoin").setup()
+
+require("mini.surround").setup({
+  mappings = {
+    add = "gsa",
+    delete = "gsd",
+    replace = "gsr",
+    find = "gsf",
+    find_left = "gsF",
+    highlight = "gsh",
+    update_n_lines = "gsn",
+  },
+})
+
+-- General workflow
+
+
 
 require("mini.diff").setup({
   view = {
@@ -193,11 +212,22 @@ hipatterns.setup({
   },
 })
 
-require("mini.snippets").setup({
-  snippets = {
-    require("mini.snippets").gen_loader.from_lang(),
+require("mini.jump").setup()
+
+require("mini.jump2d").setup({
+  mappings = { 
+    start_jumping = "s",
   },
-})
+ })
+
+-- Appearance
+
+require("mini.icons").setup()
+require("mini.notify").setup()
+require("mini.statusline").setup()
+
+
+
 
 
 ------------------------------------------------------------
@@ -210,6 +240,21 @@ require("mini.snippets").setup({
 -- Diagnostics
 ------------------------------------------------------------
 
+
+------------------------------------------------------------
+-- Formatting
+------------------------------------------------------------
+require("conform").setup({
+  formatters_by_ft = {
+    lua = { "stylua" },
+    rust = { "rustfmt", lsp_format = "fallback" },
+  },
+})
+
+
+------------------------------------------------------------
+-- Statusline
+------------------------------------------------------------
 
 
 ------------------------------------------------------------
@@ -224,6 +269,7 @@ require("catppuccin").setup({
   },
   integrations = {
     mini = { enabled = true },
+    treesitter = true,
   },
 })
 
@@ -236,21 +282,41 @@ vim.cmd.colorscheme("catppuccin")
 require("avante").setup({
   provider = "codex",
   behaviour = {
-    -- ACP-backed suggestions are noisy and expensive in a tiny nightly config.
     auto_suggestions = false,
   },
   acp_providers = {
     codex = {
       command = "codex-acp",
+      args = {},
       env = {
+        NODE_NO_WARNINGS = "1",
         HOME = os.getenv("HOME"),
         PATH = os.getenv("PATH"),
-        OPENAI_API_KEY = os.getenv("OPENAI_API_KEY"),
-        CODEX_API_KEY = os.getenv("CODEX_API_KEY"),
       },
     },
   },
 })
+
+do
+  local avante = require("avante")
+  local acp_config_selector = require("avante.acp_config_selector")
+  local original_open = acp_config_selector.open
+
+  acp_config_selector.open = function(category, prompt_label)
+    local sidebar = avante.get(false)
+    if not sidebar or not sidebar:is_open() then
+      avante.open_sidebar({ ask = false })
+      sidebar = avante.get(false)
+    end
+
+    if not sidebar or not sidebar:is_open() then
+      vim.notify("Unable to open Avante sidebar for ACP selection", vim.log.levels.WARN)
+      return
+    end
+
+    return original_open(category, prompt_label)
+  end
+end
 
 ------------------------------------------------------------
 -- Autocommands

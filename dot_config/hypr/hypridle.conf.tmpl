@@ -19,8 +19,3 @@ listener {
     on-timeout = $display_power_cmd off
     on-resume = $display_power_cmd on
 }
-
-listener {
-    timeout = 129600
-    on-timeout = systemctl suspend
-}
