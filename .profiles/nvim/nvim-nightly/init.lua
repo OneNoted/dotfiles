@@ -79,6 +79,7 @@ vim.pack.add({
 
   -- Editing & navigation
   gh("echasnovski/mini.nvim"),
+  gh("folke/flash.nvim"),
 
 
   -- Diagnostics
@@ -168,9 +169,17 @@ require("mini.move").setup({
 
 require("mini.operators").setup()
 
-require("mini.pairs").setup()
+require("mini.pairs").setup({
+  modes = { insert = true, command = true, terminal = false },
+})
 
 require("mini.snippets").setup({
+  mappings = {
+    expand = "<M-j>",
+    jump_next = "<C-l>",
+    jump_prev = "<C-h>",
+    stop = "<C-c>",
+  },
   snippets = {
     require("mini.snippets").gen_loader.from_lang(),
   },
@@ -214,11 +223,12 @@ hipatterns.setup({
 
 require("mini.jump").setup()
 
-require("mini.jump2d").setup({
-  mappings = { 
-    start_jumping = "s",
+require("flash").setup({
+  modes = {
+    search = { enabled = false },
+    char = { enabled = false },
   },
- })
+})
 
 -- Appearance
 
@@ -234,7 +244,43 @@ require("mini.statusline").setup()
 -- Keymaps
 ------------------------------------------------------------
 
+-- mini.pairs
+------------------------------------------------------------
 
+-- Enter aliases for terminals/keyboards that don't send plain <CR>
+vim.keymap.set("i", "<NL>", "v:lua.MiniPairs.cr()", {
+  expr = true,
+  replace_keycodes = false,
+  desc = "MiniPairs <NL>",
+})
+
+vim.keymap.set("i", "<kEnter>", "v:lua.MiniPairs.cr()", {
+  expr = true,
+  replace_keycodes = false,
+  desc = "MiniPairs <kEnter>",
+})
+
+------------------------------------------------------------
+-- flash.nvim
+------------------------------------------------------------
+
+-- General motion and selection
+vim.keymap.set({ "n", "x", "o" }, "s", function()
+  require("flash").jump()
+end, { desc = "Flash" })
+
+vim.keymap.set({ "n", "x", "o" }, "S", function()
+  require("flash").treesitter()
+end, { desc = "Flash Treesitter" })
+
+-- Operator-pending and visual selection
+vim.keymap.set("o", "r", function()
+  require("flash").remote()
+end, { desc = "Remote Flash" })
+
+vim.keymap.set({ "o", "x" }, "R", function()
+  require("flash").treesitter_search()
+end, { desc = "Treesitter Search" })
 
 ------------------------------------------------------------
 -- Diagnostics
@@ -270,6 +316,7 @@ require("catppuccin").setup({
   integrations = {
     mini = { enabled = true },
     treesitter = true,
+    flash = true,
   },
 })
 
