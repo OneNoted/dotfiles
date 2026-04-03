@@ -17,6 +17,7 @@ set -q DOCKER_CONFIG; or set -gx DOCKER_CONFIG $XDG_CONFIG_HOME/docker
 set -q EMACSDIR; or set -gx EMACSDIR $XDG_CONFIG_HOME/emacs
 set -q DOOMDIR; or set -gx DOOMDIR $XDG_CONFIG_HOME/doom
 set -q DOOMPROFILE; or set -gx DOOMPROFILE default
+set -q GTK_USE_PORTAL; or set -gx GTK_USE_PORTAL 1
 
 contains -- $NPM_CONFIG_PREFIX/bin $PATH; or set -gx PATH $NPM_CONFIG_PREFIX/bin $PATH
 contains -- $BUN_INSTALL/bin $PATH; or set -gx PATH $BUN_INSTALL/bin $PATH

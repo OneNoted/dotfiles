@@ -13,6 +13,7 @@ collect_session_env() {
         XDG_RUNTIME_DIR XDG_SESSION_CLASS XDG_SESSION_DESKTOP XDG_SESSION_ID \
         XDG_SESSION_TYPE XDG_CURRENT_DESKTOP XDG_SEAT XDG_VTNR \
         XCURSOR_THEME XCURSOR_SIZE \
+        GTK_USE_PORTAL \
         QT_QPA_PLATFORMTHEME QT_QUICK_CONTROLS_STYLE QT_QUICK_CONTROLS_MATERIAL_THEME
     do
         eval "present=\${$var+x}"
@@ -20,6 +21,9 @@ collect_session_env() {
         printf '%s ' "$var"
     done
 }
+
+: "${GTK_USE_PORTAL:=1}"
+export GTK_USE_PORTAL
 
 # Detect if being run as a user service, which implies external session
 # management, and exec compositor directly.
