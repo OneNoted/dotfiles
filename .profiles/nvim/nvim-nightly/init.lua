@@ -64,37 +64,35 @@ local gh = function(x)
 end
 
 vim.pack.add({
-  -- Colorscheme
-  { src = gh("catppuccin/nvim"), name = "catppuccin" },
+	-- Colorscheme
+	{ src = gh("catppuccin/nvim"), name = "catppuccin" },
 
-  -- Treesitter
-  gh("nvim-treesitter/nvim-treesitter"),
-  gh("nvim-treesitter/nvim-treesitter-textobjects"),
-  
-  -- LSP
-  gh("neovim/nvim-lspconfig"),
+	-- Treesitter
+	gh("nvim-treesitter/nvim-treesitter"),
+	gh("nvim-treesitter/nvim-treesitter-textobjects"),
 
-  -- Completion
-  { src = gh("yetone/avante.nvim"), name = "avante.nvim" },
+	-- LSP
+	gh("neovim/nvim-lspconfig"),
 
-  -- Editing & navigation
-  gh("echasnovski/mini.nvim"),
-  gh("folke/flash.nvim"),
+	-- Completion
+	{ src = gh("yetone/avante.nvim"), name = "avante.nvim" },
 
+	-- Editing & navigation
+	gh("echasnovski/mini.nvim"),
+	gh("folke/flash.nvim"),
 
-  -- Diagnostics
+	-- Diagnostics
 
-  -- Git
-  
-  -- Formatting
-  gh("stevearc/conform.nvim"),
+	-- Git
 
-  -- Dependencies
-  gh("mikesmithgh/kitty-scrollback.nvim"),
-  gh("nvim-lua/plenary.nvim"),
-  gh("MunifTanjim/nui.nvim"),
-  gh("rafamadriz/friendly-snippets"),
+	-- Formatting
+	gh("stevearc/conform.nvim"),
 
+	-- Dependencies
+	gh("mikesmithgh/kitty-scrollback.nvim"),
+	gh("nvim-lua/plenary.nvim"),
+	gh("MunifTanjim/nui.nvim"),
+	gh("rafamadriz/friendly-snippets"),
 })
 
 ------------------------------------------------------------
@@ -102,36 +100,36 @@ vim.pack.add({
 ------------------------------------------------------------
 
 local function build_avante(path)
-  if vim.fn.executable("make") ~= 1 then
-    vim.schedule(function()
-      vim.notify("avante.nvim needs `make` to build", vim.log.levels.WARN)
-    end)
-    return
-  end
+	if vim.fn.executable("make") ~= 1 then
+		vim.schedule(function()
+			vim.notify("avante.nvim needs `make` to build", vim.log.levels.WARN)
+		end)
+		return
+	end
 
-  local result = vim.system({ "make" }, { cwd = path, text = true }):wait()
-  if result.code == 0 then
-    return
-  end
+	local result = vim.system({ "make" }, { cwd = path, text = true }):wait()
+	if result.code == 0 then
+		return
+	end
 
-  local output = (result.stderr and result.stderr ~= "") and result.stderr or (result.stdout or "")
-  vim.schedule(function()
-    vim.notify("Failed to build avante.nvim\n" .. output, vim.log.levels.ERROR)
-  end)
+	local output = (result.stderr and result.stderr ~= "") and result.stderr or (result.stdout or "")
+	vim.schedule(function()
+		vim.notify("Failed to build avante.nvim\n" .. output, vim.log.levels.ERROR)
+	end)
 end
 
 vim.api.nvim_create_autocmd("PackChanged", {
-  callback = function(ev)
-    if ev.data.spec.name == "avante.nvim" and (ev.data.kind == "install" or ev.data.kind == "update") then
-      build_avante(ev.data.path)
-    end
-  end,
+	callback = function(ev)
+		if ev.data.spec.name == "avante.nvim" and (ev.data.kind == "install" or ev.data.kind == "update") then
+			build_avante(ev.data.path)
+		end
+	end,
 })
 
 ------------------------------------------------------------
 -- kitty-scrollback.nvim
 ------------------------------------------------------------
-require('kitty-scrollback').setup()
+require("kitty-scrollback").setup()
 
 ------------------------------------------------------------
 -- Mini plugins
@@ -140,94 +138,107 @@ require('kitty-scrollback').setup()
 -- Text editing
 local ai = require("mini.ai")
 ai.setup({
-  n_lines = 500,
-  custom_textobjects = {
-    o = ai.gen_spec.treesitter({
-      a = { "@block.outer", "@conditional.outer", "@loop.outer" },
-      i = { "@block.inner", "@conditional.inner", "@loop.inner" },
-    }, {}),
-    f = ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }, {}),
-    c = ai.gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }, {}),
-  },
+	n_lines = 500,
+	custom_textobjects = {
+		o = ai.gen_spec.treesitter({
+			a = { "@block.outer", "@conditional.outer", "@loop.outer" },
+			i = { "@block.inner", "@conditional.inner", "@loop.inner" },
+		}, {}),
+		f = ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }, {}),
+		c = ai.gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }, {}),
+	},
 })
 require("mini.align").setup()
 
 require("mini.comment").setup()
 
 require("mini.move").setup({
-  mappings = {
-    left = "<M-h>",
-    right = "<M-l>",
-    down = "<M-j>",
-    up = "<M-k>",
-    line_left = "<M-h>",
-    line_right = "<M-l>",
-    line_down = "<M-j>",
-    line_up = "<M-k>",
-  },
+	mappings = {
+		left = "<M-h>",
+		right = "<M-l>",
+		down = "<M-j>",
+		up = "<M-k>",
+		line_left = "<M-h>",
+		line_right = "<M-l>",
+		line_down = "<M-j>",
+		line_up = "<M-k>",
+	},
 })
 
 require("mini.operators").setup()
 
+local mini_pairs_mapping = function(action, pair, neigh_pattern, opts)
+	return vim.tbl_extend("force", {
+		action = action,
+		pair = pair,
+		neigh_pattern = neigh_pattern,
+	}, opts or {})
+end
+
 require("mini.pairs").setup({
-  modes = { insert = true, command = true, terminal = false },
+	modes = { insert = true, command = false, terminal = false },
+	mappings = {
+		[")"] = mini_pairs_mapping("close", "()", "[^\\]."),
+		["]"] = mini_pairs_mapping("close", "[]", "[^\\]."),
+		["}"] = mini_pairs_mapping("close", "{}", "[^\\]."),
+		["["] = mini_pairs_mapping("open", "[]", ".[%s%z%)}%]]", { register = { cr = false } }),
+		['"'] = mini_pairs_mapping("closeopen", '""', "[^%w\\][^%w]", { register = { cr = false } }),
+	},
 })
 
 require("mini.snippets").setup({
-  mappings = {
-    expand = "<M-j>",
-    jump_next = "<C-l>",
-    jump_prev = "<C-h>",
-    stop = "<C-c>",
-  },
-  snippets = {
-    require("mini.snippets").gen_loader.from_lang(),
-  },
+	mappings = {
+		expand = "<M-j>",
+		jump_next = "<C-l>",
+		jump_prev = "<C-h>",
+		stop = "<C-c>",
+	},
+	snippets = {
+		require("mini.snippets").gen_loader.from_lang(),
+	},
 })
 
 require("mini.splitjoin").setup()
 
 require("mini.surround").setup({
-  mappings = {
-    add = "gsa",
-    delete = "gsd",
-    replace = "gsr",
-    find = "gsf",
-    find_left = "gsF",
-    highlight = "gsh",
-    update_n_lines = "gsn",
-  },
+	mappings = {
+		add = "gsa",
+		delete = "gsd",
+		replace = "gsr",
+		find = "gsf",
+		find_left = "gsF",
+		highlight = "gsh",
+		update_n_lines = "gsn",
+	},
 })
 
 -- General workflow
 
-
-
 require("mini.diff").setup({
-  view = {
-    style = "sign",
-    signs = { add = "+", change = "~", delete = "-" },
-  },
+	view = {
+		style = "sign",
+		signs = { add = "+", change = "~", delete = "-" },
+	},
 })
 
 local hipatterns = require("mini.hipatterns")
 hipatterns.setup({
-  highlighters = {
-    fixme = { pattern = "%f[%w]()FIXME()%f[%W]", group = "MiniHipatternsFixme" },
-    hack = { pattern = "%f[%w]()HACK()%f[%W]", group = "MiniHipatternsHack" },
-    todo = { pattern = "%f[%w]()TODO()%f[%W]", group = "MiniHipatternsTodo" },
-    note = { pattern = "%f[%w]()NOTE()%f[%W]", group = "MiniHipatternsNote" },
-    hex_color = hipatterns.gen_highlighter.hex_color(),
-  },
+	highlighters = {
+		fixme = { pattern = "%f[%w]()FIXME()%f[%W]", group = "MiniHipatternsFixme" },
+		hack = { pattern = "%f[%w]()HACK()%f[%W]", group = "MiniHipatternsHack" },
+		todo = { pattern = "%f[%w]()TODO()%f[%W]", group = "MiniHipatternsTodo" },
+		note = { pattern = "%f[%w]()NOTE()%f[%W]", group = "MiniHipatternsNote" },
+		hex_color = hipatterns.gen_highlighter.hex_color(),
+	},
 })
 
 require("mini.jump").setup()
 
 require("flash").setup({
-  modes = {
-    search = { enabled = false },
-    char = { enabled = false },
-  },
+	modes = {
+		search = { enabled = false },
+		char = { enabled = false },
+	},
 })
 
 -- Appearance
@@ -236,28 +247,28 @@ require("mini.icons").setup()
 require("mini.notify").setup()
 require("mini.statusline").setup()
 
-
-
-
-
 ------------------------------------------------------------
 -- Keymaps
 ------------------------------------------------------------
+
+vim.keymap.set("n", "<C-s>", "<Cmd>write<CR>", { desc = "Save buffer" })
+vim.keymap.set("i", "<C-s>", "<C-o><Cmd>write<CR>", { desc = "Save buffer" })
+vim.keymap.set("x", "<C-s>", "<Esc><Cmd>write<CR>gv", { desc = "Save buffer" })
 
 -- mini.pairs
 ------------------------------------------------------------
 
 -- Enter aliases for terminals/keyboards that don't send plain <CR>
 vim.keymap.set("i", "<NL>", "v:lua.MiniPairs.cr()", {
-  expr = true,
-  replace_keycodes = false,
-  desc = "MiniPairs <NL>",
+	expr = true,
+	replace_keycodes = false,
+	desc = "MiniPairs <NL>",
 })
 
 vim.keymap.set("i", "<kEnter>", "v:lua.MiniPairs.cr()", {
-  expr = true,
-  replace_keycodes = false,
-  desc = "MiniPairs <kEnter>",
+	expr = true,
+	replace_keycodes = false,
+	desc = "MiniPairs <kEnter>",
 })
 
 ------------------------------------------------------------
@@ -266,58 +277,58 @@ vim.keymap.set("i", "<kEnter>", "v:lua.MiniPairs.cr()", {
 
 -- General motion and selection
 vim.keymap.set({ "n", "x", "o" }, "s", function()
-  require("flash").jump()
+	require("flash").jump()
 end, { desc = "Flash" })
 
 vim.keymap.set({ "n", "x", "o" }, "S", function()
-  require("flash").treesitter()
+	require("flash").treesitter()
 end, { desc = "Flash Treesitter" })
 
 -- Operator-pending and visual selection
 vim.keymap.set("o", "r", function()
-  require("flash").remote()
+	require("flash").remote()
 end, { desc = "Remote Flash" })
 
 vim.keymap.set({ "o", "x" }, "R", function()
-  require("flash").treesitter_search()
+	require("flash").treesitter_search()
 end, { desc = "Treesitter Search" })
 
 ------------------------------------------------------------
 -- Diagnostics
 ------------------------------------------------------------
 
-
 ------------------------------------------------------------
 -- Formatting
 ------------------------------------------------------------
 require("conform").setup({
-  formatters_by_ft = {
-    lua = { "stylua" },
-    rust = { "rustfmt", lsp_format = "fallback" },
-  },
+	formatters_by_ft = {
+		lua = { "stylua" },
+		rust = { "rustfmt", lsp_format = "fallback" },
+	},
+	format_on_save = {
+		timeout_ms = 1000,
+	},
 })
-
 
 ------------------------------------------------------------
 -- Statusline
 ------------------------------------------------------------
-
 
 ------------------------------------------------------------
 -- Colorscheme
 ------------------------------------------------------------
 
 require("catppuccin").setup({
-  flavour = "mocha",
-  styles = {
-    comments = { "italic" },
-    conditionals = { "italic" },
-  },
-  integrations = {
-    mini = { enabled = true },
-    treesitter = true,
-    flash = true,
-  },
+	flavour = "mocha",
+	styles = {
+		comments = { "italic" },
+		conditionals = { "italic" },
+	},
+	integrations = {
+		mini = { enabled = true },
+		treesitter = true,
+		flash = true,
+	},
 })
 
 vim.cmd.colorscheme("catppuccin")
@@ -327,42 +338,42 @@ vim.cmd.colorscheme("catppuccin")
 ------------------------------------------------------------
 
 require("avante").setup({
-  provider = "codex",
-  behaviour = {
-    auto_suggestions = false,
-  },
-  acp_providers = {
-    codex = {
-      command = "codex-acp",
-      args = {},
-      env = {
-        NODE_NO_WARNINGS = "1",
-        HOME = os.getenv("HOME"),
-        PATH = os.getenv("PATH"),
-      },
-    },
-  },
+	provider = "codex",
+	behaviour = {
+		auto_suggestions = false,
+	},
+	acp_providers = {
+		codex = {
+			command = "codex-acp",
+			args = {},
+			env = {
+				NODE_NO_WARNINGS = "1",
+				HOME = os.getenv("HOME"),
+				PATH = os.getenv("PATH"),
+			},
+		},
+	},
 })
 
 do
-  local avante = require("avante")
-  local acp_config_selector = require("avante.acp_config_selector")
-  local original_open = acp_config_selector.open
+	local avante = require("avante")
+	local acp_config_selector = require("avante.acp_config_selector")
+	local original_open = acp_config_selector.open
 
-  acp_config_selector.open = function(category, prompt_label)
-    local sidebar = avante.get(false)
-    if not sidebar or not sidebar:is_open() then
-      avante.open_sidebar({ ask = false })
-      sidebar = avante.get(false)
-    end
+	acp_config_selector.open = function(category, prompt_label)
+		local sidebar = avante.get(false)
+		if not sidebar or not sidebar:is_open() then
+			avante.open_sidebar({ ask = false })
+			sidebar = avante.get(false)
+		end
 
-    if not sidebar or not sidebar:is_open() then
-      vim.notify("Unable to open Avante sidebar for ACP selection", vim.log.levels.WARN)
-      return
-    end
+		if not sidebar or not sidebar:is_open() then
+			vim.notify("Unable to open Avante sidebar for ACP selection", vim.log.levels.WARN)
+			return
+		end
 
-    return original_open(category, prompt_label)
-  end
+		return original_open(category, prompt_label)
+	end
 end
 
 ------------------------------------------------------------
