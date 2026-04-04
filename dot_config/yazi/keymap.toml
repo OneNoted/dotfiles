@@ -1,4 +1,9 @@
 [[mgr.prepend_keymap]]
+on   = [ "g", "a" ]
+run  = "cd sftp://asteria"
+desc = "Go to Asteria"
+
+[[mgr.prepend_keymap]]
 on = ["<BackTab>"]
 run = "tab_switch 1 --relative"
 desc = "Switch to the next tab"

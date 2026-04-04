@@ -1,0 +1,5 @@
+{{ if eq .chezmoi.hostname "aeolus" -}}
+[Service]
+ExecStart=
+ExecStart=%h/.local/share/cargo/bin/niri --session
+{{ end -}}
