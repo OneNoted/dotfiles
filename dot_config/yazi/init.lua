@@ -2,7 +2,7 @@ local EXTERNAL_PACKAGES = {
   { id = "yazi-rs/plugins:mount", entry = "plugins/mount.yazi/main.lua" },
   { id = "dedukun/relative-motions", entry = "plugins/relative-motions.yazi/main.lua" },
   { id = "boydaihungst/restore", entry = "plugins/restore.yazi/main.lua" },
-  { id = "dedukun/bookmarks", entry = "plugins/bookmarks.yazi/main.lua" },
+  { id = "OneNoted/bookmarks", entry = "plugins/bookmarks.yazi/main.lua" },
 }
 
 local function file_exists(path)
@@ -58,7 +58,6 @@ require("relative-motions"):setup({ show_numbers = "relative", show_motion = tru
 
 require("folder-rules"):setup()
 
--- dedukun/bookmarks
 require("bookmarks"):setup({
   last_directory = { enable = false, persist = false, mode = "dir" },
   persist = "vim",

@@ -63,6 +63,97 @@ local gh = function(x)
 	return "https://github.com/" .. x
 end
 
+local has_chezmoi = vim.fn.executable("chezmoi") == 1
+local source_path_cache = {}
+local target_path_cache = {}
+local watched_chezmoi_buffers = {}
+local redirecting_targets = {}
+
+local function normalize_path(path)
+	if path == nil or path == "" then
+		return nil
+	end
+
+	return vim.fs.normalize(vim.fn.fnamemodify(path, ":p"))
+end
+
+local function run_chezmoi_path_command(command, path)
+	if not has_chezmoi then
+		return nil
+	end
+
+	local args = { "chezmoi", command }
+	if path then
+		table.insert(args, normalize_path(path))
+	end
+
+	local result = vim.fn.systemlist(args)
+	if vim.v.shell_error ~= 0 or result[1] == nil or result[1] == "" then
+		return nil
+	end
+
+	return normalize_path(result[1])
+end
+
+local chezmoi_source_root = run_chezmoi_path_command("source-path")
+
+local function is_chezmoi_source_file(path)
+	local normalized = normalize_path(path)
+	if not normalized or not chezmoi_source_root then
+		return false
+	end
+
+	return normalized == chezmoi_source_root
+		or normalized:sub(1, #chezmoi_source_root + 1) == chezmoi_source_root .. "/"
+end
+
+local function managed_source_path(path)
+	local normalized = normalize_path(path)
+	if not normalized or is_chezmoi_source_file(normalized) then
+		return nil
+	end
+
+	local cached = source_path_cache[normalized]
+	if cached ~= nil then
+		return cached or nil
+	end
+
+	local source_path = run_chezmoi_path_command("source-path", normalized)
+	if not source_path or source_path == normalized then
+		source_path_cache[normalized] = false
+		return nil
+	end
+
+	source_path_cache[normalized] = source_path
+	return source_path
+end
+
+local function managed_target_path(path)
+	local normalized = normalize_path(path)
+	if not normalized or not is_chezmoi_source_file(normalized) then
+		return nil
+	end
+
+	local cached = target_path_cache[normalized]
+	if cached ~= nil then
+		return cached or nil
+	end
+
+	local target_path = run_chezmoi_path_command("target-path", normalized)
+	if not target_path then
+		target_path_cache[normalized] = false
+		return nil
+	end
+
+	target_path_cache[normalized] = target_path
+	return target_path
+end
+
+if has_chezmoi then
+	vim.g["chezmoi#use_tmp_buffer"] = 1
+	vim.g["chezmoi#use_external"] = 1
+end
+
 vim.pack.add({
 	-- Colorscheme
 	{ src = gh("catppuccin/nvim"), name = "catppuccin" },
@@ -74,6 +165,13 @@ vim.pack.add({
 	-- LSP
 	gh("neovim/nvim-lspconfig"),
 
+	-- Chezmoi
+	gh("alker0/chezmoi.vim"),
+	gh("xvzc/chezmoi.nvim"),
+
+	-- Presence
+	{ src = gh("vyfor/cord.nvim"), name = "cord.nvim" },
+
 	-- Completion
 	{ src = gh("yetone/avante.nvim"), name = "avante.nvim" },
 
@@ -84,6 +182,9 @@ vim.pack.add({
 	-- Diagnostics
 
 	-- Git
+
+	-- Picker
+	gh("mikavilpas/yazi.nvim"),
 
 	-- Formatting
 	gh("stevearc/conform.nvim"),
@@ -122,14 +223,148 @@ vim.api.nvim_create_autocmd("PackChanged", {
 	callback = function(ev)
 		if ev.data.spec.name == "avante.nvim" and (ev.data.kind == "install" or ev.data.kind == "update") then
 			build_avante(ev.data.path)
+		elseif ev.data.spec.name == "cord.nvim" and (ev.data.kind == "install" or ev.data.kind == "update") then
+			vim.schedule(function()
+				vim.cmd("Cord update")
+			end)
 		end
 	end,
 })
 
 ------------------------------------------------------------
+-- Chezmoi
+------------------------------------------------------------
+if has_chezmoi and chezmoi_source_root then
+	local chezmoi_group = vim.api.nvim_create_augroup("nightly_chezmoi_integration", { clear = true })
+
+	local function watch_source_buffer(bufnr)
+		if watched_chezmoi_buffers[bufnr] then
+			return
+		end
+
+		local filepath = vim.api.nvim_buf_get_name(bufnr)
+		if not managed_target_path(filepath) then
+			return
+		end
+
+		watched_chezmoi_buffers[bufnr] = true
+		vim.schedule(function()
+			if not vim.api.nvim_buf_is_valid(bufnr) then
+				watched_chezmoi_buffers[bufnr] = nil
+				return
+			end
+
+			local ok, edit = pcall(require, "chezmoi.commands.__edit")
+			if ok and type(edit.watch) == "function" then
+				edit.watch(bufnr)
+			end
+		end)
+	end
+
+	local function redirect_target_buffer(event)
+		local filepath = normalize_path(vim.api.nvim_buf_get_name(event.buf))
+		if not filepath or is_chezmoi_source_file(filepath) or redirecting_targets[filepath] then
+			return
+		end
+
+		if vim.bo[event.buf].buftype ~= "" or vim.fn.isdirectory(filepath) == 1 then
+			return
+		end
+
+		local source_path = managed_source_path(filepath)
+		if not source_path then
+			return
+		end
+
+		local winid = vim.fn.bufwinid(event.buf)
+		if winid == -1 then
+			return
+		end
+
+		redirecting_targets[filepath] = true
+		vim.schedule(function()
+			local current_winid = vim.fn.bufwinid(event.buf)
+			if current_winid ~= -1 then
+				vim.api.nvim_win_call(current_winid, function()
+					vim.cmd({ cmd = "edit", args = { source_path } })
+				end)
+			end
+
+			redirecting_targets[filepath] = nil
+		end)
+	end
+
+	vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
+		group = chezmoi_group,
+		callback = function(event)
+			local filepath = vim.api.nvim_buf_get_name(event.buf)
+			if is_chezmoi_source_file(filepath) then
+				watch_source_buffer(event.buf)
+				return
+			end
+
+			redirect_target_buffer(event)
+		end,
+	})
+
+	vim.api.nvim_create_autocmd("BufWipeout", {
+		group = chezmoi_group,
+		callback = function(event)
+			watched_chezmoi_buffers[event.buf] = nil
+		end,
+	})
+
+	vim.api.nvim_create_user_command("ChezmoiRefreshCache", function()
+		source_path_cache = {}
+		target_path_cache = {}
+		vim.notify("Chezmoi source/target path caches cleared", vim.log.levels.INFO)
+	end, { desc = "Refresh chezmoi path caches" })
+end
+
+------------------------------------------------------------
 -- kitty-scrollback.nvim
 ------------------------------------------------------------
 require("kitty-scrollback").setup()
+
+------------------------------------------------------------
+-- cord.nvim
+------------------------------------------------------------
+require("cord").setup({
+	display = {
+		theme = "catppuccin",
+		flavor = "dark",
+	},
+
+	editor = {
+		client = "neovim",
+		tooltip = "I know what I'm doing some of the time maybe probably hopefully",
+		icon = require("cord.api.icon").get("neovim", "atom"),
+	},
+
+	text = {
+		editing = function(_)
+			return "Editing a file"
+		end,
+		viewing = "Viewing a file",
+		workspace = "",
+	},
+
+	hooks = {
+		post_activity = function(_, activity)
+			activity.type = "competing"
+			activity.status_display_type = "name"
+			activity.details = activity.details or "wawa"
+			activity.state = activity.state or "Neovim"
+			return activity
+		end,
+	},
+
+	idle = {
+		enabled = false,
+	},
+
+	assets = {},
+})
 
 ------------------------------------------------------------
 -- Mini plugins
@@ -213,6 +448,37 @@ require("mini.surround").setup({
 })
 
 -- General workflow
+
+require("mini.clue").setup({
+	triggers = {
+		-- Leader triggers
+		{ mode = { "n", "x" }, keys = "<Leader>" },
+
+		-- `[` and `]` keys
+		{ mode = "n", keys = "[" },
+		{ mode = "n", keys = "]" },
+
+		-- Built-in completion
+		{ mode = "i", keys = "<C-x>" },
+
+		-- `g` key
+		{ mode = { "n", "x" }, keys = "g" },
+
+		-- Marks
+		{ mode = { "n", "x" }, keys = "'" },
+		{ mode = { "n", "x" }, keys = "`" },
+
+		-- Registers
+		{ mode = { "n", "x" }, keys = '"' },
+		{ mode = { "i", "c" }, keys = "<C-r>" },
+
+		-- Window commands
+		{ mode = "n", keys = "<C-w>" },
+
+		-- `z` key
+		{ mode = { "n", "x" }, keys = "z" },
+	},
+})
 
 require("mini.diff").setup({
 	view = {
