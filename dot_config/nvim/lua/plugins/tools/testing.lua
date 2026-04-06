@@ -2,12 +2,12 @@ return {
   {
     "nvim-neotest/neotest",
     dependencies = {
+      "mrcjkb/rustaceanvim",
       "nvim-neotest/nvim-nio",
       "nvim-lua/plenary.nvim",
       "antoinemadec/FixCursorHold.nvim",
       "nvim-treesitter/nvim-treesitter",
       -- Adapters
-      "rouge8/neotest-rust",
       "fredrikaverpil/neotest-golang",
       "rcasia/neotest-java",
     },
@@ -27,10 +27,7 @@ return {
     config = function()
       require("neotest").setup({
         adapters = {
-          require("neotest-rust")({
-            args = { "--no-capture" },
-            dap_adapter = "lldb",
-          }),
+          require("rustaceanvim.neotest"),
           require("neotest-golang")({
             go_test_args = { "-v", "-race", "-count=1" },
             dap_go_enabled = false, -- No DAP for now

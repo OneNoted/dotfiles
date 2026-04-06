@@ -598,11 +598,53 @@ do
 end
 
 ------------------------------------------------------------
+-- Testing: local chatgpt-cmp plugin
+------------------------------------------------------------
+local testing_chatgpt_cmp = false
+
+do
+	local chatgpt_cmp_root = "/home/notes/Projects/plugins/neovim/completers"
+	local chatgpt_cmp_backend = chatgpt_cmp_root .. "/target/debug/chatgpt-cmp-backend"
+
+	if vim.fn.isdirectory(chatgpt_cmp_root) == 1 then
+		vim.opt.runtimepath:prepend(chatgpt_cmp_root)
+
+		local ok, chatgpt_cmp = pcall(require, "chatgpt_cmp")
+		if ok then
+			if vim.fn.executable(chatgpt_cmp_backend) == 1 then
+				chatgpt_cmp.setup({
+					backend_cmd = { chatgpt_cmp_backend },
+					debounce_ms = 180,
+					cmp = { enabled = false },
+				})
+				testing_chatgpt_cmp = true
+			else
+				vim.schedule(function()
+					vim.notify(
+						"chatgpt-cmp testing backend is missing; run `cargo build` in /home/notes/Projects/plugins/neovim/completers",
+						vim.log.levels.WARN
+					)
+				end)
+			end
+		else
+			vim.schedule(function()
+				vim.notify("Failed to load local chatgpt-cmp plugin", vim.log.levels.WARN)
+			end)
+		end
+	end
+end
+
+------------------------------------------------------------
 -- nvim-cmp
 ------------------------------------------------------------
 do
 	local ok, cmp = pcall(require, "cmp")
 	if ok then
+		local primary_sources = {
+			{ name = "nvim_lsp" },
+			{ name = "mini_snippets" },
+		}
+
 		cmp.setup({
 			snippet = {
 				expand = function(args)
@@ -612,10 +654,7 @@ do
 					require("cmp.config").set_onetime({ sources = {} })
 				end,
 			},
-			sources = cmp.config.sources({
-				{ name = "nvim_lsp" },
-				{ name = "mini_snippets" },
-			}, {
+			sources = cmp.config.sources(primary_sources, {
 				{ name = "buffer", keyword_length = 3 },
 				{ name = "path" },
 			}),
@@ -648,6 +687,7 @@ do
 				format = function(entry, vim_item)
 					vim_item.menu = ({
 						nvim_lsp = "[LSP]",
+						chatgpt_cmp = "[AI]",
 						mini_snippets = "[Snip]",
 						buffer = "[Buf]",
 						path = "[Path]",
@@ -665,6 +705,32 @@ do
 			vim.notify("nvim-cmp is still installing; restart Neovim to enable completion", vim.log.levels.WARN)
 		end)
 	end
+end
+
+------------------------------------------------------------
+-- Testing keymaps
+------------------------------------------------------------
+if testing_chatgpt_cmp then
+	vim.keymap.set("i", "<C-g>c", "<Plug>(chatgpt-cmp-accept)", {
+		remap = true,
+		desc = "Accept ChatGPT completion",
+	})
+	vim.keymap.set("i", "<C-g>w", "<Plug>(chatgpt-cmp-accept-word)", {
+		remap = true,
+		desc = "Accept ChatGPT completion word",
+	})
+	vim.keymap.set("i", "<C-g>l", "<Plug>(chatgpt-cmp-accept-line)", {
+		remap = true,
+		desc = "Accept ChatGPT completion line",
+	})
+	vim.keymap.set("i", "<C-g>t", "<Plug>(chatgpt-cmp-trigger)", {
+		remap = true,
+		desc = "Trigger ChatGPT completion",
+	})
+	vim.keymap.set("i", "<C-g>x", "<Plug>(chatgpt-cmp-dismiss)", {
+		remap = true,
+		desc = "Dismiss ChatGPT completion",
+	})
 end
 
 ------------------------------------------------------------

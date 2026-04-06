@@ -3,6 +3,7 @@ local EXTERNAL_PACKAGES = {
   { id = "dedukun/relative-motions", entry = "plugins/relative-motions.yazi/main.lua" },
   { id = "boydaihungst/restore", entry = "plugins/restore.yazi/main.lua" },
   { id = "OneNoted/bookmarks", entry = "plugins/bookmarks.yazi/main.lua" },
+  { id = "OneNoted/television", entry = "plugins/television.yazi/main.lua" },
 }
 
 local function file_exists(path)

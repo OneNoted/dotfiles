@@ -8,6 +8,16 @@ on = ["<BackTab>"]
 run = "tab_switch 1 --relative"
 desc = "Switch to the next tab"
 
+[[mgr.prepend_keymap]]
+on = [ "z" ]
+run = "plugin television"
+desc = "Jump to a file with television"
+
+[[mgr.prepend_keymap]]
+on = [ "Z" ]
+run = "plugin television -- zoxide"
+desc = "Jump to a directory with zoxide + television"
+
 # dedukun/bookmarks keybinds
 [[mgr.prepend_keymap]]
 on = [ "m" ]
