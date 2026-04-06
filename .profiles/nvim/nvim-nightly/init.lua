@@ -10,6 +10,9 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+-- Let yazi.nvim take over directory opens like `nvim .`.
+vim.g.loaded_netrwPlugin = 1
+
 ------------------------------------------------------------
 -- Options
 ------------------------------------------------------------
@@ -93,6 +96,11 @@ do
 
 		-- Completion
 		{ src = gh("yetone/avante.nvim"), name = "avante.nvim" },
+		gh("hrsh7th/nvim-cmp"),
+		gh("hrsh7th/cmp-nvim-lsp"),
+		gh("hrsh7th/cmp-buffer"),
+		gh("hrsh7th/cmp-path"),
+		gh("abeldekat/cmp-mini-snippets"),
 
 		-- Editing & navigation
 		gh("echasnovski/mini.nvim"),
@@ -384,6 +392,111 @@ require("cord").setup({
 })
 
 ------------------------------------------------------------
+-- Treesitter
+------------------------------------------------------------
+do
+	local ok, treesitter = pcall(require, "nvim-treesitter")
+	if ok then
+		local languages = {
+			"bash",
+			"diff",
+			"go",
+			"git_config",
+			"gitcommit",
+			"gitignore",
+			"javascript",
+			"jsdoc",
+			"json",
+			"lua",
+			"markdown",
+			"markdown_inline",
+			"nix",
+			"query",
+			"regex",
+			"rust",
+			"toml",
+			"tsx",
+			"typescript",
+			"vim",
+			"vimdoc",
+			"yaml",
+			"zig",
+		}
+
+		treesitter.setup({})
+		vim.treesitter.language.register("json", { "jsonc" })
+		vim.g.nightly_treesitter_languages = languages
+
+		vim.api.nvim_create_autocmd("FileType", {
+			group = vim.api.nvim_create_augroup("nightly_treesitter", { clear = true }),
+			callback = function(event)
+				local ok_start = pcall(vim.treesitter.start, event.buf)
+				if ok_start and vim.bo[event.buf].buftype == "" then
+					vim.bo[event.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+				end
+			end,
+		})
+
+		local ok_textobjects, textobjects = pcall(require, "nvim-treesitter-textobjects")
+		if ok_textobjects then
+			textobjects.setup({
+				select = {
+					lookahead = true,
+				},
+				move = {
+					set_jumps = true,
+				},
+			})
+
+			local select = require("nvim-treesitter-textobjects.select")
+			local move = require("nvim-treesitter-textobjects.move")
+
+			vim.keymap.set({ "x", "o" }, "af", function()
+				select.select_textobject("@function.outer", "textobjects")
+			end, { desc = "Select Function" })
+			vim.keymap.set({ "x", "o" }, "if", function()
+				select.select_textobject("@function.inner", "textobjects")
+			end, { desc = "Select Inner Function" })
+			vim.keymap.set({ "x", "o" }, "ac", function()
+				select.select_textobject("@class.outer", "textobjects")
+			end, { desc = "Select Class" })
+			vim.keymap.set({ "x", "o" }, "ic", function()
+				select.select_textobject("@class.inner", "textobjects")
+			end, { desc = "Select Inner Class" })
+			vim.keymap.set({ "x", "o" }, "aa", function()
+				select.select_textobject("@parameter.outer", "textobjects")
+			end, { desc = "Select Parameter" })
+			vim.keymap.set({ "x", "o" }, "ia", function()
+				select.select_textobject("@parameter.inner", "textobjects")
+			end, { desc = "Select Inner Parameter" })
+
+			vim.keymap.set({ "n", "x", "o" }, "]f", function()
+				move.goto_next_start("@function.outer", "textobjects")
+			end, { desc = "Next Function" })
+			vim.keymap.set({ "n", "x", "o" }, "[f", function()
+				move.goto_previous_start("@function.outer", "textobjects")
+			end, { desc = "Prev Function" })
+			vim.keymap.set({ "n", "x", "o" }, "]C", function()
+				move.goto_next_start("@class.outer", "textobjects")
+			end, { desc = "Next Class" })
+			vim.keymap.set({ "n", "x", "o" }, "[C", function()
+				move.goto_previous_start("@class.outer", "textobjects")
+			end, { desc = "Prev Class" })
+			vim.keymap.set({ "n", "x", "o" }, "]a", function()
+				move.goto_next_start("@parameter.inner", "textobjects")
+			end, { desc = "Next Parameter" })
+			vim.keymap.set({ "n", "x", "o" }, "[a", function()
+				move.goto_previous_start("@parameter.inner", "textobjects")
+			end, { desc = "Prev Parameter" })
+		end
+	else
+		vim.schedule(function()
+			vim.notify("nvim-treesitter is still installing; restart Neovim to enable Treesitter", vim.log.levels.WARN)
+		end)
+	end
+end
+
+------------------------------------------------------------
 -- Mini Plugins
 ------------------------------------------------------------
 do
@@ -485,6 +598,76 @@ do
 end
 
 ------------------------------------------------------------
+-- nvim-cmp
+------------------------------------------------------------
+do
+	local ok, cmp = pcall(require, "cmp")
+	if ok then
+		cmp.setup({
+			snippet = {
+				expand = function(args)
+					local insert = MiniSnippets.config.expand.insert or MiniSnippets.default_insert
+					insert({ body = args.body })
+					cmp.resubscribe({ "TextChangedI", "TextChangedP" })
+					require("cmp.config").set_onetime({ sources = {} })
+				end,
+			},
+			sources = cmp.config.sources({
+				{ name = "nvim_lsp" },
+				{ name = "mini_snippets" },
+			}, {
+				{ name = "buffer", keyword_length = 3 },
+				{ name = "path" },
+			}),
+			mapping = cmp.mapping.preset.insert({
+				["<C-n>"] = cmp.mapping.select_next_item(),
+				["<C-p>"] = cmp.mapping.select_prev_item(),
+				["<C-b>"] = cmp.mapping.scroll_docs(-4),
+				["<C-f>"] = cmp.mapping.scroll_docs(4),
+				["<C-Space>"] = cmp.mapping.complete(),
+				["<C-e>"] = cmp.mapping.abort(),
+				["<CR>"] = cmp.mapping.confirm({ select = true }),
+				["<Tab>"] = cmp.mapping(function(fallback)
+					if vim.lsp.inline_completion and vim.lsp.inline_completion.get and vim.lsp.inline_completion.get() then
+						vim.lsp.inline_completion.accept()
+					elseif cmp.visible() then
+						cmp.select_next_item()
+					else
+						fallback()
+					end
+				end, { "i", "s" }),
+				["<S-Tab>"] = cmp.mapping(function(fallback)
+					if cmp.visible() then
+						cmp.select_prev_item()
+					else
+						fallback()
+					end
+				end, { "i", "s" }),
+			}),
+			formatting = {
+				format = function(entry, vim_item)
+					vim_item.menu = ({
+						nvim_lsp = "[LSP]",
+						mini_snippets = "[Snip]",
+						buffer = "[Buf]",
+						path = "[Path]",
+					})[entry.source.name]
+					return vim_item
+				end,
+			},
+			window = {
+				completion = cmp.config.window.bordered(),
+				documentation = cmp.config.window.bordered(),
+			},
+		})
+	else
+		vim.schedule(function()
+			vim.notify("nvim-cmp is still installing; restart Neovim to enable completion", vim.log.levels.WARN)
+		end)
+	end
+end
+
+------------------------------------------------------------
 -- which-key.nvim
 ------------------------------------------------------------
 require("which-key").setup({
@@ -542,6 +725,18 @@ require("snacks").setup({
 })
 
 ------------------------------------------------------------
+-- yazi.nvim
+------------------------------------------------------------
+require("yazi").setup({
+	open_for_directories = true,
+	integrations = {
+		grep_in_directory = "snacks.picker",
+		grep_in_selected_files = "snacks.picker",
+		picker_add_copy_relative_path_action = "snacks.picker",
+	},
+})
+
+------------------------------------------------------------
 -- flash.nvim
 ------------------------------------------------------------
 require("flash").setup({
@@ -581,6 +776,10 @@ end, { desc = "Recent Files" })
 vim.keymap.set("n", "<leader>fg", function()
 	require("snacks").picker.git_files()
 end, { desc = "Git Files" })
+vim.keymap.set({ "n", "v" }, "<leader>-", "<Cmd>Yazi<CR>", { desc = "Yazi" })
+vim.keymap.set({ "n", "v" }, "<leader>e", "<Cmd>Yazi<CR>", { desc = "Yazi" })
+vim.keymap.set("n", "<leader>E", "<Cmd>Yazi cwd<CR>", { desc = "Yazi (cwd)" })
+vim.keymap.set("n", "<C-Up>", "<Cmd>Yazi toggle<CR>", { desc = "Resume Yazi" })
 
 -- Enter aliases for terminals and keyboards that don't send plain <CR>.
 vim.keymap.set("i", "<NL>", "v:lua.MiniPairs.cr()", {
