@@ -11,7 +11,7 @@ collect_session_env() {
         LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT LC_IDENTIFICATION \
         SSH_AUTH_SOCK \
         XDG_RUNTIME_DIR XDG_SESSION_CLASS XDG_SESSION_DESKTOP XDG_SESSION_ID \
-        XDG_SESSION_TYPE XDG_CURRENT_DESKTOP XDG_SEAT XDG_VTNR \
+        XDG_SESSION_TYPE XDG_CURRENT_DESKTOP DESKTOP_SESSION XDG_SEAT XDG_VTNR \
         XCURSOR_THEME XCURSOR_SIZE \
         GTK_USE_PORTAL \
         QT_QPA_PLATFORMTHEME QT_QUICK_CONTROLS_STYLE QT_QUICK_CONTROLS_MATERIAL_THEME
@@ -22,8 +22,18 @@ collect_session_env() {
     done
 }
 
+# Keep the imported session identity aligned with the compositor we are
+# launching so portal/backend selection does not inherit stale desktop IDs.
+normalize_session_identity() {
+    XDG_CURRENT_DESKTOP=niri
+    XDG_SESSION_DESKTOP=niri
+    DESKTOP_SESSION=niri
+    export XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP DESKTOP_SESSION
+}
+
 : "${GTK_USE_PORTAL:=1}"
 export GTK_USE_PORTAL
+normalize_session_identity
 
 # Detect if being run as a user service, which implies external session
 # management, and exec compositor directly.
@@ -78,7 +88,7 @@ if hash systemctl >/dev/null 2>&1; then
     systemctl --user start --job-mode=replace-irreversibly niri-shutdown.target
 
     # Unset environment that we've set.
-    systemctl --user unset-environment WAYLAND_DISPLAY DISPLAY XDG_SESSION_TYPE XDG_CURRENT_DESKTOP NIRI_SOCKET
+    systemctl --user unset-environment WAYLAND_DISPLAY DISPLAY XDG_SESSION_TYPE XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP DESKTOP_SESSION NIRI_SOCKET
 elif hash dinitctl >/dev/null 2>&1; then
     # Check that the user dinit daemon is running.
     if ! pgrep -u "$(id -u)" dinit >/dev/null 2>&1; then
