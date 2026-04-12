@@ -104,6 +104,10 @@ bind = $mainMod, mouse_up, workspace, e-1
 bindm = $mainMod, mouse:272, movewindow
 bindm = $mainMod, mouse:273, resizewindow
 
+# Resize the active scrolling-layout column in fixed
+bind = $mainMod, minus, layoutmsg, colresize -0.1
+bind = $mainMod, equal, layoutmsg, colresize +0.1
+
 
 # Laptop multimedia keys for volume and LCD brightness
 bindel = ,XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+
