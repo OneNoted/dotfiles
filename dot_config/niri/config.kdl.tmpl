@@ -326,7 +326,7 @@ layout {
 spawn-sh-at-startup "vicinae server"
 spawn-sh-at-startup "awww-daemon"
 // spawn-sh-at-startup "walker --gapplication-service"
-spawn-sh-at-startup "ashell"
+spawn-sh-at-startup "{{ .chezmoi.homeDir }}/.local/bin/niri-launch-eww"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"

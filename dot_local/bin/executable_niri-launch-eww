@@ -1,0 +1,57 @@
+#!/bin/sh
+
+set -eu
+
+cfg="${HOME}/.config/eww"
+eww_bin="$(command -v eww || true)"
+log_file="${XDG_RUNTIME_DIR:-/tmp}/eww-bar.log"
+
+latest_niri_socket() {
+    runtime_dir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+    ls -t "$runtime_dir"/niri.*.sock 2>/dev/null | head -n1 || true
+}
+
+pkill -x ashell >/dev/null 2>&1 || true
+
+if [ -z "$eww_bin" ] || [ ! -d "$cfg" ]; then
+    exit 0
+fi
+
+"$eww_bin" -c "$cfg" kill >/dev/null 2>&1 || true
+"$eww_bin" -c "$cfg" daemon >"$log_file" 2>&1 || true
+
+attempt=0
+while [ "$attempt" -lt 10 ]; do
+    if "$eww_bin" -c "$cfg" ping >/dev/null 2>&1; then
+        break
+    fi
+    attempt=$((attempt + 1))
+    sleep 1
+done
+
+screens=
+attempt=0
+while [ "$attempt" -lt 5 ]; do
+    socket="$(latest_niri_socket)"
+    if [ -n "$socket" ]; then
+        export NIRI_SOCKET="$socket"
+    fi
+    screens="$(niri msg -j outputs 2>/dev/null | jq -r 'to_entries | sort_by(.value.logical.x, .value.logical.y) | to_entries[] | .key' 2>/dev/null || true)"
+    if [ -n "$screens" ]; then
+        break
+    fi
+    attempt=$((attempt + 1))
+    sleep 1
+done
+
+"$eww_bin" -c "$cfg" close-all >/dev/null 2>&1 || true
+
+if [ -z "$screens" ]; then
+    "$eww_bin" -c "$cfg" open eww-bar --id "eww-bar-default" >>"$log_file" 2>&1 || true
+    exit 0
+fi
+
+printf '%s\n' "$screens" | while IFS= read -r screen; do
+    [ -n "$screen" ] || continue
+    "$eww_bin" -c "$cfg" open eww-bar --id "eww-bar-${screen}" --arg "screen=${screen}" >>"$log_file" 2>&1 || true
+done
