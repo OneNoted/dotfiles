@@ -19,6 +19,8 @@ set -g @plugin 'christoomey/vim-tmux-navigator'
 
 ##### Status bar plugins #####
 set -g @plugin 'catppuccin/tmux'
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+set -g @plugin 'tmux-plugins/tmux-continuum'
 # Modules
 
 
@@ -62,20 +64,20 @@ set -g @catppuccin_status_right_separator_inverse "no"
 set -g @catppuccin_status_fill "icon"
 set -g @catppuccin_status_connect_separator "no"
 set -g @catppuccin_directory_text " #{b:pane_current_path}"
+set -g @continuum-restore "on"
 ##### Status bar plugins #####
 
-# Load Catppuccin before composing the status line from its module variables.
+# Keep the custom status line in place before TPM runs so continuum can append
+# its hidden autosave hook to status-right.
 source-file -F "#{HOME}/.config/tmux/plugins/tmux/catppuccin_tmux.conf"
 set -g status-left-length 100
 set -g status-right-length 100
-set -g status-left "#{E:@catppuccin_status_session}"
-set -g status-right "#{E:@catppuccin_status_directory}"
+set -g status-left '#[fg=#{?client_prefix,#{@thm_red},#{@thm_green}},bg=default] #[fg=#{@thm_crust},bg=#{?client_prefix,#{@thm_red},#{@thm_green}}] #[fg=#{@thm_fg},bg=#{@thm_bg}] #S#[fg=#{@thm_bg},bg=default]'
+set -g status-right '#[fg=#{@thm_mauve},bg=default] #[fg=#{@thm_crust},bg=#{@thm_mauve}] #[fg=#{@thm_fg},bg=#{@thm_bg}] #{b:pane_current_path}#[fg=#{@thm_bg},bg=default] '
 
 # Initialize TMUX plugin manager 
 run '~/.config/tmux/plugins/tpm/tpm'
 
-# Reapply custom status/window formats after TPM so plugin reloads do not overwrite them.
-set -g status-left '#[fg=#{?client_prefix,#{@thm_red},#{@thm_green}},bg=default] #[fg=#{@thm_crust},bg=#{?client_prefix,#{@thm_red},#{@thm_green}}] #[fg=#{@thm_fg},bg=#{@thm_bg}] #S#[fg=#{@thm_bg},bg=default]'
-set -g status-right '#[fg=#{@thm_mauve},bg=default] #[fg=#{@thm_crust},bg=#{@thm_mauve}] #[fg=#{@thm_fg},bg=#{@thm_bg}] #{b:pane_current_path}#[fg=#{@thm_bg},bg=default] '
+# Reapply custom window formats after TPM so plugin reloads do not overwrite them.
 set -gF window-status-format '#[fg=#{E:@catppuccin_window_text_color},bg=default]#[fg=#{@thm_fg},bg=#{E:@catppuccin_window_text_color}]#{@catppuccin_window_text}#[fg=#{@thm_crust},bg=#{E:@catppuccin_window_number_color}] #{@catppuccin_window_number}#[fg=#{E:@catppuccin_window_number_color},bg=default]'
 set -gF window-status-current-format '#[fg=#{E:@catppuccin_window_current_text_color},bg=default]#[fg=#{@thm_fg},bg=#{E:@catppuccin_window_current_text_color}]#{@catppuccin_window_current_text}#[fg=#{@thm_crust},bg=#{E:@catppuccin_window_current_number_color}] #{@catppuccin_window_current_number}#[fg=#{E:@catppuccin_window_current_number_color},bg=default]'
