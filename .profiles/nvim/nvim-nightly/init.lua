@@ -111,6 +111,7 @@ do
 
 		-- Picker
 		gh("mikavilpas/yazi.nvim"),
+		gh("stevearc/oil.nvim"),
 
 		-- Formatting
 		gh("stevearc/conform.nvim"),
@@ -771,12 +772,19 @@ require("snacks").setup({
 -- yazi.nvim
 ------------------------------------------------------------
 require("yazi").setup({
-	open_for_directories = true,
+	open_for_directories = false,
 	integrations = {
 		grep_in_directory = "snacks.picker",
 		grep_in_selected_files = "snacks.picker",
 		picker_add_copy_relative_path_action = "snacks.picker",
 	},
+})
+
+------------------------------------------------------------
+--- oil.nvim
+------------------------------------------------------------
+require("oil").setup({
+	default_file_explorer = true,
 })
 
 ------------------------------------------------------------
@@ -819,10 +827,11 @@ end, { desc = "Recent Files" })
 vim.keymap.set("n", "<leader>fg", function()
 	require("snacks").picker.git_files()
 end, { desc = "Git Files" })
-vim.keymap.set({ "n", "v" }, "<leader>-", "<Cmd>Yazi<CR>", { desc = "Yazi" })
+-- vim.keymap.set({ "n", "v" }, "<leader>-", "<Cmd>Yazi<CR>", { desc = "Yazi" })
 vim.keymap.set({ "n", "v" }, "<leader>e", "<Cmd>Yazi<CR>", { desc = "Yazi" })
 vim.keymap.set("n", "<leader>E", "<Cmd>Yazi cwd<CR>", { desc = "Yazi (cwd)" })
 vim.keymap.set("n", "<C-Up>", "<Cmd>Yazi toggle<CR>", { desc = "Resume Yazi" })
+vim.keymap.set({ "n", "v" }, "<leader>-", "<Cmd>Oil<CR>", { desc = "Oil" })
 
 -- Enter aliases for terminals and keyboards that don't send plain <CR>.
 vim.keymap.set("i", "<NL>", "v:lua.MiniPairs.cr()", {
