@@ -27,6 +27,12 @@ unbind C-b
 set -g prefix C-Space
 bind C-Space send-prefix
 
+# Swap the current pane with its neighbor using Alt-h/j/k/l.
+bind -n M-h swap-pane -s '{left-of}'
+bind -n M-j swap-pane -s '{down-of}'
+bind -n M-k swap-pane -s '{up-of}'
+bind -n M-l swap-pane -s '{right-of}'
+
 
 
 
@@ -42,7 +48,7 @@ set -g @catppuccin_flavor "mocha"
 set -g @catppuccin_status_background "none"
 set -g @catppuccin_status_module_bg_color "#{@thm_mantle}"
 set -g @catppuccin_status_session_text_bg "#{@thm_mantle}"
-set -g @catppuccin_window_status_style "rounded"
+set -g @catppuccin_window_status_style "none"
 set -g @catppuccin_window_number_position "right"
 set -g @catppuccin_window_text " #W"
 set -g @catppuccin_window_current_text "#W#{?window_zoomed_flag,(),} "
@@ -56,10 +62,6 @@ set -g @catppuccin_status_right_separator_inverse "no"
 set -g @catppuccin_status_fill "icon"
 set -g @catppuccin_status_connect_separator "no"
 set -g @catppuccin_directory_text " #{b:pane_current_path}"
-set -g status-left '#[fg=#{?client_prefix,#{@thm_red},#{@thm_green}},bg=default] #[fg=#{@thm_crust},bg=#{?client_prefix,#{@thm_red},#{@thm_green}}] #[fg=#{@thm_fg},bg=#{@thm_bg}] #S#[fg=#{@thm_bg},bg=default]'
-set -g status-right '#[fg=#{@thm_mauve},bg=default] #[fg=#{@thm_crust},bg=#{@thm_mauve}] #[fg=#{@thm_fg},bg=#{@thm_bg}] #{b:pane_current_path}#[fg=#{@thm_bg},bg=default] '
-set -gF window-status-format '#[fg=#{E:@catppuccin_window_text_color},bg=default]#[fg=#{@thm_fg},bg=#{E:@catppuccin_window_text_color}]#{@catppuccin_window_text}#[fg=#{@thm_crust},bg=#{E:@catppuccin_window_number_color}] #{@catppuccin_window_number}#[fg=#{E:@catppuccin_window_number_color},bg=default]'
-set -gF window-status-current-format '#[fg=#{E:@catppuccin_window_current_text_color},bg=default]#[fg=#{@thm_fg},bg=#{E:@catppuccin_window_current_text_color}]#{@catppuccin_window_current_text}#[fg=#{@thm_crust},bg=#{E:@catppuccin_window_current_number_color}] #{@catppuccin_window_current_number}#[fg=#{E:@catppuccin_window_current_number_color},bg=default]'
 ##### Status bar plugins #####
 
 # Load Catppuccin before composing the status line from its module variables.
@@ -71,3 +73,9 @@ set -g status-right "#{E:@catppuccin_status_directory}"
 
 # Initialize TMUX plugin manager 
 run '~/.config/tmux/plugins/tpm/tpm'
+
+# Reapply custom status/window formats after TPM so plugin reloads do not overwrite them.
+set -g status-left '#[fg=#{?client_prefix,#{@thm_red},#{@thm_green}},bg=default] #[fg=#{@thm_crust},bg=#{?client_prefix,#{@thm_red},#{@thm_green}}] #[fg=#{@thm_fg},bg=#{@thm_bg}] #S#[fg=#{@thm_bg},bg=default]'
+set -g status-right '#[fg=#{@thm_mauve},bg=default] #[fg=#{@thm_crust},bg=#{@thm_mauve}] #[fg=#{@thm_fg},bg=#{@thm_bg}] #{b:pane_current_path}#[fg=#{@thm_bg},bg=default] '
+set -gF window-status-format '#[fg=#{E:@catppuccin_window_text_color},bg=default]#[fg=#{@thm_fg},bg=#{E:@catppuccin_window_text_color}]#{@catppuccin_window_text}#[fg=#{@thm_crust},bg=#{E:@catppuccin_window_number_color}] #{@catppuccin_window_number}#[fg=#{E:@catppuccin_window_number_color},bg=default]'
+set -gF window-status-current-format '#[fg=#{E:@catppuccin_window_current_text_color},bg=default]#[fg=#{@thm_fg},bg=#{E:@catppuccin_window_current_text_color}]#{@catppuccin_window_current_text}#[fg=#{@thm_crust},bg=#{E:@catppuccin_window_current_number_color}] #{@catppuccin_window_current_number}#[fg=#{E:@catppuccin_window_current_number_color},bg=default]'
