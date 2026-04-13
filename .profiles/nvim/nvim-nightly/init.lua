@@ -109,6 +109,7 @@ do
 		gh("folke/snacks.nvim"),
 		gh("folke/which-key.nvim"),
 		gh("monaqa/dial.nvim"),
+		gh("gbprod/yanky.nvim"),
 
 		-- Picker
 		gh("mikavilpas/yazi.nvim"),
@@ -894,6 +895,18 @@ do
 end
 
 ------------------------------------------------------------
+-- yanky.nvim
+------------------------------------------------------------
+require("yanky").setup({
+	system_clipboard = {
+		sync_with_ring = not vim.env.SSH_CONNECTION,
+	},
+	highlight = {
+		timer = 150,
+	},
+})
+
+------------------------------------------------------------
 -- snacks.nvim
 ------------------------------------------------------------
 require("snacks").setup({
@@ -961,6 +974,14 @@ end, { desc = "Recent Files" })
 vim.keymap.set("n", "<leader>fg", function()
 	require("snacks").picker.git_files()
 end, { desc = "Git Files" })
+vim.keymap.set({ "n", "x" }, "<leader>p", function()
+	local ok, snacks = pcall(require, "snacks")
+	if ok and snacks.picker and snacks.picker.yanky then
+		snacks.picker.yanky()
+	else
+		vim.cmd("YankyRingHistory")
+	end
+end, { desc = "Open Yank History" })
 vim.keymap.set({ "n", "v" }, "<C-a>", function()
 	return dial(true)
 end, { expr = true, desc = "Increment" })
@@ -973,6 +994,23 @@ end, { expr = true, desc = "Increment (g)" })
 vim.keymap.set({ "n", "x" }, "g<C-x>", function()
 	return dial(false, true)
 end, { expr = true, desc = "Decrement (g)" })
+vim.keymap.set({ "n", "x" }, "y", "<Plug>(YankyYank)", { desc = "Yank Text" })
+vim.keymap.set({ "n", "x" }, "p", "<Plug>(YankyPutAfter)", { desc = "Put Text After Cursor" })
+vim.keymap.set({ "n", "x" }, "P", "<Plug>(YankyPutBefore)", { desc = "Put Text Before Cursor" })
+vim.keymap.set({ "n", "x" }, "gp", "<Plug>(YankyGPutAfter)", { desc = "Put Text After Selection" })
+vim.keymap.set({ "n", "x" }, "gP", "<Plug>(YankyGPutBefore)", { desc = "Put Text Before Selection" })
+vim.keymap.set("n", "[y", "<Plug>(YankyCycleForward)", { desc = "Cycle Forward Through Yank History" })
+vim.keymap.set("n", "]y", "<Plug>(YankyCycleBackward)", { desc = "Cycle Backward Through Yank History" })
+vim.keymap.set("n", "]p", "<Plug>(YankyPutIndentAfterLinewise)", { desc = "Put Indented After Cursor (Linewise)" })
+vim.keymap.set("n", "[p", "<Plug>(YankyPutIndentBeforeLinewise)", { desc = "Put Indented Before Cursor (Linewise)" })
+vim.keymap.set("n", "]P", "<Plug>(YankyPutIndentAfterLinewise)", { desc = "Put Indented After Cursor (Linewise)" })
+vim.keymap.set("n", "[P", "<Plug>(YankyPutIndentBeforeLinewise)", { desc = "Put Indented Before Cursor (Linewise)" })
+vim.keymap.set("n", ">p", "<Plug>(YankyPutIndentAfterShiftRight)", { desc = "Put and Indent Right" })
+vim.keymap.set("n", "<p", "<Plug>(YankyPutIndentAfterShiftLeft)", { desc = "Put and Indent Left" })
+vim.keymap.set("n", ">P", "<Plug>(YankyPutIndentBeforeShiftRight)", { desc = "Put Before and Indent Right" })
+vim.keymap.set("n", "<P", "<Plug>(YankyPutIndentBeforeShiftLeft)", { desc = "Put Before and Indent Left" })
+vim.keymap.set("n", "=p", "<Plug>(YankyPutAfterFilter)", { desc = "Put After Applying a Filter" })
+vim.keymap.set("n", "=P", "<Plug>(YankyPutBeforeFilter)", { desc = "Put Before Applying a Filter" })
 -- vim.keymap.set({ "n", "v" }, "<leader>-", "<Cmd>Yazi<CR>", { desc = "Yazi" })
 vim.keymap.set({ "n", "v" }, "<leader>e", "<Cmd>Yazi<CR>", { desc = "Yazi" })
 vim.keymap.set("n", "<leader>E", "<Cmd>Yazi cwd<CR>", { desc = "Yazi (cwd)" })
