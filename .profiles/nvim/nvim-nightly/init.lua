@@ -108,6 +108,7 @@ do
 		gh("folke/flash.nvim"),
 		gh("folke/snacks.nvim"),
 		gh("folke/which-key.nvim"),
+		gh("monaqa/dial.nvim"),
 
 		-- Picker
 		gh("mikavilpas/yazi.nvim"),
@@ -623,7 +624,10 @@ do
 		})
 	else
 		vim.schedule(function()
-			vim.notify("copilot.lua is still installing; restart Neovim to enable AI inline completion", vim.log.levels.WARN)
+			vim.notify(
+				"copilot.lua is still installing; restart Neovim to enable AI inline completion",
+				vim.log.levels.WARN
+			)
 		end)
 	end
 end
@@ -662,7 +666,11 @@ do
 				["<C-e>"] = cmp.mapping.abort(),
 				["<CR>"] = cmp.mapping.confirm({ select = true }),
 				["<Tab>"] = cmp.mapping(function(fallback)
-					if vim.lsp.inline_completion and vim.lsp.inline_completion.get and vim.lsp.inline_completion.get() then
+					if
+						vim.lsp.inline_completion
+						and vim.lsp.inline_completion.get
+						and vim.lsp.inline_completion.get()
+					then
 						vim.lsp.inline_completion.accept()
 					elseif cmp.visible() then
 						cmp.select_next_item()
@@ -760,6 +768,10 @@ require("which-key").setup({
 })
 
 ------------------------------------------------------------
+-- dial.nvim
+------------------------------------------------------------
+
+------------------------------------------------------------
 -- snacks.nvim
 ------------------------------------------------------------
 require("snacks").setup({
@@ -781,7 +793,7 @@ require("yazi").setup({
 })
 
 ------------------------------------------------------------
---- oil.nvim
+-- oil.nvim
 ------------------------------------------------------------
 require("oil").setup({
 	default_file_explorer = true,
