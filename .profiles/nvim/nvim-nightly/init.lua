@@ -769,6 +769,129 @@ require("which-key").setup({
 ------------------------------------------------------------
 -- dial.nvim
 ------------------------------------------------------------
+local function dial(increment, g)
+	local mode = vim.fn.mode(true)
+	local is_visual = mode == "v" or mode == "V" or mode == "\22"
+	local func = (increment and "inc" or "dec") .. (g and "_g" or "_") .. (is_visual and "visual" or "normal")
+	local group = (vim.g.dials_by_ft or {})[vim.bo.filetype] or "default"
+	return require("dial.map")[func](group)
+end
+
+do
+	local augend = require("dial.augend")
+	local logical_alias = augend.constant.new({
+		elements = { "&&", "||" },
+		word = false,
+		cyclic = true,
+	})
+	local ordinal_numbers = augend.constant.new({
+		elements = {
+			"first",
+			"second",
+			"third",
+			"fourth",
+			"fifth",
+			"sixth",
+			"seventh",
+			"eighth",
+			"ninth",
+			"tenth",
+		},
+		word = false,
+		cyclic = true,
+	})
+	local months = augend.constant.new({
+		elements = {
+			"January",
+			"February",
+			"March",
+			"April",
+			"May",
+			"June",
+			"July",
+			"August",
+			"September",
+			"October",
+			"November",
+			"December",
+		},
+		word = true,
+		cyclic = true,
+	})
+	local dials_by_ft = {
+		css = "css",
+		javascript = "typescript",
+		javascriptreact = "typescript",
+		json = "json",
+		lua = "lua",
+		markdown = "markdown",
+		python = "python",
+		sass = "css",
+		scss = "css",
+		typescript = "typescript",
+		typescriptreact = "typescript",
+		vue = "vue",
+	}
+	local groups = {
+		default = {
+			augend.integer.alias.decimal,
+			augend.integer.alias.decimal_int,
+			augend.integer.alias.hex,
+			augend.date.alias["%Y/%m/%d"],
+			augend.constant.alias.en_weekday,
+			augend.constant.alias.en_weekday_full,
+			ordinal_numbers,
+			months,
+			augend.constant.alias.bool,
+			augend.constant.alias.Bool,
+			logical_alias,
+		},
+		vue = {
+			augend.constant.new({ elements = { "let", "const" } }),
+			augend.hexcolor.new({ case = "lower" }),
+			augend.hexcolor.new({ case = "upper" }),
+		},
+		typescript = {
+			augend.constant.new({ elements = { "let", "const" } }),
+		},
+		css = {
+			augend.hexcolor.new({ case = "lower" }),
+			augend.hexcolor.new({ case = "upper" }),
+		},
+		markdown = {
+			augend.constant.new({
+				elements = { "[ ]", "[x]" },
+				word = false,
+				cyclic = true,
+			}),
+			augend.misc.alias.markdown_header,
+		},
+		json = {
+			augend.semver.alias.semver,
+		},
+		lua = {
+			augend.constant.new({
+				elements = { "and", "or" },
+				word = true,
+				cyclic = true,
+			}),
+		},
+		python = {
+			augend.constant.new({
+				elements = { "and", "or" },
+			}),
+		},
+	}
+
+	for name, group in pairs(groups) do
+		if name ~= "default" then
+			vim.list_extend(group, groups.default)
+		end
+	end
+
+	require("dial.config").augends:register_group(groups)
+	vim.g.dials_by_ft = dials_by_ft
+end
 
 ------------------------------------------------------------
 -- snacks.nvim
@@ -838,6 +961,18 @@ end, { desc = "Recent Files" })
 vim.keymap.set("n", "<leader>fg", function()
 	require("snacks").picker.git_files()
 end, { desc = "Git Files" })
+vim.keymap.set({ "n", "v" }, "<C-a>", function()
+	return dial(true)
+end, { expr = true, desc = "Increment" })
+vim.keymap.set({ "n", "v" }, "<C-x>", function()
+	return dial(false)
+end, { expr = true, desc = "Decrement" })
+vim.keymap.set({ "n", "x" }, "g<C-a>", function()
+	return dial(true, true)
+end, { expr = true, desc = "Increment (g)" })
+vim.keymap.set({ "n", "x" }, "g<C-x>", function()
+	return dial(false, true)
+end, { expr = true, desc = "Decrement (g)" })
 -- vim.keymap.set({ "n", "v" }, "<leader>-", "<Cmd>Yazi<CR>", { desc = "Yazi" })
 vim.keymap.set({ "n", "v" }, "<leader>e", "<Cmd>Yazi<CR>", { desc = "Yazi" })
 vim.keymap.set("n", "<leader>E", "<Cmd>Yazi cwd<CR>", { desc = "Yazi (cwd)" })
