@@ -1228,6 +1228,8 @@ end, { desc = "Remote Flash" })
 vim.keymap.set({ "o", "x" }, "R", function()
 	require("flash").treesitter_search()
 end, { desc = "Treesitter Search" })
+
+vim.keymap.set("i", "kj", "<Esc>", { desc = "Exit insert mode", remap = true })
 -- Keymaps }}}
 
 ------------------------------------------------------------
