@@ -95,7 +95,7 @@ do
 		{ src = gh("vyfor/cord.nvim"), name = "cord.nvim" },
 
 		-- Completion
-		{ src = gh("yetone/avante.nvim"), name = "avante.nvim" },
+		-- { src = gh("yetone/avante.nvim"), name = "avante.nvim" },
 		gh("zbirenbaum/copilot.lua"),
 		gh("hrsh7th/nvim-cmp"),
 		gh("hrsh7th/cmp-nvim-lsp"),
@@ -127,46 +127,46 @@ end
 ------------------------------------------------------------
 -- Plugin Hooks {{{1
 ------------------------------------------------------------
-do
-	local function build_avante(path)
-		if vim.fn.executable("make") ~= 1 then
-			vim.schedule(function()
-				vim.notify("avante.nvim needs `make` to build", vim.log.levels.WARN)
-			end)
-			return
-		end
-
-		local result = vim.system({ "make" }, { cwd = path, text = true }):wait()
-		if result.code == 0 then
-			return
-		end
-
-		local output = (result.stderr and result.stderr ~= "") and result.stderr or (result.stdout or "")
-		vim.schedule(function()
-			vim.notify("Failed to build avante.nvim\n" .. output, vim.log.levels.ERROR)
-		end)
-	end
-
-	vim.api.nvim_create_autocmd("PackChanged", {
-		callback = function(event)
-			local pack_event = event.data or {}
-			local spec = pack_event.spec or {}
-			local name = spec.name
-			local kind = pack_event.kind
-
-			if name == "avante.nvim" and (kind == "install" or kind == "update") then
-				build_avante(pack_event.path)
-				return
-			end
-
-			if name == "cord.nvim" and (kind == "install" or kind == "update") then
-				vim.schedule(function()
-					vim.cmd("Cord update")
-				end)
-			end
-		end,
-	})
-end
+-- do
+-- 	local function build_avante(path)
+-- 		if vim.fn.executable("make") ~= 1 then
+-- 			vim.schedule(function()
+-- 				vim.notify("avante.nvim needs `make` to build", vim.log.levels.WARN)
+-- 			end)
+-- 			return
+-- 		end
+--
+-- 		local result = vim.system({ "make" }, { cwd = path, text = true }):wait()
+-- 		if result.code == 0 then
+-- 			return
+-- 		end
+--
+-- 		local output = (result.stderr and result.stderr ~= "") and result.stderr or (result.stdout or "")
+-- 		vim.schedule(function()
+-- 			vim.notify("Failed to build avante.nvim\n" .. output, vim.log.levels.ERROR)
+-- 		end)
+-- 	end
+--
+-- 	vim.api.nvim_create_autocmd("PackChanged", {
+-- 		callback = function(event)
+-- 			local pack_event = event.data or {}
+-- 			local spec = pack_event.spec or {}
+-- 			local name = spec.name
+-- 			local kind = pack_event.kind
+--
+-- 			if name == "avante.nvim" and (kind == "install" or kind == "update") then
+-- 				build_avante(pack_event.path)
+-- 				return
+-- 			end
+--
+-- 			if name == "cord.nvim" and (kind == "install" or kind == "update") then
+-- 				vim.schedule(function()
+-- 					vim.cmd("Cord update")
+-- 				end)
+-- 			end
+-- 		end,
+-- 	})
+-- end
 -- Plugin Hooks }}}
 
 ------------------------------------------------------------
@@ -918,41 +918,41 @@ vim.cmd.colorscheme("catppuccin")
 ------------------------------------------------------------
 -- avante.nvim
 ------------------------------------------------------------
-do
-	require("avante").setup({
-		provider = "codex",
-		behaviour = {
-			auto_suggestions = false,
-		},
-		acp_providers = {
-			codex = {
-				command = "codex-acp",
-				args = {},
-				env = {
-					NODE_NO_WARNINGS = "1",
-					HOME = os.getenv("HOME"),
-					PATH = os.getenv("PATH"),
-				},
-			},
-		},
-	})
-
-	local avante = require("avante")
-	local acp_config_selector = require("avante.acp_config_selector")
-	local original_open = acp_config_selector.open
-
-	acp_config_selector.open = function(category, prompt_label)
-		local sidebar = avante.get(false)
-		if not sidebar or not sidebar:is_open() then
-			avante.open_sidebar({ ask = false })
-			sidebar = avante.get(false)
-		end
-
-		if not sidebar or not sidebar:is_open() then
-			vim.notify("Unable to open Avante sidebar for ACP selection", vim.log.levels.WARN)
-			return
-		end
-
-		return original_open(category, prompt_label)
-	end
-end
+-- do
+-- 	require("avante").setup({
+-- 		provider = "codex",
+-- 		behaviour = {
+-- 			auto_suggestions = false,
+-- 		},
+-- 		acp_providers = {
+-- 			codex = {
+-- 				command = "codex-acp",
+-- 				args = {},
+-- 				env = {
+-- 					NODE_NO_WARNINGS = "1",
+-- 					HOME = os.getenv("HOME"),
+-- 					PATH = os.getenv("PATH"),
+-- 				},
+-- 			},
+-- 		},
+-- 	})
+--
+-- 	local avante = require("avante")
+-- 	local acp_config_selector = require("avante.acp_config_selector")
+-- 	local original_open = acp_config_selector.open
+--
+-- 	acp_config_selector.open = function(category, prompt_label)
+-- 		local sidebar = avante.get(false)
+-- 		if not sidebar or not sidebar:is_open() then
+-- 			avante.open_sidebar({ ask = false })
+-- 			sidebar = avante.get(false)
+-- 		end
+--
+-- 		if not sidebar or not sidebar:is_open() then
+-- 			vim.notify("Unable to open Avante sidebar for ACP selection", vim.log.levels.WARN)
+-- 			return
+-- 		end
+--
+-- 		return original_open(category, prompt_label)
+-- 	end
+-- end
