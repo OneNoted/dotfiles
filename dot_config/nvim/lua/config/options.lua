@@ -7,6 +7,9 @@ vim.g.maplocalleader = "\\"
 
 -- General
 vim.opt.autowrite = true          -- Auto-save before commands like :next
+if vim.env.SSH_CONNECTION then
+  vim.g.clipboard = "osc52"
+end
 vim.opt.clipboard = "unnamedplus" -- Sync with system clipboard
 vim.opt.completeopt = "menu,menuone,noselect"
 vim.opt.conceallevel = 2          -- Hide markup in markdown

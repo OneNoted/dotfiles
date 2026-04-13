@@ -30,6 +30,9 @@ do
 	opt.pumblend = 10
 
 	-- UX
+	if vim.env.SSH_CONNECTION then
+		vim.g.clipboard = "osc52"
+	end
 	opt.clipboard = "unnamedplus"
 	opt.scrolloff = 4
 	opt.sidescrolloff = 8
