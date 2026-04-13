@@ -92,6 +92,8 @@ set -g status-right '#[fg=#{@thm_mauve},bg=default] #[fg=#{@thm_crust},bg=#{@
 # Initialize TMUX plugin manager 
 run '~/.config/tmux/plugins/tpm/tpm'
 
-# Reapply custom window formats after TPM so plugin reloads do not overwrite them.
+# Reapply custom styles after TPM so plugin reloads do not overwrite them.
+set -g message-style "fg=#{@thm_yellow},bg=#{@thm_mantle}"
+set -g message-command-style "fg=#{@thm_fg},bg=#{@thm_surface0}"
 set -gF window-status-format '#[fg=#{E:@catppuccin_window_text_color},bg=default]#[fg=#{@thm_fg},bg=#{E:@catppuccin_window_text_color}]#{@catppuccin_window_text}#[fg=#{@thm_crust},bg=#{E:@catppuccin_window_number_color}] #{@catppuccin_window_number}#[fg=#{E:@catppuccin_window_number_color},bg=default]'
 set -gF window-status-current-format '#[fg=#{E:@catppuccin_window_current_text_color},bg=default]#[fg=#{@thm_fg},bg=#{E:@catppuccin_window_current_text_color}]#{@catppuccin_window_current_text}#[fg=#{@thm_crust},bg=#{E:@catppuccin_window_current_number_color}] #{@catppuccin_window_current_number}#[fg=#{E:@catppuccin_window_current_number_color},bg=default]'
