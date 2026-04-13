@@ -615,6 +615,9 @@ do
 				auto_trigger = true,
 				hide_during_completion = true,
 				debounce = 60,
+				keymap = {
+					accept = "<M-l>",
+				},
 			},
 			filetypes = {
 				markdown = false,
@@ -666,12 +669,8 @@ do
 				["<C-e>"] = cmp.mapping.abort(),
 				["<CR>"] = cmp.mapping.confirm({ select = true }),
 				["<Tab>"] = cmp.mapping(function(fallback)
-					if
-						vim.lsp.inline_completion
-						and vim.lsp.inline_completion.get
-						and vim.lsp.inline_completion.get()
-					then
-						vim.lsp.inline_completion.accept()
+					if has_copilot_suggestion and copilot_suggestion.is_visible() then
+						copilot_suggestion.accept()
 					elseif cmp.visible() then
 						cmp.select_next_item()
 					else
