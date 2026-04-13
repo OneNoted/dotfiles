@@ -402,26 +402,43 @@ require("cord").setup({
 -- Treesitter
 ------------------------------------------------------------
 do
-	local ok, treesitter = pcall(require, "nvim-treesitter")
+	local ok = pcall(require, "nvim-treesitter")
 	if ok then
+		local mason_bin_dir = vim.fn.stdpath("data") .. "/mason/bin"
+		local tree_sitter_bin = mason_bin_dir .. "/tree-sitter"
+		if vim.fn.executable("tree-sitter") == 0 and vim.fn.executable(tree_sitter_bin) == 1 then
+			vim.env.PATH = mason_bin_dir .. ":" .. vim.env.PATH
+		end
+
+		local function is_lazy_readme_help(bufnr)
+			local path = vim.api.nvim_buf_get_name(bufnr)
+			local readme_help_dir = vim.fn.stdpath("state") .. "/lazy/readme/doc/"
+			return path:find("^" .. vim.pesc(readme_help_dir)) ~= nil
+		end
+
 		local languages = {
 			"bash",
 			"diff",
+			"fish",
 			"go",
 			"git_config",
 			"gitcommit",
 			"gitignore",
+			"hyprlang",
 			"javascript",
 			"jsdoc",
 			"json",
+			"kdl",
 			"lua",
 			"markdown",
 			"markdown_inline",
 			"nix",
+			"nu",
 			"query",
 			"regex",
 			"rust",
 			"toml",
+			"tmux",
 			"tsx",
 			"typescript",
 			"vim",
@@ -430,19 +447,60 @@ do
 			"zig",
 		}
 
-		treesitter.setup({})
 		vim.treesitter.language.register("json", { "jsonc" })
-		vim.g.nightly_treesitter_languages = languages
+
+		local configured_languages = {}
+		for _, language in ipairs(languages) do
+			configured_languages[language] = true
+		end
+
+		local function get_treesitter_language(bufnr)
+			local filetype = vim.bo[bufnr].filetype
+			if filetype == "" then
+				return nil
+			end
+
+			return vim.treesitter.language.get_lang(filetype) or filetype
+		end
+
+		local function has_treesitter_parser(language)
+			return language ~= nil and pcall(vim.treesitter.language.inspect, language)
+		end
 
 		vim.api.nvim_create_autocmd("FileType", {
 			group = vim.api.nvim_create_augroup("nightly_treesitter", { clear = true }),
 			callback = function(event)
-				local ok_start = pcall(vim.treesitter.start, event.buf)
-				if ok_start and vim.bo[event.buf].buftype == "" then
-					vim.bo[event.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+				local lang = get_treesitter_language(event.buf)
+				if
+					vim.bo[event.buf].buftype == ""
+					and not is_lazy_readme_help(event.buf)
+					and configured_languages[lang]
+					and has_treesitter_parser(lang)
+				then
+					pcall(vim.treesitter.start, event.buf)
 				end
 			end,
 		})
+
+		vim.api.nvim_create_user_command("NightlyTreesitterStatus", function()
+			local missing = {}
+			for _, language in ipairs(languages) do
+				if not has_treesitter_parser(language) then
+					table.insert(missing, language)
+				end
+			end
+
+			if #missing == 0 then
+				vim.notify("All configured Tree-sitter parsers are available", vim.log.levels.INFO)
+				return
+			end
+
+			vim.notify(
+				"Missing Tree-sitter parsers: " .. table.concat(missing, ", "),
+				vim.log.levels.WARN,
+				{ title = "NightlyTreesitterStatus" }
+			)
+		end, { desc = "Show configured Tree-sitter parser coverage" })
 
 		local ok_textobjects, textobjects = pcall(require, "nvim-treesitter-textobjects")
 		if ok_textobjects then
