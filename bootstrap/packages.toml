@@ -33,9 +33,7 @@ pacman = [
   "stylua",
   "taplo-cli",
 ]
-aur = [
-  "carapace-bin",
-]
+aur = ["carapace-bin"]
 
 [groups.wm]
 pacman = [
@@ -50,15 +48,8 @@ pacman = [
 aur = []
 
 [groups.desktop]
-pacman = [
-  "niri",
-  "btop",
-  "fastfetch",
-]
-aur = [
-  "hyprpanel-git",
-  "zen-browser-bin",
-]
+pacman = ["niri", "btop", "fastfetch"]
+aur = ["hyprpanel-git", "zen-browser-bin"]
 
 [groups.nvim]
 pacman = [
@@ -68,9 +59,7 @@ pacman = [
   "rust-analyzer",
   "taplo-cli",
 ]
-aur = [
-  "qmlls6",
-]
+aur = ["qmlls6"]
 
 [components.nvim]
 pacman = [
@@ -98,6 +87,4 @@ pacman = [
   "zig",
   "zls",
 ]
-aur = [
-  "qmlls6",
-]
+aur = ["qmlls6"]

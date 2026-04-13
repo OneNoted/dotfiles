@@ -9,7 +9,7 @@ repos:
     hooks:
       - id: zsh-syntax
         name: zsh syntax check
-        entry: zsh -n dot_zshrc
+        entry: zsh -n dot_zshenv dot_config/zsh/dot_zshenv dot_config/zsh/dot_zshrc
         language: system
         pass_filenames: false
       - id: fish-syntax
@@ -24,7 +24,8 @@ repos:
         pass_filenames: false
       - id: taplo-format-check
         name: taplo format check
-        entry: taplo fmt --check
+        entry: >-
+          bash -lc 'mapfile -t files < <(rg --files -g "*.toml" -g "!.jj/**" -g "!dot_config/yazi/flavors/**/readonly_*.toml"); taplo fmt --check "${files[@]}"'
         language: system
         pass_filenames: false
       - id: stylua-format-check
@@ -34,12 +35,12 @@ repos:
         pass_filenames: false
       - id: shfmt-check
         name: shfmt check
-        entry: shfmt -d dot_config/niri/executable_region-record-toggle.sh dot_config/hypr/executable_screenshot-region.sh bootstrap/bootstrap.sh bootstrap/nvim.sh
+        entry: shfmt -d dot_config/niri/executable_snappers-record-toggle.sh dot_config/hypr/executable_screenshot-region.sh bootstrap/bootstrap.sh bootstrap/nvim.sh
         language: system
         pass_filenames: false
       - id: shellcheck-check
         name: shellcheck
-        entry: shellcheck dot_config/niri/executable_region-record-toggle.sh dot_config/hypr/executable_screenshot-region.sh bootstrap/bootstrap.sh bootstrap/nvim.sh
+        entry: shellcheck dot_config/niri/executable_snappers-record-toggle.sh dot_config/hypr/executable_screenshot-region.sh bootstrap/bootstrap.sh bootstrap/nvim.sh
         language: system
         pass_filenames: false
       - id: bootstrap-plan-check

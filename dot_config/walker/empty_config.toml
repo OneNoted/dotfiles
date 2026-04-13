@@ -5,6 +5,5 @@ theme = "catppuccin-mocha"
 ## Binds
 [keybinds]
 quick_activate = []
-next = ["Down","ctrl j"]
+next = ["Down", "ctrl j"]
 previous = ["Up", "ctrl k"]
-
