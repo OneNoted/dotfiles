@@ -1044,7 +1044,7 @@ require("flash").setup({ -- {{{1
 ------------------------------------------------------------
 -- Keymaps
 ------------------------------------------------------------
-local function nightly_lsp_supports(method, bufnr)
+local function nightly_lsp_supports(method, bufnr) -- {{{1
 	bufnr = bufnr or 0
 	for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr })) do
 		if client.supports_method(method) then
@@ -1072,7 +1072,7 @@ local function nightly_picker_workspace_symbols()
 	vim.notify("No attached LSP client with workspace symbol support", vim.log.levels.WARN)
 end
 
-vim.keymap.set("n", "<C-s>", "<Cmd>write<CR>", { desc = "Save buffer" }) -- {{{1
+vim.keymap.set("n", "<C-s>", "<Cmd>write<CR>", { desc = "Save buffer" })
 vim.keymap.set("i", "<C-s>", "<C-o><Cmd>write<CR>", { desc = "Save buffer" })
 vim.keymap.set("x", "<C-s>", "<Esc><Cmd>write<CR>gv", { desc = "Save buffer" })
 vim.keymap.set("n", "<leader>?", function()
