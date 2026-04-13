@@ -7,16 +7,17 @@
 ------------------------------------------------------------
 -- Leader
 ------------------------------------------------------------
-vim.g.mapleader = " "
+vim.g.mapleader = " " -- {{{1
 vim.g.maplocalleader = "\\"
 
 -- Let yazi.nvim take over directory opens like `nvim .`.
 vim.g.loaded_netrwPlugin = 1
+-- Leader }}}
 
 ------------------------------------------------------------
 -- Options
 ------------------------------------------------------------
-do
+do -- {{{1
 	local opt = vim.opt
 
 	-- UI
@@ -65,11 +66,12 @@ do
 	opt.splitbelow = true
 	opt.splitright = true
 end
+-- Options }}}
 
 ------------------------------------------------------------
 -- Packages
 ------------------------------------------------------------
-do
+do -- {{{1
 	local function gh(repo)
 		return "https://github.com/" .. repo
 	end
@@ -128,11 +130,12 @@ do
 		gh("rafamadriz/friendly-snippets"),
 	})
 end
+-- Packages }}}
 
 ------------------------------------------------------------
--- Plugin Hooks {{{1
+-- Plugin Hooks
 ------------------------------------------------------------
--- do
+-- do -- {{{1
 -- 	local function build_avante(path)
 -- 		if vim.fn.executable("make") ~= 1 then
 -- 			vim.schedule(function()
@@ -175,9 +178,9 @@ end
 -- Plugin Hooks }}}
 
 ------------------------------------------------------------
--- Chezmoi {{{1
+-- Chezmoi
 ------------------------------------------------------------
-do
+do -- {{{1
 	local has_chezmoi = vim.fn.executable("chezmoi") == 1
 	local source_path_cache = {}
 	local target_path_cache = {}
@@ -361,12 +364,13 @@ end
 ------------------------------------------------------------
 -- kitty-scrollback.nvim
 ------------------------------------------------------------
-require("kitty-scrollback").setup()
+require("kitty-scrollback").setup() -- {{{1
+-- kitty-scrollback.nvim }}}
 
 ------------------------------------------------------------
 -- cord.nvim
 ------------------------------------------------------------
-require("cord").setup({
+require("cord").setup({ -- {{{1
 	display = {
 		theme = "catppuccin",
 		flavor = "dark",
@@ -397,11 +401,12 @@ require("cord").setup({
 	},
 	assets = {},
 })
+-- cord.nvim }}}
 
 ------------------------------------------------------------
 -- Treesitter
 ------------------------------------------------------------
-do
+do -- {{{1
 	local ok = pcall(require, "nvim-treesitter")
 	if ok then
 		local mason_bin_dir = vim.fn.stdpath("data") .. "/mason/bin"
@@ -560,11 +565,12 @@ do
 		end)
 	end
 end
+-- Treesitter }}}
 
 ------------------------------------------------------------
 -- Mini Plugins
 ------------------------------------------------------------
-do
+do -- {{{1
 	local ai = require("mini.ai")
 	local hipatterns = require("mini.hipatterns")
 	local snippets = require("mini.snippets")
@@ -661,11 +667,12 @@ do
 	require("mini.notify").setup()
 	require("mini.statusline").setup()
 end
+-- Mini Plugins }}}
 
 ------------------------------------------------------------
 -- AI inline completion
 ------------------------------------------------------------
-do
+do -- {{{1
 	local ok, copilot = pcall(require, "copilot")
 	if ok then
 		copilot.setup({
@@ -696,11 +703,12 @@ do
 		end)
 	end
 end
+-- AI inline completion }}}
 
 ------------------------------------------------------------
 -- nvim-cmp
 ------------------------------------------------------------
-do
+do -- {{{1
 	local ok, cmp = pcall(require, "cmp")
 	if ok then
 		local has_copilot_suggestion, copilot_suggestion = pcall(require, "copilot.suggestion")
@@ -779,11 +787,12 @@ do
 		end)
 	end
 end
+-- nvim-cmp }}}
 
 ------------------------------------------------------------
 -- which-key.nvim
 ------------------------------------------------------------
-require("which-key").setup({
+require("which-key").setup({ -- {{{1
 	preset = "helix",
 	delay = 200,
 	plugins = {
@@ -827,11 +836,12 @@ require("which-key").setup({
 		{ "<C-x>", group = "completion", mode = "i" },
 	},
 })
+-- which-key.nvim }}}
 
 ------------------------------------------------------------
 -- dial.nvim
 ------------------------------------------------------------
-local function dial(increment, g)
+local function dial(increment, g) -- {{{1
 	local mode = vim.fn.mode(true)
 	local is_visual = mode == "v" or mode == "V" or mode == "\22"
 	local func = (increment and "inc" or "dec") .. (g and "_g" or "_") .. (is_visual and "visual" or "normal")
@@ -954,11 +964,12 @@ do
 	require("dial.config").augends:register_group(groups)
 	vim.g.dials_by_ft = dials_by_ft
 end
+-- dial.nvim }}}
 
 ------------------------------------------------------------
 -- yanky.nvim
 ------------------------------------------------------------
-require("yanky").setup({
+require("yanky").setup({ -- {{{1
 	system_clipboard = {
 		sync_with_ring = not vim.env.SSH_CONNECTION,
 	},
@@ -966,20 +977,22 @@ require("yanky").setup({
 		timer = 150,
 	},
 })
+-- yanky.nvim }}}
 
 ------------------------------------------------------------
 -- snacks.nvim
 ------------------------------------------------------------
-require("snacks").setup({
+require("snacks").setup({ -- {{{1
 	input = { enabled = true },
 	notifier = { enabled = true },
 	picker = { enabled = true },
 })
+-- snacks.nvim }}}
 
 ------------------------------------------------------------
 -- yazi.nvim
 ------------------------------------------------------------
-require("yazi").setup({
+require("yazi").setup({ -- {{{1
 	open_for_directories = false,
 	integrations = {
 		grep_in_directory = "snacks.picker",
@@ -987,28 +1000,31 @@ require("yazi").setup({
 		picker_add_copy_relative_path_action = "snacks.picker",
 	},
 })
+-- yazi.nvim }}}
 
 ------------------------------------------------------------
 -- oil.nvim
 ------------------------------------------------------------
-require("oil").setup({
+require("oil").setup({ -- {{{1
 	default_file_explorer = true,
 })
+-- oil.nvim }}}
 
 ------------------------------------------------------------
 -- flash.nvim
 ------------------------------------------------------------
-require("flash").setup({
+require("flash").setup({ -- {{{1
 	modes = {
 		search = { enabled = false },
 		char = { enabled = false },
 	},
 })
+-- flash.nvim }}}
 
 ------------------------------------------------------------
 -- Keymaps
 ------------------------------------------------------------
-vim.keymap.set("n", "<C-s>", "<Cmd>write<CR>", { desc = "Save buffer" })
+vim.keymap.set("n", "<C-s>", "<Cmd>write<CR>", { desc = "Save buffer" }) -- {{{1
 vim.keymap.set("i", "<C-s>", "<C-o><Cmd>write<CR>", { desc = "Save buffer" })
 vim.keymap.set("x", "<C-s>", "<Esc><Cmd>write<CR>gv", { desc = "Save buffer" })
 vim.keymap.set("n", "<leader>?", function()
@@ -1102,11 +1118,12 @@ end, { desc = "Remote Flash" })
 vim.keymap.set({ "o", "x" }, "R", function()
 	require("flash").treesitter_search()
 end, { desc = "Treesitter Search" })
+-- Keymaps }}}
 
 ------------------------------------------------------------
 -- Debug
 ------------------------------------------------------------
-vim.api.nvim_create_user_command("NightlyInspectKey", function()
+vim.api.nvim_create_user_command("NightlyInspectKey", function() -- {{{1
 	vim.api.nvim_echo({ { "Press a key to inspect...", "Question" } }, false, {})
 
 	local key = vim.fn.getcharstr()
@@ -1126,11 +1143,12 @@ vim.api.nvim_create_user_command("NightlyInspectKey", function()
 		{ title = "NightlyInspectKey" }
 	)
 end, { desc = "Inspect the next key Neovim receives" })
+-- Debug }}}
 
 ------------------------------------------------------------
 -- Formatting
 ------------------------------------------------------------
-require("conform").setup({
+require("conform").setup({ -- {{{1
 	formatters_by_ft = {
 		lua = { "stylua" },
 		rust = { "rustfmt", lsp_format = "fallback" },
@@ -1139,11 +1157,12 @@ require("conform").setup({
 		timeout_ms = 1000,
 	},
 })
+-- Formatting }}}
 
 ------------------------------------------------------------
 -- Colorscheme
 ------------------------------------------------------------
-require("catppuccin").setup({
+require("catppuccin").setup({ -- {{{1
 	flavour = "mocha",
 	styles = {
 		comments = { "italic" },
@@ -1159,11 +1178,12 @@ require("catppuccin").setup({
 })
 
 vim.cmd.colorscheme("catppuccin")
+-- Colorscheme }}}
 
 ------------------------------------------------------------
 -- avante.nvim
 ------------------------------------------------------------
--- do
+-- do -- {{{1
 -- 	require("avante").setup({
 -- 		provider = "codex",
 -- 		behaviour = {
@@ -1201,3 +1221,4 @@ vim.cmd.colorscheme("catppuccin")
 -- 		return original_open(category, prompt_label)
 -- 	end
 -- end
+-- avante.nvim }}}
