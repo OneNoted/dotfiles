@@ -616,7 +616,7 @@ do
 				hide_during_completion = true,
 				debounce = 60,
 				keymap = {
-					accept = "<M-l>",
+					accept = "<C-l>",
 				},
 			},
 			filetypes = {
