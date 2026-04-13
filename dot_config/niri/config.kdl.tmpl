@@ -310,13 +310,6 @@ layout {
         // bottom 64
     }
 }
-    blur {
-      passes 3
-      offset 3
-      noise 0.02
-      saturation 1.5
-      }
-}
 
 // Add lines like this to spawn processes at startup.
 // Note that running niri as a session supports xdg-desktop-autostart,
@@ -326,8 +319,9 @@ layout {
 // This line starts waybar, a commonly used bar for Wayland compositors.
 spawn-sh-at-startup "vicinae server"
 spawn-sh-at-startup "awww-daemon"
+spawn-sh-at-startup "qs"
 // spawn-sh-at-startup "walker --gapplication-service"
-spawn-sh-at-startup "{{ .chezmoi.homeDir }}/.local/bin/niri-launch-eww"
+// spawn-sh-at-startup "{{ .chezmoi.homeDir }}/.local/bin/niri-launch-eww"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
