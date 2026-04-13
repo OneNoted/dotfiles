@@ -41,6 +41,12 @@ bind -n M-j select-pane -D
 bind -n M-k select-pane -U
 bind -n M-l select-pane -R
 
+# Move the current pane with Ctrl-Alt-h/j/k/l.
+bind -n C-M-h swap-pane -s '{left-of}'
+bind -n C-M-j swap-pane -s '{down-of}'
+bind -n C-M-k swap-pane -s '{up-of}'
+bind -n C-M-l swap-pane -s '{right-of}'
+
 
 
 
