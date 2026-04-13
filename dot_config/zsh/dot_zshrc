@@ -122,8 +122,12 @@ fi
 
 # fuzzy attach zellij via television
 alias zel='zellij attach $(zellij ls -s | tv)'
-alias claude='claude --permission-mode bypassPermissions'
-alias codex='codex --dangerously-bypass-approvals-and-sandbox'
+if [[ ${CLAUDE_UNSAFE:-0} == 1 ]]; then
+  alias claude='claude --permission-mode bypassPermissions'
+fi
+if [[ ${CODEX_UNSAFE:-0} == 1 ]]; then
+  alias codex='codex --dangerously-bypass-approvals-and-sandbox'
+fi
 
 # back aliases
 alias ..='cd ..'

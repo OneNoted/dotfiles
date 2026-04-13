@@ -35,12 +35,12 @@ repos:
         pass_filenames: false
       - id: shfmt-check
         name: shfmt check
-        entry: shfmt -d dot_config/niri/executable_snappers-record-toggle.sh dot_config/hypr/executable_screenshot-region.sh bootstrap/bootstrap.sh bootstrap/nvim.sh
+        entry: shfmt -d dot_config/niri/executable_snappers-record-toggle.sh dot_config/hypr/executable_screenshot-region.sh bootstrap/bootstrap.sh bootstrap/nvim.sh dot_local/bin/executable_niri-session dot_local/bin/executable_portal-session-refresh dot_local/bin/executable_xdg-open dot_local/bin/executable_yazi-wrapper.sh dot_local/bin/executable_niri-launch-eww
         language: system
         pass_filenames: false
       - id: shellcheck-check
         name: shellcheck
-        entry: shellcheck dot_config/niri/executable_snappers-record-toggle.sh dot_config/hypr/executable_screenshot-region.sh bootstrap/bootstrap.sh bootstrap/nvim.sh
+        entry: shellcheck dot_config/niri/executable_snappers-record-toggle.sh dot_config/hypr/executable_screenshot-region.sh bootstrap/bootstrap.sh bootstrap/nvim.sh dot_local/bin/executable_niri-session dot_local/bin/executable_portal-session-refresh dot_local/bin/executable_xdg-open dot_local/bin/executable_yazi-wrapper.sh dot_local/bin/executable_niri-launch-eww
         language: system
         pass_filenames: false
       - id: bootstrap-plan-check
