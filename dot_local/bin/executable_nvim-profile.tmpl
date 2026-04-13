@@ -27,6 +27,17 @@ profile_source() {
   esac
 }
 
+profile_pack_lockfile() {
+  case "$1" in
+{{- range .nvim_profiles.profiles }}
+{{- if hasKey . "pack_lockfile" }}
+    {{ .name | quote }}) printf '%s\n' "$SOURCE_ROOT/{{ .pack_lockfile }}" ;;
+{{- end }}
+{{- end }}
+    *) return 1 ;;
+  esac
+}
+
 print_profiles() {
   printf '%s\n' "${PROFILES[@]}"
 }
@@ -140,6 +151,8 @@ sync_profile() {
   validate_profile "$profile"
   local source_dir
   source_dir="$(profile_source "$profile")"
+  local pack_lockfile=''
+  pack_lockfile="$(profile_pack_lockfile "$profile" 2>/dev/null || true)"
   if [[ ! -d "$source_dir" ]]; then
     printf 'Profile source missing: %s\n' "$source_dir" >&2
     return 1
@@ -158,6 +171,9 @@ sync_profile() {
 
   mkdir -p "$DEST_DIR"
   rsync -a --delete "$source_dir/" "$DEST_DIR/"
+  if [[ -n "$pack_lockfile" && -f "$pack_lockfile" ]]; then
+    cp "$pack_lockfile" "$DEST_DIR/nvim-pack-lock.json"
+  fi
   rm -rf "$DEST_DIR/.git" "$DEST_DIR/.jj"
   printf '%s\n' "$profile" > "$ACTIVE_PROFILE_FILE"
   printf 'Active Neovim profile synced: %s\n' "$profile"

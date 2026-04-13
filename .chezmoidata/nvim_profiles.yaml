@@ -7,5 +7,7 @@ nvim_profiles:
       source: dot_config/nvim
     - name: nvim-nightly
       source: .profiles/nvim/nvim-nightly
+      pack_lockfile: dot_config/nvim/nvim-pack-lock.json
     - name: nvim-server
       source: .profiles/nvim/nvim-server
+      pack_lockfile: dot_config/nvim/nvim-pack-lock.json
