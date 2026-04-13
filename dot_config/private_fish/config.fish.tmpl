@@ -19,6 +19,24 @@ set -q DOOMDIR; or set -gx DOOMDIR $XDG_CONFIG_HOME/doom
 set -q DOOMPROFILE; or set -gx DOOMPROFILE default
 set -q GTK_USE_PORTAL; or set -gx GTK_USE_PORTAL 1
 
+# When a tmux session is attached over SSH, drop any stale local GUI clipboard
+# env inherited from an older shell.
+if set -q TMUX; and command -q tmux
+    set -l tmux_ssh_line (tmux show-environment -g SSH_CONNECTION 2>/dev/null | string collect)
+    if string match -q 'SSH_CONNECTION=*' -- $tmux_ssh_line
+        set -gx SSH_CONNECTION (string replace 'SSH_CONNECTION=' '' -- $tmux_ssh_line)
+
+        for var in DISPLAY WAYLAND_DISPLAY
+            set -l tmux_line (tmux show-environment -g $var 2>/dev/null | string collect)
+            if string match -q "$var=*" -- $tmux_line
+                set -gx $var (string replace "$var=" "" -- $tmux_line)
+            else
+                set -e $var
+            end
+        end
+    end
+end
+
 contains -- $NPM_CONFIG_PREFIX/bin $PATH; or set -gx PATH $NPM_CONFIG_PREFIX/bin $PATH
 contains -- $BUN_INSTALL/bin $PATH; or set -gx PATH $BUN_INSTALL/bin $PATH
 contains -- $CARGO_HOME/bin $PATH; or set -gx PATH $CARGO_HOME/bin $PATH
