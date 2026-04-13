@@ -827,6 +827,7 @@ require("which-key").setup({ -- {{{1
 		{ "z", mode = { "n", "x" } },
 	},
 	spec = {
+		{ "<leader>s", group = "search" },
 		{ "[", group = "prev" },
 		{ "]", group = "next" },
 		{ "g", group = "goto" },
@@ -983,9 +984,28 @@ require("yanky").setup({ -- {{{1
 -- snacks.nvim
 ------------------------------------------------------------
 require("snacks").setup({ -- {{{1
+	indent = { enabled = true },
 	input = { enabled = true },
 	notifier = { enabled = true },
-	picker = { enabled = true },
+	picker = {
+		enabled = true,
+		win = {
+			input = {
+				keys = {
+					["<NL>"] = { "confirm", mode = { "n", "i" } },
+					["<kEnter>"] = { "confirm", mode = { "n", "i" } },
+				},
+			},
+			list = {
+				keys = {
+					["<NL>"] = "confirm",
+					["<kEnter>"] = "confirm",
+				},
+			},
+		},
+	},
+	scope = { enabled = true },
+	words = { enabled = true },
 })
 -- snacks.nvim }}}
 
@@ -1024,6 +1044,34 @@ require("flash").setup({ -- {{{1
 ------------------------------------------------------------
 -- Keymaps
 ------------------------------------------------------------
+local function nightly_lsp_supports(method, bufnr)
+	bufnr = bufnr or 0
+	for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr })) do
+		if client.supports_method(method) then
+			return true
+		end
+	end
+	return false
+end
+
+local function nightly_picker_symbols()
+	if nightly_lsp_supports("textDocument/documentSymbol") then
+		require("snacks").picker.lsp_symbols()
+		return
+	end
+
+	require("snacks").picker.treesitter()
+end
+
+local function nightly_picker_workspace_symbols()
+	if nightly_lsp_supports("workspace/symbol") then
+		require("snacks").picker.lsp_workspace_symbols()
+		return
+	end
+
+	vim.notify("No attached LSP client with workspace symbol support", vim.log.levels.WARN)
+end
+
 vim.keymap.set("n", "<C-s>", "<Cmd>write<CR>", { desc = "Save buffer" }) -- {{{1
 vim.keymap.set("i", "<C-s>", "<C-o><Cmd>write<CR>", { desc = "Save buffer" })
 vim.keymap.set("x", "<C-s>", "<Esc><Cmd>write<CR>gv", { desc = "Save buffer" })
@@ -1039,6 +1087,14 @@ end, { desc = "Buffers" })
 vim.keymap.set("n", "<leader>/", function()
 	require("snacks").picker.grep()
 end, { desc = "Grep" })
+vim.keymap.set("n", "<leader>sj", function()
+	require("snacks").picker.jumps()
+end, { desc = "Jumps" })
+vim.keymap.set("n", "<leader>st", function()
+	require("snacks").picker.treesitter()
+end, { desc = "Treesitter Symbols" })
+vim.keymap.set("n", "<leader>ss", nightly_picker_symbols, { desc = "Symbols" })
+vim.keymap.set("n", "<leader>sS", nightly_picker_workspace_symbols, { desc = "Workspace Symbols" })
 vim.keymap.set("n", "<leader>ff", function()
 	require("snacks").picker.files()
 end, { desc = "Find Files" })
@@ -1082,6 +1138,45 @@ vim.keymap.set("n", "]p", "<Plug>(YankyPutIndentAfterLinewise)", { desc = "Put I
 vim.keymap.set("n", "[p", "<Plug>(YankyPutIndentBeforeLinewise)", { desc = "Put Indented Before Cursor (Linewise)" })
 vim.keymap.set("n", "]P", "<Plug>(YankyPutIndentAfterLinewise)", { desc = "Put Indented After Cursor (Linewise)" })
 vim.keymap.set("n", "[P", "<Plug>(YankyPutIndentBeforeLinewise)", { desc = "Put Indented Before Cursor (Linewise)" })
+vim.keymap.set({ "x", "o" }, "ii", function()
+	require("snacks").scope.textobject({
+		min_size = 2,
+		edge = false,
+		cursor = false,
+		treesitter = { blocks = { enabled = false } },
+	})
+end, { desc = "Inner Scope" })
+vim.keymap.set({ "x", "o" }, "ai", function()
+	require("snacks").scope.textobject({
+		cursor = false,
+		min_size = 2,
+		treesitter = { blocks = { enabled = false } },
+	})
+end, { desc = "Around Scope" })
+vim.keymap.set({ "n", "x", "o" }, "[i", function()
+	require("snacks").scope.jump({
+		min_size = 1,
+		bottom = false,
+		cursor = false,
+		edge = true,
+		treesitter = { blocks = { enabled = false } },
+	})
+end, { desc = "Scope Top" })
+vim.keymap.set({ "n", "x", "o" }, "]i", function()
+	require("snacks").scope.jump({
+		min_size = 1,
+		bottom = true,
+		cursor = false,
+		edge = true,
+		treesitter = { blocks = { enabled = false } },
+	})
+end, { desc = "Scope Bottom" })
+vim.keymap.set({ "n", "t" }, "]]", function()
+	require("snacks").words.jump(vim.v.count1)
+end, { desc = "Next Reference" })
+vim.keymap.set({ "n", "t" }, "[[", function()
+	require("snacks").words.jump(-vim.v.count1)
+end, { desc = "Prev Reference" })
 vim.keymap.set("n", ">p", "<Plug>(YankyPutIndentAfterShiftRight)", { desc = "Put and Indent Right" })
 vim.keymap.set("n", "<p", "<Plug>(YankyPutIndentAfterShiftLeft)", { desc = "Put and Indent Left" })
 vim.keymap.set("n", ">P", "<Plug>(YankyPutIndentBeforeShiftRight)", { desc = "Put Before and Indent Right" })
@@ -1093,6 +1188,21 @@ vim.keymap.set({ "n", "v" }, "<leader>e", "<Cmd>Yazi<CR>", { desc = "Yazi" })
 vim.keymap.set("n", "<leader>E", "<Cmd>Yazi cwd<CR>", { desc = "Yazi (cwd)" })
 vim.keymap.set("n", "<C-Up>", "<Cmd>Yazi toggle<CR>", { desc = "Resume Yazi" })
 vim.keymap.set({ "n", "v" }, "<leader>-", "<Cmd>Oil<CR>", { desc = "Oil" })
+vim.keymap.set("n", "gd", function()
+	require("snacks").picker.lsp_definitions()
+end, { desc = "Goto Definition" })
+vim.keymap.set("n", "gD", function()
+	require("snacks").picker.lsp_declarations()
+end, { desc = "Goto Declaration" })
+vim.keymap.set("n", "gr", function()
+	require("snacks").picker.lsp_references()
+end, { nowait = true, desc = "References" })
+vim.keymap.set("n", "gI", function()
+	require("snacks").picker.lsp_implementations()
+end, { desc = "Goto Implementation" })
+vim.keymap.set("n", "gy", function()
+	require("snacks").picker.lsp_type_definitions()
+end, { desc = "Goto Type Definition" })
 
 -- Enter aliases for terminals and keyboards that don't send plain <CR>.
 vim.keymap.set("i", "<NL>", "v:lua.MiniPairs.cr()", {
