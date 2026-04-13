@@ -1,0 +1,53 @@
+# Shared bash environment under XDG config.
+: "${XDG_CONFIG_HOME:=$HOME/.config}"
+: "${XDG_DATA_HOME:=$HOME/.local/share}"
+: "${XDG_STATE_HOME:=$HOME/.local/state}"
+: "${XDG_CACHE_HOME:=$HOME/.cache}"
+: "${XDG_BIN_HOME:=$HOME/.local/bin}"
+: "${CARGO_HOME:=$XDG_DATA_HOME/cargo}"
+: "${RUSTUP_HOME:=$XDG_DATA_HOME/rustup}"
+: "${BUN_INSTALL:=$XDG_DATA_HOME/bun}"
+: "${GRADLE_USER_HOME:=$XDG_DATA_HOME/gradle}"
+: "${NPM_CONFIG_USERCONFIG:=$XDG_CONFIG_HOME/npm/npmrc}"
+: "${NPM_CONFIG_CACHE:=$XDG_CACHE_HOME/npm}"
+: "${NPM_CONFIG_PREFIX:=$XDG_DATA_HOME/npm}"
+: "${PUB_CACHE:=$XDG_DATA_HOME/pub-cache}"
+: "${DOCKER_CONFIG:=$XDG_CONFIG_HOME/docker}"
+: "${EMACSDIR:=$XDG_CONFIG_HOME/emacs}"
+: "${DOOMDIR:=$XDG_CONFIG_HOME/doom}"
+: "${DOOMPROFILE:=default}"
+: "${GTK_USE_PORTAL:=1}"
+: "${BASH_ENV:=$XDG_CONFIG_HOME/bash/bashenv}"
+HISTFILE="$XDG_STATE_HOME/bash/history"
+export XDG_CONFIG_HOME XDG_DATA_HOME XDG_STATE_HOME XDG_CACHE_HOME XDG_BIN_HOME
+export CARGO_HOME RUSTUP_HOME BUN_INSTALL GRADLE_USER_HOME
+export NPM_CONFIG_USERCONFIG NPM_CONFIG_CACHE NPM_CONFIG_PREFIX PUB_CACHE DOCKER_CONFIG
+export EMACSDIR DOOMDIR DOOMPROFILE GTK_USE_PORTAL BASH_ENV HISTFILE
+export EDITOR=nvim VISUAL=nvim SUDO_EDITOR=nvim
+
+case ":$PATH:" in
+  *":$NPM_CONFIG_PREFIX/bin:"*) ;;
+  *) PATH="$NPM_CONFIG_PREFIX/bin${PATH:+:$PATH}" ;;
+esac
+
+case ":$PATH:" in
+  *":$BUN_INSTALL/bin:"*) ;;
+  *) PATH="$BUN_INSTALL/bin${PATH:+:$PATH}" ;;
+esac
+
+case ":$PATH:" in
+  *":$CARGO_HOME/bin:"*) ;;
+  *) PATH="$CARGO_HOME/bin${PATH:+:$PATH}" ;;
+esac
+
+case ":$PATH:" in
+  *":$XDG_BIN_HOME:"*) ;;
+  *) PATH="$XDG_BIN_HOME${PATH:+:$PATH}" ;;
+esac
+
+case ":$PATH:" in
+  *":$EMACSDIR/bin:"*) ;;
+  *) PATH="$EMACSDIR/bin${PATH:+:$PATH}" ;;
+esac
+
+export PATH

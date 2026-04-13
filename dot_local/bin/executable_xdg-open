@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -eu
+
+has_graphical_session() {
+	[ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ]
+}
+
+if has_graphical_session && command -v gio >/dev/null 2>&1; then
+	exec gio open "$@"
+fi
+
+exec /usr/bin/xdg-open "$@"

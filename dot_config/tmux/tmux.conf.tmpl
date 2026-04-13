@@ -7,6 +7,14 @@ set -g default-shell {{ lookPath "fish" }}
 set -g mouse on
 set -g default-terminal "tmux-256color"
 set-option -sa terminal-overrides ",xterm*:Tc"
+# When a local tmux server is attached over SSH, track Wayland the same way
+# DISPLAY is tracked so remote panes do not keep the local GUI clipboard path.
+set -ga update-environment " WAYLAND_DISPLAY"
+set -s set-clipboard on
+set -as terminal-features ",xterm-kitty:clipboard"
+set -g allow-passthrough on
+set -g pane-active-border-style 'fg=magenta,bg=default'
+set -g pane-border-style 'fg=brightblack,bg=default'
 
 
 # List of plugins
@@ -18,10 +26,10 @@ set -g @plugin 'tmux-plugins/tmux-sensible'
 set -g @plugin 'christoomey/vim-tmux-navigator'
 
 ##### Status bar plugins #####
-set -g @plugin 'catppuccin/tmux#v2.1.3'
+set -g @plugin 'catppuccin/tmux'
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+set -g @plugin 'tmux-plugins/tmux-continuum'
 # Modules
-set -g @plugin 'tmux-plugins/tmux-cpu'
-set -g @plugin 'tmux-plugins/tmux-battery'
 
 
 ##### Keybindings #####
@@ -29,23 +37,63 @@ unbind C-b
 set -g prefix C-Space
 bind C-Space send-prefix
 
+# Move focus to the neighboring pane using Alt-h/j/k/l.
+bind -n M-h select-pane -L
+bind -n M-j select-pane -D
+bind -n M-k select-pane -U
+bind -n M-l select-pane -R
+
+# Move the current pane with Ctrl-Alt-h/j/k/l.
+bind -n C-M-h swap-pane -s '{left-of}'
+bind -n C-M-j swap-pane -s '{down-of}'
+bind -n C-M-k swap-pane -s '{up-of}'
+bind -n C-M-l swap-pane -s '{right-of}'
+
 
 
 
 
 # Catppuccin theme options
-set -g @catppuccin_flavor 'mocha' # latte, frappe, macchiato, mocha
-set -g status-right-length 100 
-set -g status-left-length 100
-set -g status-left ""
-set -g status-right "#{E:@catppuccin_status_application}"
-set -agF status-right "#{E:@catppuccin_status_cpu}"
-set -ag status-right "#{E:@catppuccin_status_session}"
-set -ag status-right "#{E:@catppuccin_status_uptime}"
-{{- if eq .chezmoi.hostname "hephaestus" }}
-set -agF status-right "#{E:@catppuccin_status_battery}"
-{{- end }}
+set -g @catppuccin_flavor "mocha"
+set -g @catppuccin_reset "true"
+source-file -F "#{HOME}/.config/tmux/plugins/tmux/catppuccin_options_tmux.conf"
+source-file -F "#{HOME}/.config/tmux/plugins/tmux/catppuccin_tmux.conf"
+
+# Reapply custom Catppuccin options after reset so `source-file` picks them up.
+set -g @catppuccin_flavor "mocha"
+set -g @catppuccin_status_background "none"
+set -g @catppuccin_status_module_bg_color "#{@thm_mantle}"
+set -g @catppuccin_status_session_text_bg "#{@thm_mantle}"
+set -g @catppuccin_window_status_style "none"
+set -g @catppuccin_window_number_position "right"
+set -g @catppuccin_window_text " #W"
+set -g @catppuccin_window_current_text "#W#{?window_zoomed_flag,(),} "
+set -g @catppuccin_window_current_text_color "#{@thm_crust}"
+set -g @catppuccin_window_current_number_color "#{@thm_peach}"
+set -g @catppuccin_status_modules_right "directory" # date_time"
+set -g @catppuccin_status_modules_left "session"
+set -g @catppuccin_status_left_separator  " "
+set -g @catppuccin_status_right_separator " "
+set -g @catppuccin_status_right_separator_inverse "no"
+set -g @catppuccin_status_fill "icon"
+set -g @catppuccin_status_connect_separator "no"
+set -g @catppuccin_directory_text " #{b:pane_current_path}"
+set -g @continuum-restore "on"
 ##### Status bar plugins #####
+
+# Keep the custom status line in place before TPM runs so continuum can append
+# its hidden autosave hook to status-right.
+source-file -F "#{HOME}/.config/tmux/plugins/tmux/catppuccin_tmux.conf"
+set -g status-left-length 100
+set -g status-right-length 100
+set -g status-left '#[fg=#{?client_prefix,#{@thm_red},#{@thm_green}},bg=default] #[fg=#{@thm_crust},bg=#{?client_prefix,#{@thm_red},#{@thm_green}}] #[fg=#{@thm_fg},bg=#{@thm_bg}] #S#[fg=#{@thm_bg},bg=default]'
+set -g status-right '#[fg=#{@thm_mauve},bg=default] #[fg=#{@thm_crust},bg=#{@thm_mauve}] #[fg=#{@thm_fg},bg=#{@thm_bg}] #{b:pane_current_path}#[fg=#{@thm_bg},bg=default] '
 
 # Initialize TMUX plugin manager 
 run '~/.config/tmux/plugins/tpm/tpm'
+
+# Reapply custom styles after TPM so plugin reloads do not overwrite them.
+set -g message-style "fg=#{@thm_yellow},bg=#{@thm_mantle}"
+set -g message-command-style "fg=#{@thm_fg},bg=#{@thm_surface0}"
+set -gF window-status-format '#[fg=#{E:@catppuccin_window_text_color},bg=default]#[fg=#{@thm_fg},bg=#{E:@catppuccin_window_text_color}]#{@catppuccin_window_text}#[fg=#{@thm_crust},bg=#{E:@catppuccin_window_number_color}] #{@catppuccin_window_number}#[fg=#{E:@catppuccin_window_number_color},bg=default]'
+set -gF window-status-current-format '#[fg=#{E:@catppuccin_window_current_text_color},bg=default]#[fg=#{@thm_fg},bg=#{E:@catppuccin_window_current_text_color}]#{@catppuccin_window_current_text}#[fg=#{@thm_crust},bg=#{E:@catppuccin_window_current_number_color}] #{@catppuccin_window_current_number}#[fg=#{E:@catppuccin_window_current_number_color},bg=default]'

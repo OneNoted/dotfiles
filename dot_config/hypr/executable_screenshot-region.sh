@@ -3,19 +3,19 @@
 set -eu
 
 dir="$HOME/Pictures/Screenshots/Snippets"
-host="${HOSTNAME:-$(hostname)}"
+host="$(hostname 2>/dev/null || printf '%s' unknown)"
 app="unknown"
 
 if command -v hyprctl >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
-    app="$(hyprctl activewindow -j 2>/dev/null | jq -r '.class // "unknown"' 2>/dev/null || printf 'unknown')"
+	app="$(hyprctl activewindow -j 2>/dev/null | jq -r '.class // "unknown"' 2>/dev/null || printf 'unknown')"
 fi
 
 app="$(printf '%s' "$app" | tr '/[:space:]' '__' | tr -cd '[:alnum:]_.-')"
 [ -n "$app" ] || app="unknown"
 
 if ! command -v hyprshot >/dev/null 2>&1; then
-    printf '%s\n' 'hyprshot not found in PATH' >&2
-    exit 1
+	printf '%s\n' 'hyprshot not found in PATH' >&2
+	exit 1
 fi
 
 mkdir -p "$dir"

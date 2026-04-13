@@ -104,6 +104,11 @@ bind = $mainMod, mouse_up, workspace, e-1
 bindm = $mainMod, mouse:272, movewindow
 bindm = $mainMod, mouse:273, resizewindow
 
+# Resize the active scrolling-layout column in fixed
+bind = $mainMod, minus, layoutmsg, colresize -0.1
+bind = $mainMod, equal, layoutmsg, colresize +0.1
+
+
 # Laptop multimedia keys for volume and LCD brightness
 bindel = ,XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+
 bindel = ,XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
@@ -122,5 +127,5 @@ bindl = , XF86AudioPrev, exec, playerctl previous
 bind = $mainMod+Ctrl, S, exec, ~/.config/hypr/screenshot-region.sh
 
 # Speech-to-text (whispers)
-bindd = SUPER ALT, D, Speech-to-text, exec, ~/.cargo/bin/whispers
-bindd = SUPER ALT, V, Speech-to-text (voice), exec, ~/.cargo/bin/whispers voice
+bindd = SUPER ALT, D, Speech-to-text, exec, whispers
+bindd = SUPER ALT, V, Speech-to-text (voice), exec, whispers voice

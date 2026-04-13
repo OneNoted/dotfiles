@@ -1,0 +1,9 @@
+##### Minimal home-level Zsh bootstrap #####
+# Zsh must discover this file in $HOME before it knows about ZDOTDIR.
+: "${XDG_CONFIG_HOME:=$HOME/.config}"
+: "${ZDOTDIR:=$XDG_CONFIG_HOME/zsh}"
+export XDG_CONFIG_HOME ZDOTDIR
+
+if [[ -r "$ZDOTDIR/.zshenv" && "$ZDOTDIR/.zshenv" != "$HOME/.zshenv" ]]; then
+  source "$ZDOTDIR/.zshenv"
+fi

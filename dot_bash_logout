@@ -1,0 +1,6 @@
+# Home-level bash logout bootstrap.
+: "${XDG_CONFIG_HOME:=$HOME/.config}"
+
+if [[ -r "$XDG_CONFIG_HOME/bash/logout" ]]; then
+  . "$XDG_CONFIG_HOME/bash/logout"
+fi

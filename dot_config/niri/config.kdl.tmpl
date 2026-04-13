@@ -52,11 +52,11 @@ input {
         // scroll-method "no-scroll"
     }
 
-    trackpoint {
+    trackball {
         // off
         // natural-scroll
-        // accel-speed 0.2
-        // accel-profile "flat"
+        accel-speed -0.9
+        accel-profile "adaptive"
         // scroll-method "on-button-down"
         // scroll-button 273
         // scroll-button-lock
@@ -123,7 +123,12 @@ output "HDMI-A-2" {
     transform "normal"
     position x=0 y=0
 }
-
+output "HDMI-A-1" {
+    mode "1920x1200@60"
+    scale 1
+    transform "normal"
+    position x=2000 y=2880
+}
 output "DP-3" {
     mode "3440x1440@174.963"
     scale 1
@@ -179,7 +184,7 @@ layout {
     // preset-window-heights { }
 
     // You can change the default width of the new windows.
-    default-column-width { proportion 0.5; }
+    default-column-width { proportion 0.25; }
     // If you leave the brackets empty, the windows themselves will decide their initial width.
     // default-column-width {}
 
@@ -208,7 +213,8 @@ layout {
         // - CSS-like notation: "rgb(255, 127, 0)", rgba(), hsl() and a few others.
 
         // Color of the ring on the active monitor.
-        active-color "#7fc8ff20"
+        active-color "#7fc8ff30"
+        // active-color "#cba6f750"
 
         // Color of the ring on inactive monitors.
         //
@@ -238,8 +244,9 @@ layout {
         // If you enable the border, you probably want to disable the focus ring.
         off
 
-        width 4
-        active-color "#89b4fa80"
+        width 3
+        // active-color "#89b4fa90"
+        active-color "#cba6f720"
         inactive-color "#505050"
 
         // Color of the border around windows that request your attention.
@@ -290,6 +297,7 @@ layout {
         color "#0007"
     }
 
+
     // Struts shrink the area occupied by windows, similarly to layer-shell panels.
     // You can think of them as a kind of outer gaps. They are set in logical pixels.
     // Left and right struts will cause the next window to the side to always be visible.
@@ -311,7 +319,8 @@ layout {
 // This line starts waybar, a commonly used bar for Wayland compositors.
 spawn-sh-at-startup "vicinae server"
 spawn-sh-at-startup "awww-daemon"
-spawn-sh-at-startup "~/.cargo/bin/ashell"
+// spawn-sh-at-startup "walker --gapplication-service"
+spawn-sh-at-startup "{{ .chezmoi.homeDir }}/.local/bin/niri-launch-eww"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
@@ -360,7 +369,35 @@ window-rule {
     match app-id=r#"^org\.wezfurlong\.wezterm$"#
     default-column-width {}
 }
+// Eww bar popup terminals
+window-rule {
+    match app-id=r#"^com\.eww\.nmtui$"#
+    open-floating true
+    default-column-width { fixed 600; }
+    default-window-height { fixed 500; }
+    default-floating-position x=-40 y=40 relative-to="top-right"
+}
+window-rule {
+    match app-id=r#"^com\.eww\.bluetui$"#
+    open-floating true
+    default-column-width { fixed 700; }
+    default-window-height { fixed 500; }
+    default-floating-position x=-40 y=40 relative-to="top-right"
+}
 
+window-rule {
+    match app-id=r#"^kitty$"#
+    default-column-width { proportion 0.25; }
+    background-effect {
+        blur true
+    }
+}
+window-rule {
+    match app-id=r#"^equibop$"#
+    background-effect {
+        blur true
+    }
+}
 // Open the Firefox picture-in-picture player as floating by default.
 window-rule {
     // This app-id regular expression will work for both:
@@ -421,7 +458,8 @@ binds {
     Mod+Space repeat=false { spawn "vicinae" "toggle"; }
     Mod+E hotkey-overlay-title="Open a File Manager: yazi" { spawn "kitty" "-e" "yazi"; }
     // Mod+W hotkey-overlay-title="Open Brave: brave" { spawn "brave" "--ozone-platform=x11" "--new-window"; }
-    Mod+W hotkey-overlay-title="Open Zen Browser: zen-browser" { spawn "zen-browser" "--new-window"; }
+    // Mod+W hotkey-overlay-title="Open Browser: Zen" { spawn "zen-browser" "--new-window"; }
+    Mod+W hotkey-overlay-title="Open Browser: Glide" { spawn "glide-bin" "--new-window"; }
     Mod+X hotkey-overlay-title="Open Obsidian" { spawn "obsidian"; }
     Ctrl+Tab repeat=false hotkey-overlay-title="Open Task Manager: btop" { spawn "kitty" "-e" "btop"; }
 
@@ -429,8 +467,8 @@ binds {
     // Note: the entire command goes as a single argument. It's passed verbatim to `sh -c`.
     // For example, this is a standard bind to toggle the screen reader (orca).
     Super+Alt+S allow-when-locked=true hotkey-overlay-title=null { spawn-sh "pkill orca || exec orca"; }
-    Mod+Alt+D repeat=false hotkey-overlay-title="Speech-to-text: whispers" { spawn "{{ .chezmoi.homeDir }}/.cargo/bin/whispers"; }
-    Mod+Alt+V repeat=false hotkey-overlay-title="Speech-to-text: whispers voice" { spawn "{{ .chezmoi.homeDir }}/.cargo/bin/whispers" "voice"; }
+    Mod+Alt+D repeat=false hotkey-overlay-title="Speech-to-text: whispers" { spawn "whispers"; }
+    Mod+Alt+V repeat=false hotkey-overlay-title="Speech-to-text: whispers voice" { spawn "whispers" "voice"; }
 
     // Volume and brightness
     XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "-l" "1" "@DEFAULT_AUDIO_SINK@" "5%+"; }
@@ -652,12 +690,15 @@ binds {
     // Mod+Space       { switch-layout "next"; }
     // Mod+Shift+Space { switch-layout "prev"; }
 
-    Print { spawn "hyprshot" "-m" "region" "-z"; }
-    Ctrl+Print { spawn "hyprshot" "--mode" "output" "--mode" "active" "-z"; }
-    Alt+Print { spawn "hyprshot" "--mode" "window" "--mode" "active" "-z"; }
-    Mod+Ctrl+S repeat=false { spawn-sh "dir=\"{{ .chezmoi.homeDir }}/Pictures/Screenshots/Snippets\"; f=\"$USER@$HOSTNAME-$(date +%Y-%m-%d_%H:%M:%S)-$(niri msg focused-window | grep 'App ID' | awk '{print $NF}').png\"; mkdir -p \"$dir\"; niri msg action screenshot --show-pointer true --path \"$dir/$f\""; }
-    Mod+Ctrl+Shift+S repeat=false { spawn "{{ .chezmoi.homeDir }}/.config/niri/region-record-toggle.sh"; }
-    Mod+Ctrl+C repeat=false { spawn "{{ .chezmoi.homeDir }}/.cargo/bin/zoop"; }
+    // Print { spawn "snappers" "area"; }
+    // Ctrl+Print { spawn "snappers" "screen"; }
+    // Alt+Print { spawn "hyprshot" "--mode" "window" "--mode" "active" "-z"; }
+    // Mod+Ctrl+S repeat=false { spawn-sh "dir=\"{{ .chezmoi.homeDir }}/Pictures/Screenshots/Snippets\"; user=$(id -un 2>/dev/null || printf '%s' \"${USER:-unknown-user}\"); host=$(uname -n 2>/dev/null || cat /etc/hostname 2>/dev/null || printf '%s' \"${HOSTNAME:-unknown-host}\"); app=$(niri msg focused-window | awk -F'\"' '/App ID:/ {print $2; exit}'); [ -n \"$app\" ] || app=unknown; f=\"$user@$host-$(date +%Y-%m-%d_%H:%M:%S)-$app.png\"; mkdir -p \"$dir\"; snappers area --path \"$dir/$f\""; }
+    // Mod+Ctrl+Shift+S repeat=false { spawn "{{ .chezmoi.homeDir }}/.config/niri/snappers-record-toggle.sh"; }
+    Mod+Ctrl+C repeat=false { spawn "zoop"; }
+
+    Mod+Ctrl+S { screenshot; }
+
 
     // Applications such as remote-desktop clients and software KVM switches may
     // request that niri stops processing the keyboard shortcuts defined here
@@ -669,9 +710,9 @@ binds {
     // which ensures niri always processes them, even when an inhibitor is active.
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
-    // The quit action will show a confirmation dialog to avoid accidental exits.
-    Mod+Shift+Ctrl+M { quit; }
-    Ctrl+Alt+Delete { quit; }
+    // The built-in quit confirmation isn't reliably accepting Enter here.
+    Mod+Shift+Ctrl+M { spawn "niri" "msg" "action" "quit" "--skip-confirmation"; }
+    Ctrl+Alt+Delete { spawn "niri" "msg" "action" "quit" "--skip-confirmation"; }
 
     // Powers off the monitors. To turn them back on, do any input like
     // moving the mouse or pressing any other key.

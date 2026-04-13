@@ -4,7 +4,7 @@ layout {
           plugin location="zjstatus" {
              format_left   "#[fg=#89b4fa]#[bg=#89b4fa,fg=#1e1e2e,bold] #[fg=#89b4fa,bg=#1e1e2e,bold]{mode}#[bg=#181926]{tabs}"
                       format_center "{pipe_zjstatus_hints}"
-                      format_right  "#[fg=#89b4fa]#[bg=#89b4fa,fg=#1e2030,bold] #[bg=#181926,fg=#89b4fa,bold] {session}#[bg=#181926,fg=#181926,bold]" // bg=#181926,
+                      format_right  "#[fg=#89b4fa]#[bg=#89b4fa,fg=#1e2030,bold] #[bg=#181926,fg=#89b4fa,bold] {session}#[bg=#181926,fg=#181926,bold]#[fg=#181926]" // bg=#181926,
                       format_space  ""
                       format_hide_on_overlength "true"
                       format_precedence "crl"

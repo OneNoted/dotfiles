@@ -4,9 +4,18 @@ position = "Top"
 app_launcher_cmd = "vicinae toggle"
 
 [modules]
-left = [ [ "appLauncher", "Updates", "Workspaces" ] ]
-center = [ "WindowTitle" ]
-right = [ "SystemInfo", [ "Tray", "Notifications", "Tempo", "Privacy", "Settings" ] ]
+left = [["appLauncher", "Updates", "Workspaces"]]
+center = ["WindowTitle"]
+right = [
+  "SystemInfo",
+  [
+    "Tray",
+    "Notifications",
+    "Tempo",
+    "Privacy",
+    "Settings",
+  ],
+]
 
 [notifications]
 max_notifications = 50
@@ -30,7 +39,7 @@ truncate_title_after_length = 100
 
 [settings]
 lock_cmd = "playerctl --all-players pause; hyprlock &"
-logout_cmd = "niri msg action quit"
+logout_cmd = "niri msg action quit --skip-confirmation"
 shutdown_cmd = "shutdown now"
 reboot_cmd = "systemctl reboot"
 suspend_cmd = "systemctl suspend"
@@ -63,8 +72,8 @@ style = "Islands"
 primary_color = "#7aa2f7"
 success_color = "#9ece6a"
 text_color = "#a9b1d6"
-workspace_colors = [ "#7aa2f7", "#9ece6a" ]
-special_workspace_colors = [ "#7aa2f7", "#9ece6a" ]
+workspace_colors = ["#7aa2f7", "#9ece6a"]
+special_workspace_colors = ["#7aa2f7", "#9ece6a"]
 
 [appearance.menu]
 opacity = 0.75

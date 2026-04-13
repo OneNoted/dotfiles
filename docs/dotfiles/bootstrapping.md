@@ -21,6 +21,24 @@ bash bootstrap/nvim.sh --install
 
 Package data lives in `bootstrap/packages.toml`.
 
+## Niri Under Greetd
+
+Arch's packaged `/usr/bin/niri-session` currently calls
+`systemctl --user import-environment` without a variable list. systemd
+deprecated that form because it imports the entire shell environment, including
+session-local noise like `PWD` and `TERM=linux`, into the user manager.
+
+This repo ships a managed replacement at `~/.local/bin/niri-session` that keeps
+the upstream startup flow but only forwards a curated set of session variables
+to systemd and D-Bus.
+
+If the host uses `greetd` with `tuigreet`, point the session command at the
+managed wrapper instead of `/bin/niri-session`, for example:
+
+```toml
+command = "tuigreet --cmd /home/<user>/.local/bin/niri-session"
+```
+
 ## Validation
 
 Run strict local checks before committing:

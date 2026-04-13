@@ -1,0 +1,113 @@
+#!/bin/sh
+
+# Keep the upstream niri-session control flow, but avoid importing the entire
+# shell environment into the user manager. systemd deprecated the no-argument
+# form because it leaks shell-local variables like PWD and TERM=linux into GUI
+# services.
+collect_session_env() {
+	for var in \
+		HOME LOGNAME USER SHELL \
+		LANG LC_ALL LC_COLLATE LC_CTYPE LC_MESSAGES LC_MONETARY LC_NUMERIC LC_TIME \
+		LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT LC_IDENTIFICATION \
+		SSH_AUTH_SOCK \
+		XDG_RUNTIME_DIR XDG_SESSION_CLASS XDG_SESSION_DESKTOP XDG_SESSION_ID \
+		XDG_SESSION_TYPE XDG_CURRENT_DESKTOP DESKTOP_SESSION XDG_SEAT XDG_VTNR \
+		XCURSOR_THEME XCURSOR_SIZE \
+		GTK_USE_PORTAL \
+		QT_QPA_PLATFORMTHEME QT_QUICK_CONTROLS_STYLE QT_QUICK_CONTROLS_MATERIAL_THEME; do
+		eval "[ \"\${$var+x}\" = x ]" || continue
+		printf '%s ' "$var"
+	done
+}
+
+# Keep the imported session identity aligned with the compositor we are
+# launching so portal/backend selection does not inherit stale desktop IDs.
+normalize_session_identity() {
+	XDG_CURRENT_DESKTOP=niri
+	XDG_SESSION_DESKTOP=niri
+	DESKTOP_SESSION=niri
+	export XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP DESKTOP_SESSION
+}
+
+: "${GTK_USE_PORTAL:=1}"
+export GTK_USE_PORTAL
+normalize_session_identity
+
+# Detect if being run as a user service, which implies external session
+# management, and exec compositor directly.
+if [ -n "${MANAGERPID:-}" ] && [ "${SYSTEMD_EXEC_PID:-}" = "$$" ]; then
+	case "$(ps -p "$MANAGERPID" -o cmd=)" in
+	*systemd*--user*)
+		exec niri --session
+		;;
+	esac
+fi
+
+if [ -n "$SHELL" ] &&
+	grep -Fxq "$SHELL" /etc/shells &&
+	! (printf '%s\n' "$SHELL" | grep -q "false") &&
+	! (printf '%s\n' "$SHELL" | grep -q "nologin"); then
+	if [ "${1:-}" != "-l" ]; then
+		exec bash -c '
+			shell=$1
+			shift
+			exec -l "$shell" -c "exec \"\$0\" -l \"\$@\"" "$@"
+		' bash "$SHELL" "$0" "$@"
+	else
+		shift
+	fi
+fi
+
+session_env_vars="$(collect_session_env)"
+
+# Try to detect the service manager that is being used.
+if hash systemctl >/dev/null 2>&1; then
+	# Make sure there's no already running session.
+	if systemctl --user -q is-active niri.service; then
+		echo "A niri session is already running."
+		exit 1
+	fi
+
+	# Reset failed state of all user units.
+	systemctl --user reset-failed
+
+	if [ -n "$session_env_vars" ]; then
+		# dbus-update-activation-environment --systemd updates both the D-Bus
+		# activation environment and the systemd user manager.
+		if hash dbus-update-activation-environment 2>/dev/null; then
+			# Intentional word splitting on the whitespace-delimited variable
+			# name list returned by collect_session_env.
+			# shellcheck disable=SC2086
+			dbus-update-activation-environment --systemd $session_env_vars
+		else
+			# shellcheck disable=SC2086
+			systemctl --user import-environment $session_env_vars
+		fi
+	fi
+
+	# Start niri and wait for it to terminate.
+	systemctl --user --wait start niri.service
+
+	# Force stop of graphical-session.target.
+	systemctl --user start --job-mode=replace-irreversibly niri-shutdown.target
+
+	# Unset environment that we've set.
+	systemctl --user unset-environment WAYLAND_DISPLAY DISPLAY XDG_SESSION_TYPE XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP DESKTOP_SESSION NIRI_SOCKET
+elif hash dinitctl >/dev/null 2>&1; then
+	# Check that the user dinit daemon is running.
+	if ! pgrep -u "$(id -u)" dinit >/dev/null 2>&1; then
+		echo "dinit user daemon is not running."
+		exit 1
+	fi
+
+	# Make sure there's no already running session.
+	if dinitctl --user is-started niri >/dev/null 2>&1; then
+		echo "A niri session is already running."
+		exit 1
+	fi
+
+	# Start niri.
+	dinitctl --user start niri
+else
+	echo "No systemd or dinit detected, please use niri --session instead."
+fi

@@ -1,0 +1,8 @@
+# XDG-managed bash login config.
+if [[ -r "${XDG_CONFIG_HOME:-$HOME/.config}/bash/bashenv" ]]; then
+  . "${XDG_CONFIG_HOME:-$HOME/.config}/bash/bashenv"
+fi
+
+if [[ -r "${XDG_CONFIG_HOME:-$HOME/.config}/bash/bashrc" ]]; then
+  . "${XDG_CONFIG_HOME:-$HOME/.config}/bash/bashrc"
+fi

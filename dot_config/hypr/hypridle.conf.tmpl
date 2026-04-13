@@ -1,0 +1,21 @@
+$lock_cmd = pidof hyprlock || hyprlock
+$display_power_cmd = {{ .chezmoi.homeDir }}/.config/hypr/display-power.sh
+
+general {
+    lock_cmd = $lock_cmd
+    before_sleep_cmd = $lock_cmd
+    after_sleep_cmd = $display_power_cmd on
+    ignore_dbus_inhibit = false
+    ignore_systemd_inhibit = false
+}
+
+listener {
+    timeout = 1800
+    on-timeout = $lock_cmd
+}
+
+listener {
+    timeout = 3600
+    on-timeout = $display_power_cmd off
+    on-resume = $display_power_cmd on
+}

@@ -1,29 +1,43 @@
 [[mgr.prepend_keymap]]
+on = ["g", "a"]
+run = "cd sftp://asteria"
+desc = "Go to Asteria"
+
+[[mgr.prepend_keymap]]
 on = ["<BackTab>"]
 run = "tab_switch 1 --relative"
 desc = "Switch to the next tab"
 
+[[mgr.prepend_keymap]]
+on = ["z"]
+run = "plugin television"
+desc = "Jump to a file with television"
+
+[[mgr.prepend_keymap]]
+on = ["Z"]
+run = "plugin television -- zoxide"
+desc = "Jump to a directory with zoxide + television"
+
 # dedukun/bookmarks keybinds
 [[mgr.prepend_keymap]]
-on = [ "m" ]
+on = ["m"]
 run = "plugin bookmarks save"
 desc = "Save current position as a bookmark"
 
 [[mgr.prepend_keymap]]
-on = [ "'" ]
+on = ["'"]
 run = "plugin bookmarks jump"
 desc = "Jump to a bookmark"
 
 [[mgr.prepend_keymap]]
-on = [ "b", "d" ]
+on = ["b", "d"]
 run = "plugin bookmarks delete"
 desc = "Delete a bookmark"
 
 [[mgr.prepend_keymap]]
-on = [ "b", "D" ]
+on = ["b", "D"]
 run = "plugin bookmarks delete_all"
 desc = "Delete all bookmarks"
-
 
 
 [[mgr.prepend_keymap]]

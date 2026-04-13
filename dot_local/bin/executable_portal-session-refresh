@@ -1,0 +1,38 @@
+#!/bin/sh
+
+set -eu
+
+collect_session_env() {
+	for var in \
+		WAYLAND_DISPLAY DISPLAY NIRI_SOCKET HYPRLAND_INSTANCE_SIGNATURE \
+		XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP DESKTOP_SESSION \
+		GTK_USE_PORTAL \
+		QT_QPA_PLATFORMTHEME QT_QUICK_CONTROLS_STYLE QT_QUICK_CONTROLS_MATERIAL_THEME; do
+		eval "[ \"\${$var+x}\" = x ]" || continue
+		printf '%s ' "$var"
+	done
+}
+
+session_env_vars="$(collect_session_env)"
+
+if [ -n "$session_env_vars" ]; then
+	if command -v dbus-update-activation-environment >/dev/null 2>&1; then
+		# Intentional word splitting on the whitespace-delimited variable names.
+		# shellcheck disable=SC2086
+		dbus-update-activation-environment --systemd $session_env_vars
+	else
+		# Intentional word splitting on the whitespace-delimited variable names.
+		# shellcheck disable=SC2086
+		systemctl --user import-environment $session_env_vars
+	fi
+fi
+
+for unit in \
+	xdg-desktop-portal-termfilechooser.service \
+	xdg-desktop-portal-gtk.service \
+	xdg-desktop-portal-wlr.service \
+	xdg-desktop-portal-hyprland.service \
+	xdg-desktop-portal.service; do
+	systemctl --user reset-failed "$unit" >/dev/null 2>&1 || true
+	systemctl --user restart "$unit" >/dev/null 2>&1 || true
+done

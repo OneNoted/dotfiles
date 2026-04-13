@@ -6,13 +6,17 @@
 ~/.config/fish/completions/paru.fish
 {{- end }}
 
+# ~/.config/nvim is synced by the nvim profile switcher, not directly by chezmoi.
+.config/nvim
+.config/nvim/**
+~/.config/nvim
+~/.config/nvim/**
+
 {{- if eq .chezmoi.hostname "nixos" }}
 # Ignore all by default if on NixOS
 **
 # Unignore following (why do I even bother making comments at this point)
 !.config/
-!.config/nvim/
-!.config/nvim/**
 !.config/fish/
 !.config/fish/**
 !.config/shared/
