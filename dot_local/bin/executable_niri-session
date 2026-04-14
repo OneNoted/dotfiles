@@ -30,6 +30,9 @@ normalize_session_identity() {
 }
 
 : "${GTK_USE_PORTAL:=1}"
+: "${XCURSOR_THEME:=BreezeX-RosePine-Linux}"
+: "${XCURSOR_SIZE:=24}"
+export XCURSOR_THEME XCURSOR_SIZE
 export GTK_USE_PORTAL
 normalize_session_identity
 

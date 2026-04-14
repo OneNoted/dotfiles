@@ -33,11 +33,22 @@ the upstream startup flow but only forwards a curated set of session variables
 to systemd and D-Bus.
 
 If the host uses `greetd` with `tuigreet`, point the session command at the
-managed wrapper instead of `/bin/niri-session`, for example:
+managed wrapper instead of the packaged `/usr/bin/niri-session`, for example:
 
 ```toml
 command = "tuigreet --cmd /home/<user>/.local/bin/niri-session"
 ```
+
+If the host already points greetd at `/usr/local/bin/niri-session`, keep that
+path stable but bridge it back to the managed wrapper:
+
+```sh
+sudo ~/.local/bin/niri-session-install-system-bridge
+```
+
+That installs a tiny `/usr/local/bin/niri-session` launcher that delegates to
+the current user's `~/.local/bin/niri-session`, so session environment fixes in
+chezmoi keep applying without hand-editing root-owned files after each change.
 
 ## Validation
 
