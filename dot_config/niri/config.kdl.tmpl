@@ -477,6 +477,8 @@ binds {
     // Note: the entire command goes as a single argument. It's passed verbatim to `sh -c`.
     // For example, this is a standard bind to toggle the screen reader (orca).
     Super+Alt+S allow-when-locked=true hotkey-overlay-title=null { spawn-sh "pkill orca || exec orca"; }
+    // Restart Quickshell using the same kill-and-relaunch pattern used in Hyprland setups.
+    Mod+Ctrl+Alt+R repeat=false hotkey-overlay-title="Restart Quickshell" { spawn-sh "killall qs quickshell >/dev/null 2>&1 || true; qs >/dev/null 2>&1 &"; }
     Mod+Alt+D repeat=false hotkey-overlay-title="Speech-to-text: whispers" { spawn "whispers"; }
     Mod+Alt+V repeat=false hotkey-overlay-title="Speech-to-text: whispers voice" { spawn "whispers" "voice"; }
 
