@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -eu
+
+selection="$(
+	tv sesh-picker || true
+)"
+
+[ -n "$selection" ] || exit 0
+
+kitty --detach sh -lc '
+	exec sesh connect "$1"
+' sh "$selection"

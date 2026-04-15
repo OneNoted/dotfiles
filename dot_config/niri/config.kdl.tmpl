@@ -418,6 +418,14 @@ window-rule {
     max-height 1000
     default-floating-position x=0 y=60 relative-to="top"
 }
+window-rule {
+    match app-id=r#"^niri-sesh-picker$"#
+    open-floating true
+    default-column-width { proportion 0.60; }
+    default-window-height { proportion 0.60; }
+    max-width 1600
+    max-height 1100
+}
 
 // Example: block out two password managers from screen capture.
 // (This example rule is commented out with a "/-" in front.)
@@ -457,6 +465,7 @@ binds {
     Mod+Return allow-inhibiting=false repeat=false hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
     Mod+T allow-inhibiting=false repeat=false hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
     Mod+Space repeat=false { spawn "vicinae" "toggle"; }
+    Mod+S repeat=false hotkey-overlay-title="Pick a tmux session" { spawn "kitty" "--class" "niri-sesh-picker" "{{ .chezmoi.homeDir }}/.local/bin/niri-tmux-session-picker"; }
     Mod+E hotkey-overlay-title="Open a File Manager: yazi" { spawn "kitty" "-e" "yazi"; }
     // Mod+W hotkey-overlay-title="Open Brave: brave" { spawn "brave" "--ozone-platform=x11" "--new-window"; }
     // Mod+W hotkey-overlay-title="Open Browser: Zen" { spawn "zen-browser" "--new-window"; }
