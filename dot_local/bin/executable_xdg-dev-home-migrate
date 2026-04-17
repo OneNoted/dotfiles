@@ -15,6 +15,7 @@ NPM_CONFIG_CACHE="${NPM_CONFIG_CACHE:-$XDG_CACHE_HOME/npm}"
 NPM_CONFIG_PREFIX="${NPM_CONFIG_PREFIX:-$XDG_DATA_HOME/npm}"
 PUB_CACHE="${PUB_CACHE:-$XDG_DATA_HOME/pub-cache}"
 DOCKER_CONFIG="${DOCKER_CONFIG:-$XDG_CONFIG_HOME/docker}"
+PI_CODING_AGENT_DIR="${PI_CODING_AGENT_DIR:-$XDG_CONFIG_HOME/pi/agent}"
 
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP_ROOT="$XDG_STATE_HOME/xdg-dev-home-migrate/backups/$TIMESTAMP"
@@ -58,6 +59,7 @@ ensure_targets() {
     "$NPM_CONFIG_PREFIX" \
     "$PUB_CACHE" \
     "$DOCKER_CONFIG" \
+    "$PI_CODING_AGENT_DIR" \
     "$(dirname "$NPM_CONFIG_USERCONFIG")" \
     "$XDG_STATE_HOME/xdg-dev-home-migrate/backups"
 }
@@ -100,6 +102,22 @@ migrate_dir() {
   printf 'Backed up %-10s to %s\n' "$(basename "$source")" "$backup_path"
 }
 
+cleanup_empty_pi_root() {
+  local pi_root="$HOME/.pi"
+
+  if [[ ! -d "$pi_root" ]]; then
+    return 0
+  fi
+
+  if find "$pi_root" -mindepth 1 -print -quit | grep -q .; then
+    printf 'Keep %-16s %s (not empty)\n' "pi root" "$pi_root"
+    return 0
+  fi
+
+  rmdir "$pi_root"
+  printf 'Removed empty %-6s %s\n' "pi root" "$pi_root"
+}
+
 print_smoke_tests() {
   cat <<EOF
 
@@ -115,6 +133,7 @@ Before deleting any backup, start a fresh login shell or session and verify:
   npm config get cache
   npm prefix -g
   docker --config "$DOCKER_CONFIG" version
+  printf '%s\n' "$PI_CODING_AGENT_DIR"
 
 If all checks pass and the old top-level dotdirs stay gone after a normal
 session restart, you can remove the backup directory above.
@@ -138,6 +157,7 @@ EOF
   print_mapping "$HOME/.npm" "$NPM_CONFIG_CACHE" "npm cache"
   print_mapping "$HOME/.pub-cache" "$PUB_CACHE" "Pub cache"
   print_mapping "$HOME/.docker" "$DOCKER_CONFIG" "Docker config"
+  print_mapping "$HOME/.pi/agent" "$PI_CODING_AGENT_DIR" "pi agent"
 
   cat <<EOF
 
@@ -166,6 +186,8 @@ main() {
       migrate_dir "$HOME/.npm" "$NPM_CONFIG_CACHE" "npm cache"
       migrate_dir "$HOME/.pub-cache" "$PUB_CACHE" "Pub cache"
       migrate_dir "$HOME/.docker" "$DOCKER_CONFIG" "Docker config"
+      migrate_dir "$HOME/.pi/agent" "$PI_CODING_AGENT_DIR" "pi agent"
+      cleanup_empty_pi_root
       print_smoke_tests
       ;;
     -h|--help)

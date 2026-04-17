@@ -36,6 +36,7 @@ $env.PUB_CACHE = ($env.PUB_CACHE? | default ($env.XDG_DATA_HOME | path join "pub
 $env.DOCKER_CONFIG = ($env.DOCKER_CONFIG? | default ($env.XDG_CONFIG_HOME | path join "docker"))
 $env.EMACSDIR = ($env.EMACSDIR? | default ($env.XDG_CONFIG_HOME | path join "emacs"))
 $env.DOOMDIR = ($env.DOOMDIR? | default ($env.XDG_CONFIG_HOME | path join "doom"))
+$env.PI_CODING_AGENT_DIR = ($env.PI_CODING_AGENT_DIR? | default ($env.XDG_CONFIG_HOME | path join "pi" "agent"))
 $env.DOOMPROFILE = ($env.DOOMPROFILE? | default "default")
 
 for entry in [
