@@ -716,6 +716,13 @@ do -- {{{1
 			{ name = "nvim_lsp" },
 			{ name = "mini_snippets" },
 		}
+		local function nightly_cmp_confirm(fallback)
+			if cmp.visible() then
+				cmp.confirm({ select = true })
+			else
+				fallback()
+			end
+		end
 
 		cmp.setup({
 			snippet = {
@@ -737,7 +744,9 @@ do -- {{{1
 				["<C-f>"] = cmp.mapping.scroll_docs(4),
 				["<C-Space>"] = cmp.mapping.complete(),
 				["<C-e>"] = cmp.mapping.abort(),
-				["<CR>"] = cmp.mapping.confirm({ select = true }),
+				["<CR>"] = cmp.mapping(nightly_cmp_confirm, { "i", "s" }),
+				["<NL>"] = cmp.mapping(nightly_cmp_confirm, { "i", "s" }),
+				["<kEnter>"] = cmp.mapping(nightly_cmp_confirm, { "i", "s" }),
 				["<Tab>"] = cmp.mapping(function(fallback)
 					if has_copilot_suggestion and copilot_suggestion.is_visible() then
 						copilot_suggestion.accept()
@@ -1027,6 +1036,10 @@ require("yazi").setup({ -- {{{1
 ------------------------------------------------------------
 require("oil").setup({ -- {{{1
 	default_file_explorer = true,
+	keymaps = {
+		["<NL>"] = "actions.select",
+		["<kEnter>"] = "actions.select",
+	},
 })
 -- oil.nvim }}}
 
@@ -1205,15 +1218,30 @@ vim.keymap.set("n", "gy", function()
 end, { desc = "Goto Type Definition" })
 
 -- Enter aliases for terminals and keyboards that don't send plain <CR>.
-vim.keymap.set("i", "<NL>", "v:lua.MiniPairs.cr()", {
+local function nightly_insert_enter()
+	local ok, cmp = pcall(require, "cmp")
+	if ok and cmp.visible() then
+		cmp.confirm({ select = true })
+		return ""
+	end
+
+	return MiniPairs.cr()
+end
+
+vim.keymap.set("i", "<CR>", nightly_insert_enter, {
 	expr = true,
 	replace_keycodes = false,
-	desc = "MiniPairs <NL>",
+	desc = "Confirm completion or insert newline",
 })
-vim.keymap.set("i", "<kEnter>", "v:lua.MiniPairs.cr()", {
+vim.keymap.set("i", "<NL>", nightly_insert_enter, {
 	expr = true,
 	replace_keycodes = false,
-	desc = "MiniPairs <kEnter>",
+	desc = "Confirm completion or insert newline",
+})
+vim.keymap.set("i", "<kEnter>", nightly_insert_enter, {
+	expr = true,
+	replace_keycodes = false,
+	desc = "Confirm completion or insert newline",
 })
 
 vim.keymap.set({ "n", "x", "o" }, "s", function()
