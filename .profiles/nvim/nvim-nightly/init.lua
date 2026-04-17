@@ -583,6 +583,21 @@ do -- {{{1
 		}, opts or {})
 	end
 
+	-- Keep one insert-mode Enter owner: completion first, then MiniPairs.
+	local function nightly_insert_enter()
+		local ok_cmp, cmp = pcall(require, "cmp")
+		if ok_cmp and cmp.visible() then
+			cmp.confirm({ select = true })
+			return ""
+		end
+
+		if _G.MiniPairs and type(MiniPairs.cr) == "function" then
+			return MiniPairs.cr()
+		end
+
+		return vim.api.nvim_replace_termcodes("<CR>", true, false, true)
+	end
+
 	-- Text editing
 	ai.setup({
 		n_lines = 500,
@@ -610,6 +625,21 @@ do -- {{{1
 		},
 	})
 	require("mini.operators").setup()
+	vim.keymap.set("i", "<CR>", nightly_insert_enter, {
+		expr = true,
+		replace_keycodes = false,
+		desc = "Confirm completion or insert newline",
+	})
+	vim.keymap.set("i", "<NL>", nightly_insert_enter, {
+		expr = true,
+		replace_keycodes = false,
+		desc = "Confirm completion or insert newline",
+	})
+	vim.keymap.set("i", "<kEnter>", nightly_insert_enter, {
+		expr = true,
+		replace_keycodes = false,
+		desc = "Confirm completion or insert newline",
+	})
 	require("mini.pairs").setup({
 		modes = { insert = true, command = false, terminal = false },
 		mappings = {
@@ -716,13 +746,6 @@ do -- {{{1
 			{ name = "nvim_lsp" },
 			{ name = "mini_snippets" },
 		}
-		local function nightly_cmp_confirm(fallback)
-			if cmp.visible() then
-				cmp.confirm({ select = true })
-			else
-				fallback()
-			end
-		end
 
 		cmp.setup({
 			snippet = {
@@ -744,9 +767,6 @@ do -- {{{1
 				["<C-f>"] = cmp.mapping.scroll_docs(4),
 				["<C-Space>"] = cmp.mapping.complete(),
 				["<C-e>"] = cmp.mapping.abort(),
-				["<CR>"] = cmp.mapping(nightly_cmp_confirm, { "i", "s" }),
-				["<NL>"] = cmp.mapping(nightly_cmp_confirm, { "i", "s" }),
-				["<kEnter>"] = cmp.mapping(nightly_cmp_confirm, { "i", "s" }),
 				["<Tab>"] = cmp.mapping(function(fallback)
 					if has_copilot_suggestion and copilot_suggestion.is_visible() then
 						copilot_suggestion.accept()
@@ -1216,33 +1236,6 @@ end, { desc = "Goto Implementation" })
 vim.keymap.set("n", "gy", function()
 	require("snacks").picker.lsp_type_definitions()
 end, { desc = "Goto Type Definition" })
-
--- Enter aliases for terminals and keyboards that don't send plain <CR>.
-local function nightly_insert_enter()
-	local ok, cmp = pcall(require, "cmp")
-	if ok and cmp.visible() then
-		cmp.confirm({ select = true })
-		return ""
-	end
-
-	return MiniPairs.cr()
-end
-
-vim.keymap.set("i", "<CR>", nightly_insert_enter, {
-	expr = true,
-	replace_keycodes = false,
-	desc = "Confirm completion or insert newline",
-})
-vim.keymap.set("i", "<NL>", nightly_insert_enter, {
-	expr = true,
-	replace_keycodes = false,
-	desc = "Confirm completion or insert newline",
-})
-vim.keymap.set("i", "<kEnter>", nightly_insert_enter, {
-	expr = true,
-	replace_keycodes = false,
-	desc = "Confirm completion or insert newline",
-})
 
 vim.keymap.set({ "n", "x", "o" }, "s", function()
 	require("flash").jump()

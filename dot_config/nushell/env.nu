@@ -34,6 +34,7 @@ $env.NPM_CONFIG_CACHE = ($env.NPM_CONFIG_CACHE? | default ($env.XDG_CACHE_HOME |
 $env.NPM_CONFIG_PREFIX = ($env.NPM_CONFIG_PREFIX? | default ($env.XDG_DATA_HOME | path join "npm"))
 $env.PUB_CACHE = ($env.PUB_CACHE? | default ($env.XDG_DATA_HOME | path join "pub-cache"))
 $env.DOCKER_CONFIG = ($env.DOCKER_CONFIG? | default ($env.XDG_CONFIG_HOME | path join "docker"))
+$env.FORGE_CONFIG = ($env.FORGE_CONFIG? | default ($env.XDG_CONFIG_HOME | path join "forge"))
 $env.EMACSDIR = ($env.EMACSDIR? | default ($env.XDG_CONFIG_HOME | path join "emacs"))
 $env.DOOMDIR = ($env.DOOMDIR? | default ($env.XDG_CONFIG_HOME | path join "doom"))
 $env.PI_CODING_AGENT_DIR = ($env.PI_CODING_AGENT_DIR? | default ($env.XDG_CONFIG_HOME | path join "pi" "agent"))

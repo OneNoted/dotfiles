@@ -29,9 +29,16 @@ $env.config.show_banner = false
 source ~/.config/shared/shell-core.nu
 
 # Initialize
+mkdir ($nu.data-dir | path join "vendor/autoload")
+tv init nu | save -f ($nu.data-dir | path join "vendor/autoload/tv.nu")
 
 # Zoxide
 source ~/.config/nushell/inits/.zoxide.nu
+# Starship
 source ~/.config/nushell/inits/starship.nu
+# Carapace
 source ~/.config/nushell/inits/carapace.nu
+# Atuin
 source ~/.config/nushell/inits/atuin.nu
+
+
