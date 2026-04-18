@@ -20,6 +20,7 @@
 # General
 
 $env.config.buffer_editor = "nvim"
+$env.config.edit_mode = "vi"
 
 # Appearance
 source ~/.config/nushell/themes/catppuccin_mocha.nu
@@ -32,6 +33,36 @@ source ~/.config/shared/shell-core.nu
 mkdir ($nu.data-dir | path join "vendor/autoload")
 tv init nu | save -f ($nu.data-dir | path join "vendor/autoload/tv.nu")
 
+def --env tv_sesh [] {
+    if (which tv | is-empty) {
+        return
+    }
+
+    if not $nu.is-interactive {
+        ^tv sesh
+        return
+    }
+
+    let command_buffer = (commandline)
+    commandline edit --replace ""
+    ^tv sesh
+    commandline edit --replace $command_buffer
+    commandline set-cursor --end
+}
+
+$env.config.keybindings = ($env.config.keybindings | append [
+    {
+        name: open_tv_sesh
+        modifier: control
+        keycode: char_s
+        mode: [emacs vi_insert vi_normal]
+        event: {
+            send: ExecuteHostCommand
+            cmd: "tv_sesh"
+        }
+    }
+])
+
 # Zoxide
 source ~/.config/nushell/inits/.zoxide.nu
 # Starship
@@ -40,5 +71,3 @@ source ~/.config/nushell/inits/starship.nu
 source ~/.config/nushell/inits/carapace.nu
 # Atuin
 source ~/.config/nushell/inits/atuin.nu
-
-
