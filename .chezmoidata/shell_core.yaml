@@ -60,7 +60,3 @@ aliases:
       value: eza -aT --color=always --group-directories-first --icons
     - name: l.
       value: "eza -a | grep -e '^\\.'"
-
-  nu:
-    - name: ls
-      value: eza --icons --all
