@@ -82,5 +82,5 @@ if (which starship | length) > 0 {
 
 # Atuin
 if (which atuin | length) > 0 {
-    atuin init nu | save -f ($inits_dir | path join "atuin.nu")
+    atuin init nu --disable-up-arrow | save -f ($inits_dir | path join "atuin.nu")
 }

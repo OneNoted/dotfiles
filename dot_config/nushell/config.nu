@@ -50,6 +50,22 @@ def --env tv_sesh [] {
     commandline set-cursor --end
 }
 
+def --env tv_atuin_shell_history [] {
+    if (which tv | is-empty) or (which atuin | is-empty) {
+        return
+    }
+
+    let line = (commandline)
+    let cursor = (commandline get-cursor)
+    let prompt = ($line | str substring 0..$cursor)
+    let output = (tv atuin-history --no-status-bar --inline --input $prompt | str trim)
+
+    if ($output | is-not-empty) {
+        commandline edit --replace $output
+        commandline set-cursor --end
+    }
+}
+
 $env.config.keybindings = ($env.config.keybindings | append [
     {
         name: open_tv_sesh
@@ -71,3 +87,20 @@ source ~/.config/nushell/inits/starship.nu
 source ~/.config/nushell/inits/carapace.nu
 # Atuin
 source ~/.config/nushell/inits/atuin.nu
+
+$env.config.keybindings = (
+    $env.config.keybindings
+    | where {|binding| ($binding.name? | default "") not-in ["tv_history", "atuin"] }
+    | append [
+        {
+            name: tv_atuin_history
+            modifier: control
+            keycode: char_r
+            mode: [emacs vi_insert vi_normal]
+            event: {
+                send: ExecuteHostCommand
+                cmd: "tv_atuin_shell_history"
+            }
+        }
+    ]
+)
