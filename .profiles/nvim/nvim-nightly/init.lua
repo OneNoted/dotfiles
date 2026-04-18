@@ -91,6 +91,7 @@ do -- {{{1
 
 		-- LSP
 		gh("neovim/nvim-lspconfig"),
+		gh("b0o/SchemaStore.nvim"),
 
 		-- Chezmoi
 		gh("alker0/chezmoi.vim"),
@@ -566,6 +567,47 @@ do -- {{{1
 	end
 end
 -- Treesitter }}}
+
+------------------------------------------------------------
+-- LSP
+------------------------------------------------------------
+do -- {{{1
+	local mason_bin_dir = vim.fn.stdpath("data") .. "/mason/bin"
+	local jsonls_bin = mason_bin_dir .. "/vscode-json-language-server"
+	if vim.fn.executable("vscode-json-language-server") == 0 and vim.fn.executable(jsonls_bin) == 1 then
+		vim.env.PATH = mason_bin_dir .. ":" .. vim.env.PATH
+	end
+
+	local capabilities = vim.lsp.protocol.make_client_capabilities()
+	local ok_cmp_lsp, cmp_lsp = pcall(require, "cmp_nvim_lsp")
+	if ok_cmp_lsp then
+		capabilities = vim.tbl_deep_extend("force", capabilities, cmp_lsp.default_capabilities())
+	end
+
+	local json_schemas = {}
+	local ok_schemastore, schemastore = pcall(require, "schemastore")
+	if ok_schemastore then
+		json_schemas = schemastore.json.schemas()
+	end
+
+	vim.lsp.config("jsonls", {
+		capabilities = capabilities,
+		cmd = { "vscode-json-language-server", "--stdio" },
+		filetypes = { "json", "jsonc" },
+		init_options = {
+			provideFormatter = true,
+		},
+		settings = {
+			json = {
+				schemas = json_schemas,
+				validate = { enable = true },
+			},
+		},
+	})
+
+	vim.lsp.enable("jsonls")
+end
+-- LSP }}}
 
 ------------------------------------------------------------
 -- Mini Plugins
