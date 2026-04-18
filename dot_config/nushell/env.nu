@@ -57,17 +57,11 @@ if not ($inits_dir | path exists) {
     mkdir $inits_dir
 }
 
-for file in [".zoxide.nu", "starship.nu", "carapace.nu", "atuin.nu"] {
+for file in [".zoxide.nu", "starship.nu", "atuin.nu"] {
     let init_file = ($inits_dir | path join $file)
     if not ($init_file | path exists) {
         "" | save -f $init_file
     }
-}
-
-# Carapace
-$env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense' # optional
-if (which carapace | length) > 0 {
-    carapace _carapace nushell | save --force ($inits_dir | path join "carapace.nu")
 }
 
 # Zoxide
