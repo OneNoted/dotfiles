@@ -10,8 +10,6 @@ aliases:
   core:
     - name: cd
       value: z
-    - name: find
-      value: fd
     - name: vim
       value: nvim
     - name: vi

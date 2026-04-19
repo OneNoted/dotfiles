@@ -6,7 +6,6 @@ $env.VISUAL = "nvim"
 $env.SUDO_EDITOR = "nvim"
 
 alias cd = z
-alias find = fd
 alias vim = nvim
 alias vi = nvim
 alias yay = paru
