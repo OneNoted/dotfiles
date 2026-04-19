@@ -110,6 +110,17 @@ type ClearCookiesResult = {
 	removed: number;
 };
 
+type MeasureTabMemoryResult =
+	| {
+			bytes: number;
+			label: string;
+			status: "available";
+	  }
+	| {
+			reason: string;
+			status: "unsupported";
+	  };
+
 async function notify(title: string, message: string): Promise<void> {
 	try {
 		await browser.notifications.create({
@@ -162,6 +173,91 @@ async function clearCookiesForUrl(url: URL, cookieStoreId: string | undefined): 
 	);
 
 	return { errors, removed };
+}
+
+function formatBytes(bytes: number): string {
+	if (!Number.isFinite(bytes) || bytes < 0) {
+		return `${bytes} B`;
+	}
+
+	const units = ["B", "KiB", "MiB", "GiB", "TiB"];
+	let value = bytes;
+	let unitIndex = 0;
+
+	while (value >= 1024 && unitIndex < units.length - 1) {
+		value /= 1024;
+		unitIndex += 1;
+	}
+
+	const digits = value >= 100 || unitIndex === 0 ? 0 : value >= 10 ? 1 : 2;
+
+	return `${value.toFixed(digits)} ${units[unitIndex]}`;
+}
+
+function getTabDisplayName(tab: { pendingUrl?: string | null; title?: string | null; url?: string | null }): string {
+	if (tab.title && tab.title.trim().length > 0) {
+		return tab.title.trim();
+	}
+
+	const rawUrl = tab.url ?? tab.pendingUrl;
+
+	if (!rawUrl) {
+		return "this tab";
+	}
+
+	try {
+		return new URL(rawUrl).hostname || rawUrl;
+	} catch {
+		return rawUrl;
+	}
+}
+
+async function measureTabMemoryInPage(): Promise<MeasureTabMemoryResult> {
+	type PerformanceWithMemory = Performance & {
+		memory?: {
+			usedJSHeapSize?: number;
+		};
+		measureUserAgentSpecificMemory?: () => Promise<{ bytes: number }>;
+	};
+
+	const performanceWithMemory = performance as PerformanceWithMemory;
+
+	if (typeof performanceWithMemory.measureUserAgentSpecificMemory === "function") {
+		if (!crossOriginIsolated) {
+			return {
+				reason: "Detailed page memory requires a cross-origin-isolated page",
+				status: "unsupported",
+			};
+		}
+
+		try {
+			const result = await performanceWithMemory.measureUserAgentSpecificMemory();
+
+			return {
+				bytes: result.bytes,
+				label: "page memory",
+				status: "available",
+			};
+		} catch (error) {
+			return {
+				reason: error instanceof Error ? error.message : String(error),
+				status: "unsupported",
+			};
+		}
+	}
+
+	if (typeof performanceWithMemory.memory?.usedJSHeapSize === "number") {
+		return {
+			bytes: performanceWithMemory.memory.usedJSHeapSize,
+			label: "JS heap",
+			status: "available",
+		};
+	}
+
+	return {
+		reason: "This page does not expose per-tab memory metrics to extensions",
+		status: "unsupported",
+	};
 }
 
 async function clearOriginStorageInPage(): Promise<ClearPageStorageResult> {
@@ -347,6 +443,88 @@ async function clearActivePageStorage(tabId: number): Promise<void> {
 	}
 }
 
+async function openTabMemoryDiagnostics(tabId: number): Promise<void> {
+	const sourceTab = await browser.tabs.get(tabId).catch(() => undefined);
+
+	await browser.tabs.create({
+		...(typeof sourceTab?.index === "number" ? { index: sourceTab.index + 1 } : {}),
+		...(typeof sourceTab?.windowId === "number" ? { windowId: sourceTab.windowId } : {}),
+		url: "about:processes",
+	});
+}
+
+async function inspectTabMemory(tabId: number): Promise<void> {
+	try {
+		const tab = await browser.tabs.get(tabId);
+		const rawUrl = tab.url ?? tab.pendingUrl;
+		const displayName = getTabDisplayName(tab);
+
+		if (!rawUrl) {
+			await openTabMemoryDiagnostics(tabId);
+			await notify("Glide", `Opened about:processes to inspect memory for ${displayName}.`);
+			return;
+		}
+
+		let url: URL | undefined;
+
+		try {
+			url = new URL(rawUrl);
+		} catch {
+			url = undefined;
+		}
+
+		if (!url || (url.protocol !== "http:" && url.protocol !== "https:")) {
+			await openTabMemoryDiagnostics(tabId);
+			await notify(
+				"Glide",
+				`Opened about:processes for ${displayName}. Direct tab memory only works on http(s) pages.`,
+			);
+			return;
+		}
+
+		const injectionResults = await browser.scripting.executeScript({
+			target: { tabId },
+			world: "MAIN",
+			func: measureTabMemoryInPage,
+		});
+		const injectionResult = injectionResults[0];
+
+		if (!injectionResult) {
+			throw new Error("Memory inspection script did not return any frame results");
+		}
+
+		if (injectionResult.error) {
+			throw injectionResult.error;
+		}
+
+		const memoryResult = injectionResult.result as MeasureTabMemoryResult | undefined;
+
+		if (memoryResult?.status === "available") {
+			await notify("Glide", `${displayName}: ${formatBytes(memoryResult.bytes)} of ${memoryResult.label}.`);
+			return;
+		}
+
+		await openTabMemoryDiagnostics(tabId);
+		await notify(
+			"Glide",
+			`${displayName}: ${memoryResult?.reason ?? "Direct page memory is unavailable"}. Opened about:processes.`,
+		);
+	} catch (error) {
+		console.error("Failed to inspect tab memory:", error);
+
+		try {
+			await openTabMemoryDiagnostics(tabId);
+		} catch (openError) {
+			console.error("Failed to open about:processes after memory inspection error:", openError);
+		}
+
+		await notify(
+			"Glide",
+			`Failed to inspect tab memory: ${error instanceof Error ? error.message : String(error)}`,
+		);
+	}
+}
+
 async function openGithubProfile(tabId: number): Promise<void> {
 	try {
 		await browser.tabs.update(tabId, {
@@ -378,4 +556,13 @@ glide.keymaps.set(
 		void clearActivePageStorage(tab_id);
 	},
 	{ description: "Clear storage for the active page" },
+);
+
+glide.keymaps.set(
+	"normal",
+	"<leader>tm",
+	({ tab_id }) => {
+		void inspectTabMemory(tab_id);
+	},
+	{ description: "Inspect memory for the active tab" },
 );
