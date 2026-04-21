@@ -15,7 +15,7 @@ input {
             // For more information, see xkeyboard-config(7).
 
             // For example:
-            // layout "us,ru"
+            layout "us,se"
             // options "grp:win_space_toggle,compose:ralt,ctrl:nocaps"
 
             // If this section is empty, niri will fetch xkb settings
@@ -393,7 +393,15 @@ window-rule {
     }
 }
 window-rule {
+    match app-id=r#"^ghostty$"#
+    default-column-width { proportion 0.25; }
+    background-effect {
+        blur true
+    }
+}
+window-rule {
     match app-id=r#"^equibop$"#
+    default-column-width { proportion 0.50; }
     background-effect {
         blur true
     }
@@ -457,6 +465,7 @@ binds {
     Mod+T allow-inhibiting=false repeat=false hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
     Mod+Space repeat=false { spawn "vicinae" "toggle"; }
     Mod+E hotkey-overlay-title="Open a File Manager: yazi" { spawn "kitty" "-e" "yazi"; }
+    Mod+Alt+T { switch-layout "next"; }
     // Mod+W hotkey-overlay-title="Open Brave: brave" { spawn "brave" "--ozone-platform=x11" "--new-window"; }
     // Mod+W hotkey-overlay-title="Open Browser: Zen" { spawn "zen-browser" "--new-window"; }
     Mod+W hotkey-overlay-title="Open Browser: Glide" { spawn "glide-bin" "--new-window"; }
@@ -666,8 +675,8 @@ binds {
     // * adjust width as a percentage of screen width: "-10%" or "+10%"
     // Pixel sizes use logical, or scaled, pixels. I.e. on an output with scale 2.0,
     // set-column-width "100" will make the column occupy 200 physical screen pixels.
-    Mod+Minus { set-column-width "-10%"; }
-    Mod+Equal { set-column-width "+10%"; }
+    Mod+Minus { set-column-width "-5%"; }
+    Mod+Equal { set-column-width "+5%"; }
 
     // Finer height adjustments when in column with other windows.
     Mod+Shift+Minus { set-window-height "-10%"; }
