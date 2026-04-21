@@ -16,11 +16,6 @@
     "moduleDetection": "force",
     "allowJs": true,
     "noEmit": true,
-    /**
-     * Recommended type checking rules.
-     *
-     * Feel free to modify these.
-     */
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
