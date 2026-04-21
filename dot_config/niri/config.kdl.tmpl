@@ -465,7 +465,7 @@ binds {
     Mod+T allow-inhibiting=false repeat=false hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
     Mod+Space repeat=false { spawn "vicinae" "toggle"; }
     Mod+E hotkey-overlay-title="Open a File Manager: yazi" { spawn "kitty" "-e" "yazi"; }
-    Mod+Alt+T { spawn "sh" "-c" "niri msg action switch-layout next"; }
+    Mod+Alt+T { switch-layout "next"; }
     // Mod+W hotkey-overlay-title="Open Brave: brave" { spawn "brave" "--ozone-platform=x11" "--new-window"; }
     // Mod+W hotkey-overlay-title="Open Browser: Zen" { spawn "zen-browser" "--new-window"; }
     Mod+W hotkey-overlay-title="Open Browser: Glide" { spawn "glide-bin" "--new-window"; }
