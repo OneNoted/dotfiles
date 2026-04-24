@@ -1,0 +1,7 @@
+[services.asteria]
+type = "sftp"
+host = "asteria"
+
+[services.astraea]
+type = "sftp"
+host = "astraea"
