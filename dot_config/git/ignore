@@ -1,0 +1,65 @@
+# Tool files
+.cursorrules
+.cursorignore
+.cursor/
+.aider*
+.copilot/
+.github/copilot-instructions.md
+.windsurf/
+.codeium/
+.continue/
+.omx/
+.planning
+plan.md
+.env
+.playwright/*
+.playwright/
+.playwright-cli/*
+.playwright-cli/
+.playwright-mcp/*
+.playwright-mcp/
+.playwright
+.playwright-cli
+.playwright-mcp
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Editors / IDEs
+*.swp
+*.swo
+.*.sw?
+.idea/
+*.sublime-workspace
+*.sublime-project
+.vscode/
+.netrwhist
+.nvimlog
+
+# Tags
+tags
+TAGS
+!tags/
+
+# Build artifacts
+target/
+
+# Misc
+*.orig

@@ -472,7 +472,7 @@ binds {
     Mod+Return allow-inhibiting=false repeat=false hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
     Mod+T allow-inhibiting=false repeat=false hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
     Mod+Space repeat=false { spawn "vicinae" "toggle"; }
-    Mod+S repeat=false hotkey-overlay-title="Pick a tmux session" { spawn "kitty" "--class" "sesh-picker" "-e" "tv" "sesh"; }
+    Mod+S repeat=false hotkey-overlay-title="Pick a tmux session" { spawn "kitty" "--class" "sesh-picker" "-e" "sesh-picker-terminal"; }
     Mod+E hotkey-overlay-title="Open a File Manager: yazi" { spawn "kitty" "-e" "yazi"; }
     Mod+Alt+T { switch-layout "next"; }
     // Mod+W hotkey-overlay-title="Open Brave: brave" { spawn "brave" "--ozone-platform=x11" "--new-window"; }
