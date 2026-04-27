@@ -1,6 +1,6 @@
-# dotfiles
+# Bedrock Linux dotfiles
 
-Arch/Hyprland/Niri dotfiles, managed with [chezmoi](https://www.chezmoi.io/) and templated for multi-host deployment.
+Bedrock Linux dotfiles with an Arch stratum as the primary userland, managed with [chezmoi](https://www.chezmoi.io/) and templated for multi-host deployment.
 
 <!-- TODO: Add a screenshot of the rice here -->
 > Screenshot coming soon
@@ -28,6 +28,8 @@ chezmoi init OneNoted/dotfiles
 chezmoi apply
 ```
 
+The primary target is a Bedrock Linux system where the `arch` stratum owns most desktop and developer tooling. Run the bootstrap from that primary stratum so package availability and follow-on docs line up with the expected userland.
+
 You'll be prompted for an Atuin sync server address during init — leave empty if not self-hosting.
 
 ## Neovim Profiles
@@ -36,7 +38,7 @@ Neovim profile selection is persisted in chezmoi data as `nvim_profile`. Use `nv
 
 ## Docs
 
-- [Bootstrapping](docs/dotfiles/bootstrapping.md) — Arch package install, validation
+- [Bootstrapping](docs/dotfiles/bootstrapping.md) — Bedrock bootstrap, Arch stratum package install, validation
 - [Customization](docs/dotfiles/customization.md) — host conditionals, monitors, shell choice
 - [Structure](docs/dotfiles/structure.md) — directory layout, feature notes
 

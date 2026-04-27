@@ -23,3 +23,4 @@ dot_config/yazi/plugins/restore.yazi/
 
 # Machine-specific configs
 dot_config/hypr/monitors.conf
+.omx/

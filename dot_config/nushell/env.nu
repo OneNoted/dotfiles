@@ -84,6 +84,7 @@ $env.MISE_CACHE_DIR = ($env.MISE_CACHE_DIR? | default ($env.XDG_CACHE_HOME | pat
 $env.MISE_STATE_DIR = ($env.MISE_STATE_DIR? | default ($env.XDG_STATE_HOME | path join "mise"))
 $env.STARSHIP_CONFIG = ($env.STARSHIP_CONFIG? | default ($env.XDG_CONFIG_HOME | path join "starship.toml"))
 $env.STARSHIP_CACHE = ($env.STARSHIP_CACHE? | default ($env.XDG_CACHE_HOME | path join "starship"))
+$env.FORGE_CONFIG = ($env.FORGE_CONFIG? | default ($env.XDG_CONFIG_HOME | path join "forge"))
 $env.EMACSDIR = ($env.EMACSDIR? | default ($env.XDG_CONFIG_HOME | path join "emacs"))
 $env.DOOMDIR = ($env.DOOMDIR? | default ($env.XDG_CONFIG_HOME | path join "doom"))
 $env.DOOMPROFILE = ($env.DOOMPROFILE? | default "default")
@@ -106,17 +107,11 @@ if not ($inits_dir | path exists) {
     mkdir $inits_dir
 }
 
-for file in [".zoxide.nu", "starship.nu", "carapace.nu", "atuin.nu"] {
+for file in [".zoxide.nu", "starship.nu", "atuin.nu"] {
     let init_file = ($inits_dir | path join $file)
     if not ($init_file | path exists) {
         "" | save -f $init_file
     }
-}
-
-# Carapace
-$env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense' # optional
-if (which carapace | length) > 0 {
-    carapace _carapace nushell | save --force ($inits_dir | path join "carapace.nu")
 }
 
 # Zoxide
@@ -131,5 +126,5 @@ if (which starship | length) > 0 {
 
 # Atuin
 if (which atuin | length) > 0 {
-    atuin init nu | save -f ($inits_dir | path join "atuin.nu")
+    atuin init nu --disable-up-arrow | save -f ($inits_dir | path join "atuin.nu")
 }

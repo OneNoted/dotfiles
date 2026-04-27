@@ -1,0 +1,42 @@
+#!/bin/sh
+
+set -eu
+
+target_path="${1:-/usr/local/bin/niri-session}"
+target_dir="$(dirname -- "$target_path")"
+
+if { [ -e "$target_path" ] && [ ! -w "$target_path" ]; } || { [ ! -e "$target_path" ] && [ ! -w "$target_dir" ]; }; then
+	echo "Cannot write $target_path. Re-run this installer with sudo." >&2
+	exit 1
+fi
+
+tmp_file="$(mktemp)"
+trap 'rm -f "$tmp_file"' EXIT
+
+cat >"$tmp_file" <<'EOF'
+#!/bin/sh
+
+set -eu
+
+managed_wrapper="${HOME:-}"
+if [ -n "$managed_wrapper" ]; then
+	managed_wrapper="$managed_wrapper/.local/bin/niri-session"
+fi
+
+if [ -n "${USER:-}" ] && [ ! -x "${managed_wrapper:-}" ] && command -v getent >/dev/null 2>&1; then
+	user_home="$(getent passwd "$USER" | cut -d: -f6)"
+	if [ -n "$user_home" ]; then
+		managed_wrapper="$user_home/.local/bin/niri-session"
+	fi
+fi
+
+if [ ! -x "${managed_wrapper:-}" ]; then
+	echo "Managed wrapper not found: ${managed_wrapper:-<unset>}" >&2
+	echo "Expected the chezmoi-managed session wrapper at ~/.local/bin/niri-session." >&2
+	exit 1
+fi
+
+exec "$managed_wrapper" "$@"
+EOF
+
+install -m 0755 "$tmp_file" "$target_path"
