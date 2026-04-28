@@ -1,5 +1,7 @@
 [Service]
 ExecStart=
+Environment=XCURSOR_THEME=BreezeX-RosePine-Linux
+Environment=XCURSOR_SIZE=24
 {{ if eq .chezmoi.hostname "aeolus" -}}
 ExecStart=%h/.local/share/cargo/bin/niri --session -- %h/.local/bin/portal-session-refresh
 {{ else -}}
