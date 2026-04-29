@@ -525,6 +525,641 @@ async function inspectTabMemory(tabId: number): Promise<void> {
 	}
 }
 
+function installGmailMarkdownPasteContentScript(): void {
+	type TableAlignment = "center" | "left" | "right";
+
+	type HtmlToken = {
+		html: string;
+		token: string;
+	};
+
+	const globalState = window as Window & {
+		__glideGmailMarkdownPasteInstalled?: boolean;
+	};
+
+	if (globalState.__glideGmailMarkdownPasteInstalled) {
+		return;
+	}
+
+	globalState.__glideGmailMarkdownPasteInstalled = true;
+
+	const emailTextStyle =
+		"font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.5; color: #202124;";
+	const paragraphStyle = "margin: 0 0 12px;";
+	const listStyle = "margin: 0 0 12px 24px; padding: 0;";
+	const listItemStyle = "margin: 0 0 6px;";
+	const blockquoteStyle =
+		"margin: 0 0 12px; padding: 8px 0 8px 14px; border-left: 4px solid #dadce0; color: #3c4043;";
+	const inlineCodeStyle =
+		"font-family: Consolas, Monaco, 'Liberation Mono', monospace; font-size: 0.95em; background: #f1f3f4; border-radius: 3px; padding: 1px 4px;";
+	const codeBlockStyle =
+		"font-family: Consolas, Monaco, 'Liberation Mono', monospace; font-size: 13px; line-height: 1.45; background: #f8f9fa; border: 1px solid #dadce0; border-radius: 6px; margin: 0 0 12px; padding: 10px 12px; white-space: pre-wrap;";
+	const tableStyle = "border-collapse: collapse; margin: 0 0 14px; width: 100%;";
+	const tableHeaderStyle =
+		"border: 1px solid #dadce0; background: #f8f9fa; font-weight: 700; padding: 6px 8px; vertical-align: top;";
+	const tableCellStyle = "border: 1px solid #dadce0; padding: 6px 8px; vertical-align: top;";
+
+	function escapeHtml(value: string): string {
+		return value.replace(/[&<>]/g, (character) => {
+			if (character === "&") {
+				return "&amp;";
+			}
+
+			if (character === "<") {
+				return "&lt;";
+			}
+
+			return "&gt;";
+		});
+	}
+
+	function escapeAttribute(value: string): string {
+		return escapeHtml(value).replace(/"/g, "&quot;");
+	}
+
+	function sanitizeUrl(rawUrl: string): string | undefined {
+		const trimmedUrl = rawUrl.trim().replace(/^<|>$/g, "");
+
+		if (!/^(https?:|mailto:|tel:)/i.test(trimmedUrl)) {
+			return undefined;
+		}
+
+		try {
+			const parsedUrl = new URL(trimmedUrl);
+			const allowedProtocols = new Set(["http:", "https:", "mailto:", "tel:"]);
+
+			return allowedProtocols.has(parsedUrl.protocol) ? parsedUrl.href : undefined;
+		} catch {
+			return undefined;
+		}
+	}
+
+	function renderInline(text: string): string {
+		const tokens: HtmlToken[] = [];
+		const createToken = (html: string): string => {
+			const token = `\uE000${tokens.length}\uE001`;
+
+			tokens.push({ html, token });
+			return token;
+		};
+
+		let workingText = text.replace(/`([^`\n]+)`/g, (_match: string, code: string) =>
+			createToken(`<code style="${inlineCodeStyle}">${escapeHtml(code)}</code>`),
+		);
+
+		workingText = workingText.replace(
+			/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g,
+			(match: string, altText: string, url: string) => {
+				const safeUrl = sanitizeUrl(url);
+
+				if (!safeUrl) {
+					return match;
+				}
+
+				const label = altText.trim().length > 0 ? `[image: ${altText.trim()}]` : "[image]";
+
+				return createToken(
+					`<a href="${escapeAttribute(safeUrl)}" style="color: #1155cc; text-decoration: underline;">${escapeHtml(label)}</a>`,
+				);
+			},
+		);
+
+		workingText = workingText.replace(
+			/\[([^\]]+)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g,
+			(match: string, label: string, url: string) => {
+				const safeUrl = sanitizeUrl(url);
+
+				if (!safeUrl) {
+					return label;
+				}
+
+				return createToken(
+					`<a href="${escapeAttribute(safeUrl)}" style="color: #1155cc; text-decoration: underline;">${renderInline(label)}</a>`,
+				);
+			},
+		);
+
+		workingText = escapeHtml(workingText)
+			.replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>")
+			.replace(/__([^_\n]+)__/g, "<strong>$1</strong>")
+			.replace(/~~([^~\n]+)~~/g, "<s>$1</s>")
+			.replace(/(^|[\s([{"'>])\*([^*\n]+)\*(?=$|[\s.,;:!?)}\]"'<])/g, "$1<em>$2</em>")
+			.replace(/(^|[\s([{"'>])_([^_\n]+)_(?=$|[\s.,;:!?)}\]"'<])/g, "$1<em>$2</em>");
+
+		for (const { html, token } of tokens) {
+			workingText = workingText.split(token).join(html);
+		}
+
+		return workingText;
+	}
+
+	function splitTableRow(line: string): string[] {
+		let trimmedLine = line.trim();
+
+		if (trimmedLine.startsWith("|")) {
+			trimmedLine = trimmedLine.slice(1);
+		}
+
+		if (trimmedLine.endsWith("|")) {
+			trimmedLine = trimmedLine.slice(0, -1);
+		}
+
+		const cells: string[] = [];
+		let cell = "";
+		let escaped = false;
+
+		for (const character of trimmedLine) {
+			if (escaped) {
+				cell += character;
+				escaped = false;
+				continue;
+			}
+
+			if (character === "\\") {
+				escaped = true;
+				continue;
+			}
+
+			if (character === "|") {
+				cells.push(cell.trim());
+				cell = "";
+				continue;
+			}
+
+			cell += character;
+		}
+
+		if (escaped) {
+			cell += "\\";
+		}
+
+		cells.push(cell.trim());
+		return cells;
+	}
+
+	function parseAlignment(separatorCell: string): TableAlignment | undefined {
+		const trimmedCell = separatorCell.trim();
+
+		if (!/^:?-{3,}:?$/.test(trimmedCell)) {
+			return undefined;
+		}
+
+		if (trimmedCell.startsWith(":") && trimmedCell.endsWith(":")) {
+			return "center";
+		}
+
+		if (trimmedCell.endsWith(":")) {
+			return "right";
+		}
+
+		return "left";
+	}
+
+	function isTableSeparator(line: string): boolean {
+		const cells = splitTableRow(line);
+
+		return cells.length > 1 && cells.every((cell) => /^:?-{3,}:?$/.test(cell.trim()));
+	}
+
+	function isTableStart(lines: string[], index: number): boolean {
+		const currentLine = lines[index];
+		const nextLine = lines[index + 1];
+
+		return (
+			currentLine !== undefined &&
+			nextLine !== undefined &&
+			currentLine.includes("|") &&
+			isTableSeparator(nextLine)
+		);
+	}
+
+	function renderTable(headers: string[], separator: string, rows: string[][]): string {
+		const alignments = splitTableRow(separator).map(parseAlignment);
+		const headerHtml = headers
+			.map((header, index) => {
+				const alignment = alignments[index];
+				const alignmentStyle = alignment ? ` text-align: ${alignment};` : "";
+
+				return `<th style="${tableHeaderStyle}${alignmentStyle}">${renderInline(header)}</th>`;
+			})
+			.join("");
+		const bodyHtml = rows
+			.map((row) => {
+				const cellsHtml = row
+					.map((cell, index) => {
+						const alignment = alignments[index];
+						const alignmentStyle = alignment ? ` text-align: ${alignment};` : "";
+
+						return `<td style="${tableCellStyle}${alignmentStyle}">${renderInline(cell)}</td>`;
+					})
+					.join("");
+
+				return `<tr>${cellsHtml}</tr>`;
+			})
+			.join("");
+
+		return `<table style="${tableStyle}"><thead><tr>${headerHtml}</tr></thead><tbody>${bodyHtml}</tbody></table>`;
+	}
+
+	function isBlockBoundary(lines: string[], index: number): boolean {
+		const line = lines[index];
+
+		if (line === undefined) {
+			return false;
+		}
+
+		return (
+			/^#{1,6}\s+/.test(line) ||
+			/^```/.test(line) ||
+			/^>\s?/.test(line) ||
+			/^\s*[-*+]\s+/.test(line) ||
+			/^\s*\d+[.)]\s+/.test(line) ||
+			isTableStart(lines, index)
+		);
+	}
+
+	function renderHeading(line: string): string | undefined {
+		const match = line.match(/^(#{1,6})\s+(.+?)\s*#*\s*$/);
+
+		if (!match) {
+			return undefined;
+		}
+
+		const marker = match[1];
+		const headingText = match[2];
+
+		if (marker === undefined || headingText === undefined) {
+			return undefined;
+		}
+
+		const level = Math.min(marker.length, 6);
+		const sizeByLevel = new Map<number, string>([
+			[1, "24px"],
+			[2, "20px"],
+			[3, "17px"],
+			[4, "15px"],
+			[5, "14px"],
+			[6, "13px"],
+		]);
+		const fontSize = sizeByLevel.get(level) ?? "14px";
+		const marginTop = level <= 2 ? "18px" : "14px";
+
+		return `<h${level} style="font-family: Arial, Helvetica, sans-serif; font-size: ${fontSize}; line-height: 1.25; margin: ${marginTop} 0 8px; color: #202124;">${renderInline(headingText)}</h${level}>`;
+	}
+
+	function renderBlocks(markdown: string): string {
+		const lines = markdown.replace(/\r\n?/g, "\n").trim().split("\n");
+		const blocks: string[] = [];
+		let index = 0;
+
+		while (index < lines.length) {
+			const line = lines[index];
+
+			if (line === undefined) {
+				break;
+			}
+
+			if (line.trim().length === 0) {
+				index += 1;
+				continue;
+			}
+
+			if (/^```/.test(line)) {
+				index += 1;
+
+				const codeLines: string[] = [];
+
+				while (index < lines.length) {
+					const codeLine = lines[index];
+
+					if (codeLine === undefined || /^```/.test(codeLine)) {
+						break;
+					}
+
+					codeLines.push(codeLine);
+					index += 1;
+				}
+
+				if (index < lines.length) {
+					index += 1;
+				}
+
+				blocks.push(`<pre style="${codeBlockStyle}"><code>${escapeHtml(codeLines.join("\n"))}</code></pre>`);
+				continue;
+			}
+
+			if (isTableStart(lines, index)) {
+				const headerLine = lines[index];
+				const separatorLine = lines[index + 1];
+
+				if (headerLine === undefined || separatorLine === undefined) {
+					break;
+				}
+
+				const headers = splitTableRow(headerLine);
+				const rows: string[][] = [];
+
+				index += 2;
+
+				while (index < lines.length) {
+					const rowLine = lines[index];
+
+					if (rowLine === undefined || rowLine.trim().length === 0 || !rowLine.includes("|")) {
+						break;
+					}
+
+					rows.push(splitTableRow(rowLine));
+					index += 1;
+				}
+
+				blocks.push(renderTable(headers, separatorLine, rows));
+				continue;
+			}
+
+			const heading = renderHeading(line);
+
+			if (heading) {
+				blocks.push(heading);
+				index += 1;
+				continue;
+			}
+
+			if (/^>\s?/.test(line)) {
+				const quotedLines: string[] = [];
+
+				while (index < lines.length) {
+					const quoteLine = lines[index];
+
+					if (quoteLine === undefined || !/^>\s?/.test(quoteLine)) {
+						break;
+					}
+
+					quotedLines.push(quoteLine.replace(/^>\s?/, ""));
+					index += 1;
+				}
+
+				blocks.push(`<blockquote style="${blockquoteStyle}">${renderBlocks(quotedLines.join("\n"))}</blockquote>`);
+				continue;
+			}
+
+			const unorderedMatch = line.match(/^\s*[-*+]\s+(.+)$/);
+			const orderedMatch = line.match(/^\s*\d+[.)]\s+(.+)$/);
+
+			if (unorderedMatch || orderedMatch) {
+				const ordered = Boolean(orderedMatch);
+				const tagName = ordered ? "ol" : "ul";
+				const listItems: string[] = [];
+
+				while (index < lines.length) {
+					const itemLine = lines[index];
+
+					if (itemLine === undefined) {
+						break;
+					}
+
+					const itemMatch = ordered ? itemLine.match(/^\s*\d+[.)]\s+(.+)$/) : itemLine.match(/^\s*[-*+]\s+(.+)$/);
+					const itemText = itemMatch?.[1];
+
+					if (itemText === undefined) {
+						break;
+					}
+
+					listItems.push(`<li style="${listItemStyle}">${renderInline(itemText)}</li>`);
+					index += 1;
+				}
+
+				blocks.push(`<${tagName} style="${listStyle}">${listItems.join("")}</${tagName}>`);
+				continue;
+			}
+
+			const paragraphLines: string[] = [];
+
+			while (index < lines.length) {
+				const paragraphLine = lines[index];
+
+				if (
+					paragraphLine === undefined ||
+					paragraphLine.trim().length === 0 ||
+					(paragraphLines.length > 0 && isBlockBoundary(lines, index))
+				) {
+					break;
+				}
+
+				paragraphLines.push(paragraphLine.trim());
+				index += 1;
+			}
+
+			if (paragraphLines.length > 0) {
+				blocks.push(`<p style="${paragraphStyle}">${renderInline(paragraphLines.join(" "))}</p>`);
+				continue;
+			}
+
+			index += 1;
+		}
+
+		return blocks.join("");
+	}
+
+	function stripMarkdownPasteMarker(markdown: string): string {
+		return markdown.replace(/^\s*<!--\s*gmail-md\s*-->\s*/i, "");
+	}
+
+	function looksLikeMarkdown(text: string, clipboardTypes: readonly string[]): boolean {
+		const trimmedText = text.trim();
+
+		if (trimmedText.length < 3) {
+			return false;
+		}
+
+		if (/^\s*<!--\s*gmail-md\s*-->/i.test(trimmedText)) {
+			return true;
+		}
+
+		if (clipboardTypes.includes("text/markdown") || clipboardTypes.includes("text/x-markdown")) {
+			return true;
+		}
+
+		if (/^\s*</.test(trimmedText) && /<\/?[a-z][\s>]/i.test(trimmedText.slice(0, 200))) {
+			return false;
+		}
+
+		const lines = trimmedText.split(/\n/);
+		let markdownSignals = 0;
+		const listLineCount = lines.filter((candidateLine) =>
+			/^\s*[-*+]\s+/.test(candidateLine) || /^\s*\d+[.)]\s+/.test(candidateLine)
+		).length;
+
+		if (lines.some((candidateLine, lineIndex) => candidateLine.includes("|") && isTableStart(lines, lineIndex))) {
+			markdownSignals += 3;
+		}
+
+		if (lines.some((candidateLine) => /^#{1,6}\s+/.test(candidateLine))) {
+			markdownSignals += 2;
+		}
+
+		if (listLineCount > 0) {
+			markdownSignals += listLineCount >= 2 ? 2 : 1;
+		}
+
+		if (lines.some((candidateLine) => /^>\s?/.test(candidateLine))) {
+			markdownSignals += 1;
+		}
+
+		if (/```|`[^`\n]+`/.test(trimmedText)) {
+			markdownSignals += 1;
+		}
+
+		if (/\[[^\]]+\]\((?:https?:|mailto:|tel:)[^)]+\)/i.test(trimmedText)) {
+			markdownSignals += 1;
+		}
+
+		if (/(^|[\s([{"'>])(?:\*\*[^*\n]+\*\*|__[^_\n]+__|\*[^*\n]+\*|_[^_\n]+_)(?=$|[\s.,;:!?)}\]"'<])/m.test(trimmedText)) {
+			markdownSignals += 1;
+		}
+
+		return markdownSignals >= 2 || (markdownSignals >= 1 && lines.length >= 3 && trimmedText.includes("\n\n"));
+	}
+
+	function findGmailComposeBody(target: EventTarget | null): HTMLElement | undefined {
+		if (!(target instanceof Element)) {
+			return undefined;
+		}
+
+		const editable = target.closest<HTMLElement>('[contenteditable="true"]');
+
+		if (!editable) {
+			return undefined;
+		}
+
+		const ariaLabel = (editable.getAttribute("aria-label") ?? "").toLowerCase();
+
+		if (ariaLabel.includes("subject")) {
+			return undefined;
+		}
+
+		return editable;
+	}
+
+	function insertHtml(editable: HTMLElement, html: string): void {
+		editable.focus();
+
+		if (document.execCommand("insertHTML", false, html)) {
+			return;
+		}
+
+		const selection = window.getSelection();
+
+		if (!selection || selection.rangeCount === 0) {
+			editable.insertAdjacentHTML("beforeend", html);
+			return;
+		}
+
+		const range = selection.getRangeAt(0);
+
+		if (!editable.contains(range.commonAncestorContainer)) {
+			editable.insertAdjacentHTML("beforeend", html);
+			return;
+		}
+
+		range.deleteContents();
+
+		const template = document.createElement("template");
+
+		template.innerHTML = html;
+
+		const fragment = template.content;
+		const lastChild = fragment.lastChild;
+
+		range.insertNode(fragment);
+
+		if (lastChild) {
+			range.setStartAfter(lastChild);
+			range.collapse(true);
+			selection.removeAllRanges();
+			selection.addRange(range);
+		}
+	}
+
+	document.addEventListener(
+		"paste",
+		(event) => {
+			const editable = findGmailComposeBody(event.target);
+			const clipboardData = event.clipboardData;
+
+			if (!editable || !clipboardData) {
+				return;
+			}
+
+			const markdown = clipboardData.getData("text/plain");
+			const clipboardTypes = Array.from(clipboardData.types);
+
+			if (!looksLikeMarkdown(markdown, clipboardTypes)) {
+				return;
+			}
+
+			const html = `<div style="${emailTextStyle}">${renderBlocks(stripMarkdownPasteMarker(markdown))}</div>`;
+
+			event.preventDefault();
+			event.stopPropagation();
+			insertHtml(editable, html);
+		},
+		true,
+	);
+}
+
+let gmailMarkdownPasteRegistration: Browser.ContentScripts.RegisteredContentScript | undefined;
+
+async function registerGmailMarkdownPasteContentScript(): Promise<void> {
+	if (gmailMarkdownPasteRegistration) {
+		return;
+	}
+
+	try {
+		gmailMarkdownPasteRegistration = await browser.contentScripts.register({
+			allFrames: true,
+			js: [{ code: `(${installGmailMarkdownPasteContentScript.toString()})();` }],
+			matches: ["https://mail.google.com/*"],
+			runAt: "document_idle",
+		});
+	} catch (error) {
+		console.error("Failed to register Gmail Markdown paste content script:", error);
+	}
+}
+
+async function installGmailMarkdownPasteForTab(tabId: number): Promise<void> {
+	try {
+		const tab = await browser.tabs.get(tabId);
+		const rawUrl = tab.url ?? tab.pendingUrl;
+
+		if (!rawUrl) {
+			await notify("Glide", "The active tab does not have a URL yet.");
+			return;
+		}
+
+		const url = new URL(rawUrl);
+
+		if (url.hostname !== "mail.google.com") {
+			await notify("Glide", "Open a Gmail tab before enabling Markdown paste for this tab.");
+			return;
+		}
+
+		await browser.scripting.executeScript({
+			func: installGmailMarkdownPasteContentScript,
+			target: { allFrames: true, tabId },
+		});
+
+		await notify("Glide", "Markdown paste is enabled for this Gmail tab.");
+	} catch (error) {
+		console.error("Failed to install Gmail Markdown paste helper:", error);
+		await notify(
+			"Glide",
+			`Failed to enable Markdown paste: ${error instanceof Error ? error.message : String(error)}`,
+		);
+	}
+}
+
+void registerGmailMarkdownPasteContentScript();
+
 async function openGithubProfile(tabId: number): Promise<void> {
 	try {
 		await browser.tabs.update(tabId, {
@@ -565,4 +1200,13 @@ glide.keymaps.set(
 		void inspectTabMemory(tab_id);
 	},
 	{ description: "Inspect memory for the active tab" },
+);
+
+glide.keymaps.set(
+	"normal",
+	"<leader>gm",
+	({ tab_id }) => {
+		void installGmailMarkdownPasteForTab(tab_id);
+	},
+	{ description: "Enable Gmail Markdown paste helper" },
 );
