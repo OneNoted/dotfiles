@@ -16,7 +16,7 @@ input {
 
             // For example:
             layout "us,se"
-            options "grp:win_space_toggle,compose:ralt,ctrl:nocaps"
+            options "grp:alt_space_toggle,compose:ralt,ctrl:nocaps"
 
             // If this section is empty, niri will fetch xkb settings
             // from org.freedesktop.locale1. You can control these using
@@ -434,6 +434,13 @@ window-rule {
     default-window-height { proportion 0.60; }
     max-width 1600
     max-height 1100
+}
+
+// Keep Steam auxiliary windows out of the main tiling layout.
+window-rule {
+    match app-id=r#"(?i)^steam$"# title=r#"(?i)(friends|chat|news|settings|screenshot uploader|add a game|special offers|steam guard|notification)"#
+    open-floating true
+    default-floating-position x=-40 y=-40 relative-to="bottom-right"
 }
 
 // Example: block out two password managers from screen capture.
