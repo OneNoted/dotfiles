@@ -1,5 +1,7 @@
-mkdir ($nu.data-dir | path join "vendor/autoload")
-tv init nu | save -f ($nu.data-dir | path join "vendor/autoload/tv.nu")
+if (which tv | length) > 0 {
+    mkdir ($nu.data-dir | path join "vendor/autoload")
+    tv init nu | save -f ($nu.data-dir | path join "vendor/autoload/tv.nu")
+}
 
 source ~/.config/nushell/inits/.zoxide.nu
 source ~/.config/nushell/inits/starship.nu
