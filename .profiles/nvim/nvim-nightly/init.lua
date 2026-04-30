@@ -91,6 +91,7 @@ do -- {{{1
 
 		-- LSP
 		gh("neovim/nvim-lspconfig"),
+		gh("b0o/SchemaStore.nvim"),
 
 		-- Chezmoi
 		gh("alker0/chezmoi.vim"),
@@ -568,6 +569,47 @@ end
 -- Treesitter }}}
 
 ------------------------------------------------------------
+-- LSP
+------------------------------------------------------------
+do -- {{{1
+	local mason_bin_dir = vim.fn.stdpath("data") .. "/mason/bin"
+	local jsonls_bin = mason_bin_dir .. "/vscode-json-language-server"
+	if vim.fn.executable("vscode-json-language-server") == 0 and vim.fn.executable(jsonls_bin) == 1 then
+		vim.env.PATH = mason_bin_dir .. ":" .. vim.env.PATH
+	end
+
+	local capabilities = vim.lsp.protocol.make_client_capabilities()
+	local ok_cmp_lsp, cmp_lsp = pcall(require, "cmp_nvim_lsp")
+	if ok_cmp_lsp then
+		capabilities = vim.tbl_deep_extend("force", capabilities, cmp_lsp.default_capabilities())
+	end
+
+	local json_schemas = {}
+	local ok_schemastore, schemastore = pcall(require, "schemastore")
+	if ok_schemastore then
+		json_schemas = schemastore.json.schemas()
+	end
+
+	vim.lsp.config("jsonls", {
+		capabilities = capabilities,
+		cmd = { "vscode-json-language-server", "--stdio" },
+		filetypes = { "json", "jsonc" },
+		init_options = {
+			provideFormatter = true,
+		},
+		settings = {
+			json = {
+				schemas = json_schemas,
+				validate = { enable = true },
+			},
+		},
+	})
+
+	vim.lsp.enable("jsonls")
+end
+-- LSP }}}
+
+------------------------------------------------------------
 -- Mini Plugins
 ------------------------------------------------------------
 do -- {{{1
@@ -581,6 +623,21 @@ do -- {{{1
 			pair = pair,
 			neigh_pattern = neigh_pattern,
 		}, opts or {})
+	end
+
+	-- Keep one insert-mode Enter owner: completion first, then MiniPairs.
+	local function nightly_insert_enter()
+		local ok_cmp, cmp = pcall(require, "cmp")
+		if ok_cmp and cmp.visible() then
+			cmp.confirm({ select = true })
+			return ""
+		end
+
+		if _G.MiniPairs and type(MiniPairs.cr) == "function" then
+			return MiniPairs.cr()
+		end
+
+		return vim.api.nvim_replace_termcodes("<CR>", true, false, true)
 	end
 
 	-- Text editing
@@ -610,6 +667,21 @@ do -- {{{1
 		},
 	})
 	require("mini.operators").setup()
+	vim.keymap.set("i", "<CR>", nightly_insert_enter, {
+		expr = true,
+		replace_keycodes = false,
+		desc = "Confirm completion or insert newline",
+	})
+	vim.keymap.set("i", "<NL>", nightly_insert_enter, {
+		expr = true,
+		replace_keycodes = false,
+		desc = "Confirm completion or insert newline",
+	})
+	vim.keymap.set("i", "<kEnter>", nightly_insert_enter, {
+		expr = true,
+		replace_keycodes = false,
+		desc = "Confirm completion or insert newline",
+	})
 	require("mini.pairs").setup({
 		modes = { insert = true, command = false, terminal = false },
 		mappings = {
@@ -737,7 +809,6 @@ do -- {{{1
 				["<C-f>"] = cmp.mapping.scroll_docs(4),
 				["<C-Space>"] = cmp.mapping.complete(),
 				["<C-e>"] = cmp.mapping.abort(),
-				["<CR>"] = cmp.mapping.confirm({ select = true }),
 				["<Tab>"] = cmp.mapping(function(fallback)
 					if has_copilot_suggestion and copilot_suggestion.is_visible() then
 						copilot_suggestion.accept()
@@ -1027,6 +1098,10 @@ require("yazi").setup({ -- {{{1
 ------------------------------------------------------------
 require("oil").setup({ -- {{{1
 	default_file_explorer = true,
+	keymaps = {
+		["<NL>"] = "actions.select",
+		["<kEnter>"] = "actions.select",
+	},
 })
 -- oil.nvim }}}
 
@@ -1203,18 +1278,6 @@ end, { desc = "Goto Implementation" })
 vim.keymap.set("n", "gy", function()
 	require("snacks").picker.lsp_type_definitions()
 end, { desc = "Goto Type Definition" })
-
--- Enter aliases for terminals and keyboards that don't send plain <CR>.
-vim.keymap.set("i", "<NL>", "v:lua.MiniPairs.cr()", {
-	expr = true,
-	replace_keycodes = false,
-	desc = "MiniPairs <NL>",
-})
-vim.keymap.set("i", "<kEnter>", "v:lua.MiniPairs.cr()", {
-	expr = true,
-	replace_keycodes = false,
-	desc = "MiniPairs <kEnter>",
-})
 
 vim.keymap.set({ "n", "x", "o" }, "s", function()
 	require("flash").jump()

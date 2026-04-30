@@ -1,3 +1,5 @@
+# Added by ForgeCode installer
+export PATH="$HOME/.local/bin:$PATH"
 # Home-level bash interactive bootstrap.
 : "${XDG_CONFIG_HOME:=$HOME/.config}"
 

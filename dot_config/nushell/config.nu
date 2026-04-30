@@ -17,21 +17,7 @@
 # options using:
 #     config nu --doc | nu-highlight | less -R
 
-# General
-
-$env.config.buffer_editor = "nvim"
-
-# Appearance
-source ~/.config/nushell/themes/catppuccin_mocha.nu
-$env.config.show_banner = false
-
-# Shared shell aliases/env vars from chezmoi data
-source ~/.config/shared/shell-core.nu
-
-# Initialize
-
-# Zoxide
-source ~/.config/nushell/inits/.zoxide.nu
-source ~/.config/nushell/inits/starship.nu
-source ~/.config/nushell/inits/carapace.nu
-source ~/.config/nushell/inits/atuin.nu
+source ~/.config/nushell/lib/base.nu
+source ~/.config/nushell/lib/tv.nu
+source ~/.config/nushell/lib/external.nu
+source ~/.config/nushell/lib/keybindings.nu

@@ -1,0 +1,7 @@
+[metadata]
+name = "atuin-history"
+description = "A channel to select from your Atuin shell history"
+requirements = ["atuin", "nu"]
+
+[source]
+command = "nu -c 'do { ^atuin history list --cmd-only --reverse=false } | lines | where {|command| $command not-in [\"tv_shell_history\", \"tv_atuin_shell_history\"] } | uniq | to text'"

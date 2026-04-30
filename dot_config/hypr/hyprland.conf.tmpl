@@ -345,6 +345,9 @@ windowrule = float on, match:class ^(termfilechooser)$
 windowrule = size (monitor_w*0.35) (monitor_h*0.70), match:class ^(termfilechooser)$
 windowrule = max_size 1400 1000, match:class ^(termfilechooser)$
 windowrule = move ((monitor_w-window_w)/2) 60, match:class ^(termfilechooser)$
+windowrule = float on, match:class ^(sesh-picker)$
+windowrule = size (monitor_w*0.60) (monitor_h*0.60), match:class ^(sesh-picker)$
+windowrule = max_size 1600 1100, match:class ^(sesh-picker)$
 
 # Ignore maximize requests from apps. You'll probably like this.
 # windowrule = suppressevent maximize, class:.*

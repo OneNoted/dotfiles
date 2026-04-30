@@ -14,6 +14,7 @@ continuation_prompt = "[▸▹ ](dimmed white)"
 palette = 'catppuccin_mocha'
 
 format = """($nix_shell$container$fill$git_metrics\n)$cmd_duration\
+[]()\
 $shlvl\
 $env_var\
 $jobs\

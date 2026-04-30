@@ -5,6 +5,7 @@ XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+FORGE_CONFIG="${FORGE_CONFIG:-$XDG_CONFIG_HOME/forge}"
 
 CARGO_HOME="${CARGO_HOME:-$XDG_DATA_HOME/cargo}"
 RUSTUP_HOME="${RUSTUP_HOME:-$XDG_DATA_HOME/rustup}"
@@ -20,7 +21,7 @@ TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP_ROOT="$XDG_STATE_HOME/xdg-dev-home-migrate/backups/$TIMESTAMP"
 
 usage() {
-  cat <<'EOF'
+	cat <<'EOF'
 Usage:
   xdg-dev-home-migrate --plan
   xdg-dev-home-migrate --migrate
@@ -33,75 +34,76 @@ EOF
 }
 
 ensure_prereqs() {
-  if ! command -v rsync >/dev/null 2>&1; then
-    printf 'Missing required dependency: rsync\n' >&2
-    exit 1
-  fi
+	if ! command -v rsync >/dev/null 2>&1; then
+		printf 'Missing required dependency: rsync\n' >&2
+		exit 1
+	fi
 }
 
 warn_running_processes() {
-  local matches
-  matches="$(pgrep -af 'cargo|rustup|bun|gradle|npm|node|dart|docker' || true)"
-  if [[ -n "$matches" ]]; then
-    printf 'Warning: these running processes may still be writing to the old homes:\n' >&2
-    printf '%s\n\n' "$matches" >&2
-  fi
+	local matches
+	matches="$(pgrep -af 'cargo|rustup|bun|gradle|npm|node|dart|docker' || true)"
+	if [[ -n "$matches" ]]; then
+		printf 'Warning: these running processes may still be writing to the old homes:\n' >&2
+		printf '%s\n\n' "$matches" >&2
+	fi
 }
 
 ensure_targets() {
-  mkdir -p \
-    "$CARGO_HOME" \
-    "$RUSTUP_HOME" \
-    "$BUN_INSTALL" \
-    "$GRADLE_USER_HOME" \
-    "$NPM_CONFIG_CACHE" \
-    "$NPM_CONFIG_PREFIX" \
-    "$PUB_CACHE" \
-    "$DOCKER_CONFIG" \
-    "$(dirname "$NPM_CONFIG_USERCONFIG")" \
-    "$XDG_STATE_HOME/xdg-dev-home-migrate/backups"
+	mkdir -p \
+		"$CARGO_HOME" \
+		"$RUSTUP_HOME" \
+		"$BUN_INSTALL" \
+		"$GRADLE_USER_HOME" \
+		"$NPM_CONFIG_CACHE" \
+		"$NPM_CONFIG_PREFIX" \
+		"$PUB_CACHE" \
+		"$DOCKER_CONFIG" \
+		"$(dirname "$NPM_CONFIG_USERCONFIG")" \
+		"$XDG_STATE_HOME/xdg-dev-home-migrate/backups" \
+		"$FORGE_CONFIG"
 }
 
 print_mapping() {
-  local source="$1"
-  local target="$2"
-  local label="$3"
-  local status="missing"
+	local source="$1"
+	local target="$2"
+	local label="$3"
+	local status="missing"
 
-  if [[ -d "$source" ]]; then
-    status="pending"
-  fi
+	if [[ -d "$source" ]]; then
+		status="pending"
+	fi
 
-  printf '  %-16s %s -> %s [%s]\n' "$label" "$source" "$target" "$status"
+	printf '  %-16s %s -> %s [%s]\n' "$label" "$source" "$target" "$status"
 }
 
 migrate_dir() {
-  local source="$1"
-  local target="$2"
-  local label="$3"
-  local backup_path
+	local source="$1"
+	local target="$2"
+	local label="$3"
+	local backup_path
 
-  if [[ ! -e "$source" ]]; then
-    printf 'Skip %-16s %s (missing)\n' "$label" "$source"
-    return 0
-  fi
+	if [[ ! -e "$source" ]]; then
+		printf 'Skip %-16s %s (missing)\n' "$label" "$source"
+		return 0
+	fi
 
-  if [[ ! -d "$source" ]]; then
-    printf 'Skip %-16s %s (not a directory)\n' "$label" "$source" >&2
-    return 0
-  fi
+	if [[ ! -d "$source" ]]; then
+		printf 'Skip %-16s %s (not a directory)\n' "$label" "$source" >&2
+		return 0
+	fi
 
-  mkdir -p "$target" "$BACKUP_ROOT"
-  printf 'Sync %-16s %s -> %s\n' "$label" "$source" "$target"
-  rsync -a "$source"/ "$target"/
+	mkdir -p "$target" "$BACKUP_ROOT"
+	printf 'Sync %-16s %s -> %s\n' "$label" "$source" "$target"
+	rsync -a "$source"/ "$target"/
 
-  backup_path="$BACKUP_ROOT/$(basename "$source")"
-  mv "$source" "$backup_path"
-  printf 'Backed up %-10s to %s\n' "$(basename "$source")" "$backup_path"
+	backup_path="$BACKUP_ROOT/$(basename "$source")"
+	mv "$source" "$backup_path"
+	printf 'Backed up %-10s to %s\n' "$(basename "$source")" "$backup_path"
 }
 
 print_smoke_tests() {
-  cat <<EOF
+	cat <<EOF
 
 Migration finished.
 Backups are under:
@@ -115,6 +117,7 @@ Before deleting any backup, start a fresh login shell or session and verify:
   npm config get cache
   npm prefix -g
   docker --config "$DOCKER_CONFIG" version
+  printf '%s\n' "$FORGE_CONFIG"
 
 If all checks pass and the old top-level dotdirs stay gone after a normal
 session restart, you can remove the backup directory above.
@@ -122,7 +125,7 @@ EOF
 }
 
 print_plan() {
-  cat <<EOF
+	cat <<EOF
 XDG dev-home migration plan
 
 Managed npm user config:
@@ -131,15 +134,16 @@ Managed npm user config:
 Directory moves:
 EOF
 
-  print_mapping "$HOME/.cargo" "$CARGO_HOME" "Cargo home"
-  print_mapping "$HOME/.rustup" "$RUSTUP_HOME" "Rustup home"
-  print_mapping "$HOME/.bun" "$BUN_INSTALL" "Bun install"
-  print_mapping "$HOME/.gradle" "$GRADLE_USER_HOME" "Gradle home"
-  print_mapping "$HOME/.npm" "$NPM_CONFIG_CACHE" "npm cache"
-  print_mapping "$HOME/.pub-cache" "$PUB_CACHE" "Pub cache"
-  print_mapping "$HOME/.docker" "$DOCKER_CONFIG" "Docker config"
+	print_mapping "$HOME/.cargo" "$CARGO_HOME" "Cargo home"
+	print_mapping "$HOME/.rustup" "$RUSTUP_HOME" "Rustup home"
+	print_mapping "$HOME/.bun" "$BUN_INSTALL" "Bun install"
+	print_mapping "$HOME/.gradle" "$GRADLE_USER_HOME" "Gradle home"
+	print_mapping "$HOME/.npm" "$NPM_CONFIG_CACHE" "npm cache"
+	print_mapping "$HOME/.pub-cache" "$PUB_CACHE" "Pub cache"
+	print_mapping "$HOME/.docker" "$DOCKER_CONFIG" "Docker config"
+	print_mapping "$HOME/.forge" "$FORGE_CONFIG" "Forge config"
 
-  cat <<EOF
+	cat <<EOF
 
 Targets will be pre-created, copied with rsync, and the original top-level
 dotdirs will be renamed into a dated backup under:
@@ -148,34 +152,35 @@ EOF
 }
 
 main() {
-  case "${1:---plan}" in
-    --plan)
-      warn_running_processes
-      print_plan
-      ;;
-    --migrate)
-      ensure_prereqs
-      ensure_targets
-      warn_running_processes
-      print_plan
-      printf '\nApplying migration...\n'
-      migrate_dir "$HOME/.cargo" "$CARGO_HOME" "Cargo home"
-      migrate_dir "$HOME/.rustup" "$RUSTUP_HOME" "Rustup home"
-      migrate_dir "$HOME/.bun" "$BUN_INSTALL" "Bun install"
-      migrate_dir "$HOME/.gradle" "$GRADLE_USER_HOME" "Gradle home"
-      migrate_dir "$HOME/.npm" "$NPM_CONFIG_CACHE" "npm cache"
-      migrate_dir "$HOME/.pub-cache" "$PUB_CACHE" "Pub cache"
-      migrate_dir "$HOME/.docker" "$DOCKER_CONFIG" "Docker config"
-      print_smoke_tests
-      ;;
-    -h|--help)
-      usage
-      ;;
-    *)
-      usage >&2
-      exit 1
-      ;;
-  esac
+	case "${1:---plan}" in
+	--plan)
+		warn_running_processes
+		print_plan
+		;;
+	--migrate)
+		ensure_prereqs
+		ensure_targets
+		warn_running_processes
+		print_plan
+		printf '\nApplying migration...\n'
+		migrate_dir "$HOME/.cargo" "$CARGO_HOME" "Cargo home"
+		migrate_dir "$HOME/.rustup" "$RUSTUP_HOME" "Rustup home"
+		migrate_dir "$HOME/.bun" "$BUN_INSTALL" "Bun install"
+		migrate_dir "$HOME/.gradle" "$GRADLE_USER_HOME" "Gradle home"
+		migrate_dir "$HOME/.npm" "$NPM_CONFIG_CACHE" "npm cache"
+		migrate_dir "$HOME/.pub-cache" "$PUB_CACHE" "Pub cache"
+		migrate_dir "$HOME/.docker" "$DOCKER_CONFIG" "Docker config"
+		migrate_dir "$HOME/.forge" "$FORGE_CONFIG" "Forge config"
+		print_smoke_tests
+		;;
+	-h | --help)
+		usage
+		;;
+	*)
+		usage >&2
+		exit 1
+		;;
+	esac
 }
 
 main "$@"

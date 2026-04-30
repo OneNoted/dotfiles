@@ -1,0 +1,13 @@
+[services.asteria]
+type = "sftp"
+host = "192.168.50.223"
+user = "notes"
+port = 22
+key_file = "~/.ssh/lan-sftp"
+
+[services.astraea]
+type = "sftp"
+host = "astraea"
+user = "notes"
+port = 22
+key_file = "~/.ssh/id_ed25519"

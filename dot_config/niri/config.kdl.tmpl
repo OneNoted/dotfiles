@@ -16,7 +16,7 @@ input {
 
             // For example:
             layout "us,se"
-            // options "grp:win_space_toggle,compose:ralt,ctrl:nocaps"
+            options "grp:alt_space_toggle,compose:ralt,ctrl:nocaps"
 
             // If this section is empty, niri will fetch xkb settings
             // from org.freedesktop.locale1. You can control these using
@@ -38,7 +38,7 @@ input {
         // drag false
         // drag-lock
         natural-scroll
-        // accel-speed 0.2
+        accel-speed 0.3
         // accel-profile "flat"
         // scroll-method "two-finger"
         // disabled-on-external-mouse
@@ -55,8 +55,9 @@ input {
     trackball {
         // off
         // natural-scroll
-        accel-speed -0.9
+        accel-speed -1.0
         accel-profile "adaptive"
+        // accel-profile "flat"
         // scroll-method "on-button-down"
         // scroll-button 273
         // scroll-button-lock
@@ -317,10 +318,11 @@ layout {
 // See the binds section below for more spawn examples.
 
 // This line starts waybar, a commonly used bar for Wayland compositors.
-spawn-sh-at-startup "vicinae server"
+// spawn-sh-at-startup "vicinae server"
 spawn-sh-at-startup "awww-daemon"
+spawn-sh-at-startup "qs"
 // spawn-sh-at-startup "walker --gapplication-service"
-spawn-sh-at-startup "{{ .chezmoi.homeDir }}/.local/bin/niri-launch-eww"
+// spawn-sh-at-startup "{{ .chezmoi.homeDir }}/.local/bin/niri-launch-eww"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
@@ -425,6 +427,21 @@ window-rule {
     max-height 1000
     default-floating-position x=0 y=60 relative-to="top"
 }
+window-rule {
+    match app-id=r#"^niri-sesh-picker$"#
+    open-floating true
+    default-column-width { proportion 0.60; }
+    default-window-height { proportion 0.60; }
+    max-width 1600
+    max-height 1100
+}
+
+// Keep Steam auxiliary windows out of the main tiling layout.
+window-rule {
+    match app-id=r#"(?i)^steam$"# title=r#"(?i)(friends|chat|news|settings|screenshot uploader|add a game|special offers|steam guard|notification)"#
+    open-floating true
+    default-floating-position x=-40 y=-40 relative-to="bottom-right"
+}
 
 // Example: block out two password managers from screen capture.
 // (This example rule is commented out with a "/-" in front.)
@@ -464,6 +481,7 @@ binds {
     Mod+Return allow-inhibiting=false repeat=false hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
     Mod+T allow-inhibiting=false repeat=false hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
     Mod+Space repeat=false { spawn "vicinae" "toggle"; }
+    Mod+S repeat=false hotkey-overlay-title="Pick a tmux session" { spawn "kitty" "--class" "niri-sesh-picker" "{{ .chezmoi.homeDir }}/.local/bin/niri-tmux-session-picker"; }
     Mod+E hotkey-overlay-title="Open a File Manager: yazi" { spawn "kitty" "-e" "yazi"; }
     Mod+Alt+T { switch-layout "next"; }
     // Mod+W hotkey-overlay-title="Open Brave: brave" { spawn "brave" "--ozone-platform=x11" "--new-window"; }
@@ -476,6 +494,8 @@ binds {
     // Note: the entire command goes as a single argument. It's passed verbatim to `sh -c`.
     // For example, this is a standard bind to toggle the screen reader (orca).
     Super+Alt+S allow-when-locked=true hotkey-overlay-title=null { spawn-sh "pkill orca || exec orca"; }
+    // Restart Quickshell using the same kill-and-relaunch pattern used in Hyprland setups.
+    Mod+Ctrl+Alt+R repeat=false hotkey-overlay-title="Restart Quickshell" { spawn-sh "killall qs quickshell >/dev/null 2>&1 || true; qs >/dev/null 2>&1 &"; }
     Mod+Alt+D repeat=false hotkey-overlay-title="Speech-to-text: whispers" { spawn "whispers"; }
     Mod+Alt+V repeat=false hotkey-overlay-title="Speech-to-text: whispers voice" { spawn "whispers" "voice"; }
 

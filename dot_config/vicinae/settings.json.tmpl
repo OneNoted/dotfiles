@@ -1,0 +1,62 @@
+// This configuration is merged with the default vicinae configuration file, which you can obtain by running the `vicinae config default` command.
+// Every item defined in this file takes precedence over the values defined in the default config or any other imported file.
+//
+// You can make manual edits to this file, however you should keep in mind that this file may be written to by vicinae when a configuration change is made through the GUI.
+// When that happens, any custom comments or formatting will be lost.
+//
+// If you want to maintain a configuration file with your own comments and formatting, you should create a separate file and add it to the 'imports' array.
+//
+// Learn more about configuration at https://docs.vicinae.com/config
+
+{
+   "$schema": "https://vicinae.com/schemas/config.json",
+   "theme": {
+      "dark": {
+         "name": "catppuccin-mocha"
+      }
+   },
+   "telemetry": {
+      "system_info": false
+   },
+   "providers": {
+      "@Keyruu/4f82f18c-51bc-4b7d-a1fa-342a5d5e2fc8": {
+         "enabled": false
+      },
+      "@anhthang/a2cd0c72-8b73-4610-b0d9-f838a519fccf": {
+         "enabled": false
+      },
+      "@kopach/0d65e0fe-8951-4e71-a01e-68c810a8e6c6": {
+         "enabled": false
+      },
+      "@marcjulian/6090553e-ee96-4c89-af5c-e6c60fa551ba": {
+         "enabled": false
+      },
+      "@sovereign/store.vicinae.awww-switcher": {
+         "preferences": {
+            "wallpaperPath": "{{ .chezmoi.homeDir }}/Pictures/Wallpapers"
+         }
+      },
+      "@thomaslombart/89648e03-cceb-4205-9f40-75fcb039a4c6": {
+         "enabled": true,
+         "preferences": {
+            "defaultSearchTerms": "author:@me",
+            "includeTeamReviewRequests": true,
+            "isOpenInBrowser": false,
+            "repositoryCloneProtocol": "ssh",
+            "repositoryFilterMode": "all"
+         }
+      },
+      "@tonka3000/0a3cf1ce-7de6-415c-9e37-91a892d1747e": {
+         "enabled": false
+      },
+      "applications": {
+         "preferences": {
+            "launchPrefix": "/usr/bin/env --",
+            "paths": [
+               "{{ .chezmoi.homeDir }}/.local/share/applications",
+               "/usr/share/applications"
+            ]
+         }
+      }
+   }
+}

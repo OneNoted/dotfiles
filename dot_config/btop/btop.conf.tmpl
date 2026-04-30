@@ -1,3 +1,44 @@
+{{- $btopTarget := joinPath .chezmoi.homeDir ".config" "btop" "btop.conf" -}}
+{{- $btopLive := "" -}}
+{{- $btopPreserve := list
+  "shown_boxes"
+  "proc_sorting"
+  "proc_reversed"
+  "proc_tree"
+  "proc_per_core"
+  "cpu_graph_upper"
+  "cpu_graph_lower"
+  "show_gpu_info"
+  "cpu_invert_lower"
+  "cpu_single_graph"
+  "cpu_bottom"
+  "mem_graphs"
+  "mem_below_net"
+  "show_swap"
+  "swap_disk"
+  "show_disks"
+  "only_physical"
+  "use_fstab"
+  "show_io_stat"
+  "io_mode"
+  "io_graph_combined"
+  "net_download"
+  "net_upload"
+  "net_auto"
+  "net_sync"
+  "net_iface"
+  "selected_battery"
+-}}
+{{- $btopCurrent := dict -}}
+{{- if stat $btopTarget -}}
+{{- $btopLive = output "python3" "-c" "from pathlib import Path; import sys; print(Path(sys.argv[1]).read_text(), end='')" $btopTarget -}}
+{{- range $key := $btopPreserve -}}
+{{- $line := regexFind (printf "(?m)^%s = .*$" $key) $btopLive -}}
+{{- if $line -}}
+{{- $_ := set $btopCurrent $key $line -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
 #? Config file for btop v.1.4.6
 
 #* Name of a btop++/bpytop/bashtop formatted ".theme" file, "Default" and "TTY" for builtin themes.
@@ -53,20 +94,20 @@ graph_symbol_net = "default"
 graph_symbol_proc = "default"
 
 #* Manually set which boxes to show. Available values are "cpu mem net proc" and "gpu0" through "gpu5", separate values with whitespace.
-shown_boxes = "cpu net mem proc gpu0"
+{{ if hasKey $btopCurrent "shown_boxes" }}{{ index $btopCurrent "shown_boxes" }}{{ else }}shown_boxes = "cpu net mem proc gpu0"{{ end }}
 
 #* Update time in milliseconds, recommended 2000 ms or above for better sample times for graphs.
 update_ms = 2000
 
 #* Processes sorting, "pid" "program" "arguments" "threads" "user" "memory" "cpu lazy" "cpu direct",
 #* "cpu lazy" sorts top process over time (easier to follow), "cpu direct" updates top process directly.
-proc_sorting = "cpu lazy"
+{{ if hasKey $btopCurrent "proc_sorting" }}{{ index $btopCurrent "proc_sorting" }}{{ else }}proc_sorting = "cpu lazy"{{ end }}
 
 #* Reverse sorting order, True or False.
-proc_reversed = false
+{{ if hasKey $btopCurrent "proc_reversed" }}{{ index $btopCurrent "proc_reversed" }}{{ else }}proc_reversed = false{{ end }}
 
 #* Show processes as a tree.
-proc_tree = false
+{{ if hasKey $btopCurrent "proc_tree" }}{{ index $btopCurrent "proc_tree" }}{{ else }}proc_tree = false{{ end }}
 
 #* Use the cpu graph colors in the process list.
 proc_colors = true
@@ -75,7 +116,7 @@ proc_colors = true
 proc_gradient = true
 
 #* If process cpu usage should be of the core it's running on or usage of the total available cpu power.
-proc_per_core = true
+{{ if hasKey $btopCurrent "proc_per_core" }}{{ index $btopCurrent "proc_per_core" }}{{ else }}proc_per_core = true{{ end }}
 
 #* Show process memory as bytes instead of percent.
 proc_mem_bytes = true
@@ -100,23 +141,23 @@ keep_dead_proc_usage = false
 
 #* Sets the CPU stat shown in upper half of the CPU graph, "total" is always available.
 #* Select from a list of detected attributes from the options menu.
-cpu_graph_upper = "Auto"
+{{ if hasKey $btopCurrent "cpu_graph_upper" }}{{ index $btopCurrent "cpu_graph_upper" }}{{ else }}cpu_graph_upper = "Auto"{{ end }}
 
 #* Sets the CPU stat shown in lower half of the CPU graph, "total" is always available.
 #* Select from a list of detected attributes from the options menu.
-cpu_graph_lower = "Auto"
+{{ if hasKey $btopCurrent "cpu_graph_lower" }}{{ index $btopCurrent "cpu_graph_lower" }}{{ else }}cpu_graph_lower = "Auto"{{ end }}
 
 #* If gpu info should be shown in the cpu box. Available values = "Auto", "On" and "Off".
-show_gpu_info = "Auto"
+{{ if hasKey $btopCurrent "show_gpu_info" }}{{ index $btopCurrent "show_gpu_info" }}{{ else }}show_gpu_info = "Auto"{{ end }}
 
 #* Toggles if the lower CPU graph should be inverted.
-cpu_invert_lower = true
+{{ if hasKey $btopCurrent "cpu_invert_lower" }}{{ index $btopCurrent "cpu_invert_lower" }}{{ else }}cpu_invert_lower = true{{ end }}
 
 #* Set to True to completely disable the lower CPU graph.
-cpu_single_graph = false
+{{ if hasKey $btopCurrent "cpu_single_graph" }}{{ index $btopCurrent "cpu_single_graph" }}{{ else }}cpu_single_graph = false{{ end }}
 
 #* Show cpu box at bottom of screen instead of top.
-cpu_bottom = false
+{{ if hasKey $btopCurrent "cpu_bottom" }}{{ index $btopCurrent "cpu_bottom" }}{{ else }}cpu_bottom = false{{ end }}
 
 #* Shows the system uptime in the CPU box.
 show_uptime = true
@@ -166,28 +207,28 @@ custom_cpu_name = ""
 disks_filter = ""
 
 #* Show graphs instead of meters for memory values.
-mem_graphs = true
+{{ if hasKey $btopCurrent "mem_graphs" }}{{ index $btopCurrent "mem_graphs" }}{{ else }}mem_graphs = true{{ end }}
 
 #* Show mem box below net box instead of above.
-mem_below_net = false
+{{ if hasKey $btopCurrent "mem_below_net" }}{{ index $btopCurrent "mem_below_net" }}{{ else }}mem_below_net = false{{ end }}
 
 #* Count ZFS ARC in cached and available memory.
 zfs_arc_cached = true
 
 #* If swap memory should be shown in memory box.
-show_swap = true
+{{ if hasKey $btopCurrent "show_swap" }}{{ index $btopCurrent "show_swap" }}{{ else }}show_swap = true{{ end }}
 
 #* Show swap as a disk, ignores show_swap value above, inserts itself after first disk.
-swap_disk = true
+{{ if hasKey $btopCurrent "swap_disk" }}{{ index $btopCurrent "swap_disk" }}{{ else }}swap_disk = true{{ end }}
 
 #* If mem box should be split to also show disks info.
-show_disks = true
+{{ if hasKey $btopCurrent "show_disks" }}{{ index $btopCurrent "show_disks" }}{{ else }}show_disks = true{{ end }}
 
 #* Filter out non physical disks. Set this to False to include network disks, RAM disks and similar.
-only_physical = true
+{{ if hasKey $btopCurrent "only_physical" }}{{ index $btopCurrent "only_physical" }}{{ else }}only_physical = true{{ end }}
 
 #* Read disks list from /etc/fstab. This also disables only_physical.
-use_fstab = true
+{{ if hasKey $btopCurrent "use_fstab" }}{{ index $btopCurrent "use_fstab" }}{{ else }}use_fstab = true{{ end }}
 
 #* Setting this to True will hide all datasets, and only show ZFS pools. (IO stats will be calculated per-pool)
 zfs_hide_datasets = false
@@ -196,31 +237,31 @@ zfs_hide_datasets = false
 disk_free_priv = false
 
 #* Toggles if io activity % (disk busy time) should be shown in regular disk usage view.
-show_io_stat = true
+{{ if hasKey $btopCurrent "show_io_stat" }}{{ index $btopCurrent "show_io_stat" }}{{ else }}show_io_stat = true{{ end }}
 
 #* Toggles io mode for disks, showing big graphs for disk read/write speeds.
-io_mode = true
+{{ if hasKey $btopCurrent "io_mode" }}{{ index $btopCurrent "io_mode" }}{{ else }}io_mode = true{{ end }}
 
 #* Set to True to show combined read/write io graphs in io mode.
-io_graph_combined = false
+{{ if hasKey $btopCurrent "io_graph_combined" }}{{ index $btopCurrent "io_graph_combined" }}{{ else }}io_graph_combined = false{{ end }}
 
 #* Set the top speed for the io graphs in MiB/s (100 by default), use format "mountpoint:speed" separate disks with whitespace " ".
 #* Example: "/mnt/media:100 /:20 /boot:1".
 io_graph_speeds = ""
 
 #* Set fixed values for network graphs in Mebibits. Is only used if net_auto is also set to False.
-net_download = 100
+{{ if hasKey $btopCurrent "net_download" }}{{ index $btopCurrent "net_download" }}{{ else }}net_download = 100{{ end }}
 
-net_upload = 100
+{{ if hasKey $btopCurrent "net_upload" }}{{ index $btopCurrent "net_upload" }}{{ else }}net_upload = 100{{ end }}
 
 #* Use network graphs auto rescaling mode, ignores any values set above and rescales down to 10 Kibibytes at the lowest.
-net_auto = true
+{{ if hasKey $btopCurrent "net_auto" }}{{ index $btopCurrent "net_auto" }}{{ else }}net_auto = true{{ end }}
 
 #* Sync the auto scaling for download and upload to whichever currently has the highest scale.
-net_sync = true
+{{ if hasKey $btopCurrent "net_sync" }}{{ index $btopCurrent "net_sync" }}{{ else }}net_sync = true{{ end }}
 
 #* Starts with the Network Interface specified here.
-net_iface = ""
+{{ if hasKey $btopCurrent "net_iface" }}{{ index $btopCurrent "net_iface" }}{{ else }}net_iface = ""{{ end }}
 
 #* "True" shows bitrates in base 10 (Kbps, Mbps). "False" shows bitrates in binary sizes (Kibps, Mibps, etc.). "Auto" uses base_10_sizes.
 base_10_bitrate = "Auto"
@@ -229,7 +270,7 @@ base_10_bitrate = "Auto"
 show_battery = true
 
 #* Which battery to use if multiple are present. "Auto" for auto detection.
-selected_battery = "Auto"
+{{ if hasKey $btopCurrent "selected_battery" }}{{ index $btopCurrent "selected_battery" }}{{ else }}selected_battery = "Auto"{{ end }}
 
 #* Show power stats of battery next to charge indicator.
 show_battery_watts = true
