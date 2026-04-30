@@ -33,7 +33,7 @@
       },
       "@sovereign/store.vicinae.awww-switcher": {
          "preferences": {
-            "wallpaperPath": "/home/notes/Pictures/Wallpapers"
+            "wallpaperPath": "{{ .chezmoi.homeDir }}/Pictures/Wallpapers"
          }
       },
       "@thomaslombart/89648e03-cceb-4205-9f40-75fcb039a4c6": {
@@ -53,7 +53,7 @@
          "preferences": {
             "launchPrefix": "/usr/bin/env --",
             "paths": [
-               "/home/notes/.local/share/applications",
+               "{{ .chezmoi.homeDir }}/.local/share/applications",
                "/usr/share/applications"
             ]
          }
