@@ -1,0 +1,8 @@
+[metadata]
+name = "Yazi Files"
+description = "File and directory jumping for Yazi"
+requirements = ["fd"]
+
+[source]
+command = "fd --hidden --follow --strip-cwd-prefix --exclude .git ."
+output = "{}"

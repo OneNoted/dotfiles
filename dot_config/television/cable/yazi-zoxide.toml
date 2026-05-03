@@ -1,0 +1,8 @@
+[metadata]
+name = "Yazi Zoxide"
+description = "Directory jumping for Yazi via zoxide"
+requirements = ["zoxide"]
+
+[source]
+command = "zoxide query -l"
+output = "{}"
