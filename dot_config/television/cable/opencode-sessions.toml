@@ -32,5 +32,16 @@ mode = "execute"
 
 [actions.delete]
 description = "Delete session"
-command = '''bash -c 'echo "Delete {split:\t:1}?" && read -p "[y/N]: " conf && [[ $conf == "y" ]] && opencode session delete {split:\t:0} ''''
+command = '''
+selected=$(cat <<'TV_OPENCODE_SESSION'
+{split:\t:0}	{split:\t:1}
+TV_OPENCODE_SESSION
+)
+session_id=${selected%%	*}
+session_title=${selected#*	}
+printf 'Delete %s? [y/N]: ' "$session_title"
+read -r conf
+[[ $conf == "y" ]] && opencode session delete "$session_id"
+'''
+shell = "bash"
 mode = "execute"
