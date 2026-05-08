@@ -13,3 +13,7 @@ PS1='[\u@\h \W]\$ '
 if [[ -r "${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions/whispers" ]]; then
   source "${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions/whispers"
 fi
+
+if [[ -r "${XDG_CONFIG_HOME:-$HOME/.config}/vault/apollo.env" ]]; then
+  source "${XDG_CONFIG_HOME:-$HOME/.config}/vault/apollo.env"
+fi
