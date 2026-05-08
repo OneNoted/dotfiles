@@ -15,7 +15,7 @@
 //   https://github.com/glide-browser/glide/blob/main/src/glide/browser/base/content/plugins/keymaps.mts
 //
 // Try typing `glide.` and see what you can do!
-glide.o.hint_size = "11px";
+glide.o.hint_size = "15.5px";
 
 const catppuccinMocha = {
 	rosewater: "#f5e0dc",
