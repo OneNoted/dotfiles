@@ -1175,6 +1175,13 @@ async function openGithubProfile(tabId: number): Promise<void> {
 }
 
 glide.keymaps.set(
+	["normal", "insert", "visual", "command", "op-pending"],
+	"<C-w>",
+	() => {},
+	{ description: "Disable browser close shortcut" },
+);
+
+glide.keymaps.set(
 	"normal",
 	"<leader>gh",
 	({ tab_id }) => {
