@@ -93,24 +93,6 @@ fi
 
 ##### Environment Variables #####
 
-# When a tmux session is attached over SSH, drop any stale local GUI clipboard
-# env inherited from an older shell.
-if [[ -n ${TMUX:-} ]] && command -v tmux >/dev/null 2>&1; then
-  tmux_ssh_line="$(tmux show-environment -g SSH_CONNECTION 2>/dev/null || true)"
-  if [[ "$tmux_ssh_line" == SSH_CONNECTION=* ]]; then
-    export SSH_CONNECTION="${tmux_ssh_line#*=}"
-
-    for var in DISPLAY WAYLAND_DISPLAY; do
-      tmux_line="$(tmux show-environment -g "$var" 2>/dev/null || true)"
-      if [[ "$tmux_line" == "$var="* ]]; then
-        export "$var=${tmux_line#*=}"
-      else
-        unset "$var"
-      fi
-    done
-  fi
-fi
-
 # Shared shell aliases/env vars from chezmoi data
 if [[ -f "$XDG_CONFIG_HOME/shared/shell-core.zsh" ]]; then
   source "$XDG_CONFIG_HOME/shared/shell-core.zsh"
@@ -165,6 +147,9 @@ y() {
 # Quickshell default config QML import path
 export QML_IMPORT_PATH="${QML_IMPORT_PATH:+$QML_IMPORT_PATH:}$XDG_CONFIG_HOME/quickshell/default/lib"
 
+if [[ -r "$HOME/.config/vault/apollo.env" ]]; then
+  . "$HOME/.config/vault/apollo.env"
+fi
 
 # Zoxide cd history (must be last)
 if command -v zoxide >/dev/null 2>&1; then
