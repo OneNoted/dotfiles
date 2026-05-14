@@ -1,0 +1,134 @@
+#!/bin/sh
+
+set -eu
+
+service=filter-chain.service
+eq_sink=effect_input.sundara_silver_eq
+target_sink=alsa_output.usb-R__DE_RODECaster_Pro_II_GV0067720-00.pro-output-1
+
+usage() {
+	printf '%s\n' "Usage: sundara-eq [on|all|direct|off|restart|status]"
+}
+
+need_command() {
+	if ! command -v "$1" >/dev/null 2>&1; then
+		printf '%s\n' "sundara-eq: missing required command: $1" >&2
+		exit 127
+	fi
+}
+
+sink_exists() {
+	pactl list short sinks | awk '{ print $2 }' | grep -Fxq "$1"
+}
+
+default_sink() {
+	pactl get-default-sink 2>/dev/null || true
+}
+
+wait_for_sink() {
+	i=0
+	while [ "$i" -lt 50 ]; do
+		if sink_exists "$eq_sink"; then
+			return 0
+		fi
+		i=$((i + 1))
+		sleep 0.1
+	done
+	return 1
+}
+
+start_eq() {
+	systemctl --user daemon-reload >/dev/null 2>&1 || true
+	systemctl --user restart "$service"
+
+	if ! wait_for_sink; then
+		printf '%s\n' "sundara-eq: EQ sink did not appear; recent service log:" >&2
+		journalctl --user -u "$service" -n 20 --no-pager >&2 || true
+		exit 1
+	fi
+
+	printf '%s\n' "Sundara EQ available: $eq_sink"
+}
+
+route_all() {
+	start_eq
+	pactl set-default-sink "$eq_sink"
+	printf '%s\n' "Default sink: $eq_sink"
+}
+
+route_direct() {
+	if ! sink_exists "$target_sink"; then
+		printf '%s\n' "sundara-eq: target sink is missing: $target_sink" >&2
+		exit 1
+	fi
+
+	pactl set-default-sink "$target_sink"
+	printf '%s\n' "Default sink: $target_sink"
+}
+
+stop_eq() {
+	current_default=$(default_sink)
+
+	if [ "$current_default" = "$eq_sink" ]; then
+		if sink_exists "$target_sink"; then
+			pactl set-default-sink "$target_sink"
+		else
+			fallback_sink=$(pactl list short sinks | awk -v eq="$eq_sink" '$2 != eq { print $2; exit }')
+			if [ -n "$fallback_sink" ]; then
+				pactl set-default-sink "$fallback_sink"
+			fi
+		fi
+	fi
+
+	systemctl --user stop "$service"
+	printf '%s\n' "Sundara EQ disabled"
+}
+
+show_status() {
+	if systemctl --user is-active --quiet "$service"; then
+		service_state=active
+	else
+		service_state=inactive
+	fi
+
+	if sink_exists "$eq_sink"; then
+		sink_state=available
+	else
+		sink_state=missing
+	fi
+
+	printf 'Service: %s\n' "$service_state"
+	printf 'EQ sink: %s\n' "$sink_state"
+	printf 'Default sink: %s\n' "$(default_sink)"
+}
+
+need_command pactl
+need_command systemctl
+
+case "${1:-status}" in
+	on | start)
+		start_eq
+		;;
+	all)
+		route_all
+		;;
+	direct | selective)
+		route_direct
+		;;
+	off | stop)
+		stop_eq
+		;;
+	restart)
+		start_eq
+		;;
+	status)
+		show_status
+		;;
+	-h | --help | help)
+		usage
+		;;
+	*)
+		usage >&2
+		exit 2
+		;;
+esac
