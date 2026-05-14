@@ -223,6 +223,7 @@ func applyPresetByName(cfg Config, name string) error {
 func applyPreset(cfg Config, preset Preset) error {
 	wasDefault, _ := defaultSink()
 	oldActive, _ := activePreset(cfg)
+	eqStreams := currentStreamsOnSink(oldActive.EQSink)
 
 	if err := copyFileAtomic(preset.Path, cfg.ActiveConfig); err != nil {
 		return err
@@ -233,7 +234,7 @@ func applyPreset(cfg Config, preset Preset) error {
 	if wasDefault == oldActive.EQSink || wasDefault == preset.EQSink {
 		_ = setDefaultSink(preset.EQSink)
 	}
-	return nil
+	return moveStreams(eqStreams, preset.EQSink)
 }
 
 func printStatus(cfg Config) error {
@@ -289,12 +290,12 @@ func moveStreamByName(cfg Config, id, route string) error {
 	}
 	switch route {
 	case "eq":
-		if err := restartEQ(active); err != nil {
+		if err := ensureEQSink(active); err != nil {
 			return err
 		}
-		return moveStream(id, active.EQSink)
+		return moveStreamToSink(id, active.EQSink)
 	case "direct", "target":
-		return moveStream(id, active.OutputSink)
+		return moveStreamToSink(id, active.OutputSink)
 	default:
 		return fmt.Errorf("unknown stream route %q; use eq or direct", route)
 	}
@@ -633,6 +634,105 @@ func moveStream(id, sink string) error {
 	}
 	_, err := runCommand("pactl", "move-sink-input", id, sink)
 	return err
+}
+
+func ensureEQSink(preset Preset) error {
+	if sinkExists(preset.EQSink) {
+		return nil
+	}
+	return restartEQ(preset)
+}
+
+func moveStreamToSink(id, sink string) error {
+	if sink == "" {
+		return errors.New("missing destination sink")
+	}
+
+	var lastErr error
+	deadline := time.Now().Add(2 * time.Second)
+	for {
+		lastErr = moveStream(id, sink)
+		if lastErr == nil && waitForStreamOnSink(id, sink, 350*time.Millisecond) {
+			return nil
+		}
+		if time.Now().After(deadline) {
+			break
+		}
+		time.Sleep(100 * time.Millisecond)
+	}
+
+	if lastErr != nil {
+		return lastErr
+	}
+	return fmt.Errorf("stream %s did not attach to %s", id, sink)
+}
+
+func waitForStreamOnSink(id, sink string, timeout time.Duration) bool {
+	deadline := time.Now().Add(timeout)
+	for time.Now().Before(deadline) {
+		if streamOnSink(id, sink) {
+			return true
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+	return streamOnSink(id, sink)
+}
+
+func streamOnSink(id, sink string) bool {
+	streams, err := listStreams()
+	if err != nil {
+		return false
+	}
+	for _, stream := range streams {
+		if stream.ID == id {
+			return stream.SinkName == sink
+		}
+	}
+	return false
+}
+
+func currentStreamsOnSink(sink string) []Stream {
+	if sink == "" {
+		return nil
+	}
+	streams, err := listStreams()
+	if err != nil {
+		return nil
+	}
+	return streamsOnSink(streams, sink)
+}
+
+func streamsOnSink(streams []Stream, sink string) []Stream {
+	if sink == "" {
+		return nil
+	}
+	matches := make([]Stream, 0, len(streams))
+	for _, stream := range streams {
+		if stream.SinkName == sink {
+			matches = append(matches, stream)
+		}
+	}
+	return matches
+}
+
+func moveStreams(streams []Stream, sink string) error {
+	if len(streams) == 0 {
+		return nil
+	}
+
+	var errs []error
+	for _, stream := range streams {
+		if stream.ID == "" {
+			continue
+		}
+		if err := moveStreamToSink(stream.ID, sink); err != nil {
+			errs = append(errs, fmt.Errorf("%s: %w", stream.App, err))
+		}
+	}
+	if len(errs) > 0 {
+		return fmt.Errorf("preset applied, but failed to restore some EQ stream routes: %w", errors.Join(errs...))
+	}
+	return nil
 }
 
 func listStreams() ([]Stream, error) {
@@ -1334,7 +1434,7 @@ func (m tuiModel) startDirectAction() (tea.Model, tea.Cmd) {
 		m.busy = "Moving " + stream.App + " direct"
 		m.message = ""
 		return m, actionCmd("Moved "+stream.App+" direct", func() error {
-			return moveStream(stream.ID, outputSink)
+			return moveStreamToSink(stream.ID, outputSink)
 		})
 	}
 
@@ -1357,10 +1457,10 @@ func (m tuiModel) startMoveStreamToEQ() (tea.Model, tea.Cmd) {
 	m.busy = "Moving " + stream.App + " to EQ"
 	m.message = ""
 	return m, actionCmd("Moved "+stream.App+" to EQ", func() error {
-		if err := restartEQ(active); err != nil {
+		if err := ensureEQSink(active); err != nil {
 			return err
 		}
-		return moveStream(stream.ID, active.EQSink)
+		return moveStreamToSink(stream.ID, active.EQSink)
 	})
 }
 
