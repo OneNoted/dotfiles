@@ -651,14 +651,23 @@ func moveStreamToSink(id, sink string) error {
 	var lastErr error
 	deadline := time.Now().Add(2 * time.Second)
 	for {
-		lastErr = moveStream(id, sink)
-		if lastErr == nil && waitForStreamOnSink(id, sink, 350*time.Millisecond) {
-			return nil
-		}
 		if time.Now().After(deadline) {
 			break
 		}
-		time.Sleep(100 * time.Millisecond)
+
+		lastErr = moveStream(id, sink)
+		if lastErr == nil {
+			pollTimeout := minDuration(350*time.Millisecond, time.Until(deadline))
+			if pollTimeout > 0 && waitForStreamOnSink(id, sink, pollTimeout) {
+				return nil
+			}
+		}
+
+		sleepFor := minDuration(100*time.Millisecond, time.Until(deadline))
+		if sleepFor <= 0 {
+			break
+		}
+		time.Sleep(sleepFor)
 	}
 
 	if lastErr != nil {
@@ -669,13 +678,24 @@ func moveStreamToSink(id, sink string) error {
 
 func waitForStreamOnSink(id, sink string, timeout time.Duration) bool {
 	deadline := time.Now().Add(timeout)
-	for time.Now().Before(deadline) {
+	for {
 		if streamOnSink(id, sink) {
 			return true
 		}
-		time.Sleep(50 * time.Millisecond)
+
+		sleepFor := minDuration(50*time.Millisecond, time.Until(deadline))
+		if sleepFor <= 0 {
+			return false
+		}
+		time.Sleep(sleepFor)
 	}
-	return streamOnSink(id, sink)
+}
+
+func minDuration(a, b time.Duration) time.Duration {
+	if a < b {
+		return a
+	}
+	return b
 }
 
 func streamOnSink(id, sink string) bool {
@@ -722,6 +742,7 @@ func moveStreams(streams []Stream, sink string) error {
 
 	var errs []error
 	for _, stream := range streams {
+		// Captured sink-input IDs can go stale if an app exits during EQ restart.
 		if stream.ID == "" {
 			continue
 		}

@@ -147,8 +147,8 @@ y() {
 # Quickshell default config QML import path
 export QML_IMPORT_PATH="${QML_IMPORT_PATH:+$QML_IMPORT_PATH:}$XDG_CONFIG_HOME/quickshell/default/lib"
 
-if [[ -r "$HOME/.config/vault/apollo.env" ]]; then
-  . "$HOME/.config/vault/apollo.env"
+if [[ -r "${XDG_CONFIG_HOME:-$HOME/.config}/vault/apollo.env" ]]; then
+  . "${XDG_CONFIG_HOME:-$HOME/.config}/vault/apollo.env"
 fi
 
 # Zoxide cd history (must be last)
