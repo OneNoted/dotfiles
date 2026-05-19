@@ -332,6 +332,13 @@ hotkey-overlay {
     // skip-at-startup
 }
 
+blur {
+    passes 2
+    offset 8.0
+    noise 0.08
+    saturation 1.5
+}
+
 // Uncomment this line to ask the clients to omit their client-side decorations if possible.
 // If the client will specifically ask for CSD, the request will be honored.
 // Additionally, clients will be informed that they are tiled, removing some client-side rounded corners.
@@ -392,6 +399,7 @@ window-rule {
     default-column-width { proportion 0.25; }
     background-effect {
         blur true
+        saturation 1.9
     }
 }
 window-rule {

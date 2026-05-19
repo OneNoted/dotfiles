@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -eu
+
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+
+if [ "$#" -eq 0 ]; then
+	set -- status
+fi
+
+exec "$script_dir/audio-eq" "$@"

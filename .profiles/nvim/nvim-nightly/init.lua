@@ -33,8 +33,9 @@ do -- {{{1
 	-- UX
 	if vim.env.SSH_CONNECTION then
 		vim.g.clipboard = "osc52"
+	else
+		opt.clipboard = "unnamedplus"
 	end
-	opt.clipboard = "unnamedplus"
 	opt.scrolloff = 4
 	opt.sidescrolloff = 8
 	opt.mouse = "a"

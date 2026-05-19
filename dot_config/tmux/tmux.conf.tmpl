@@ -7,12 +7,9 @@ set -g default-shell {{ lookPath "fish" }}
 set -g mouse on
 set -g default-terminal "tmux-256color"
 set-option -sa terminal-overrides ",xterm*:Tc"
-# When a local tmux server is attached over SSH, track Wayland the same way
-# DISPLAY is tracked so remote panes do not keep the local GUI clipboard path.
-set -ga update-environment " WAYLAND_DISPLAY"
 set -s set-clipboard on
-set -as terminal-features ",xterm-kitty:clipboard"
-set -g allow-passthrough on
+set -as terminal-features ",xterm-kitty:clipboard:extkeys"
+set -as terminal-features ",xterm-ghostty:clipboard:extkeys"
 set -g pane-active-border-style 'fg=magenta,bg=default'
 set -g pane-border-style 'fg=brightblack,bg=default'
 set -g extended-keys-format csi-u
@@ -25,6 +22,17 @@ set -g @plugin 'tmux-plugins/tmux-sensible'
 
 # Navigation plugins
 set -g @plugin 'christoomey/vim-tmux-navigator'
+# Keep Ctrl-h/j/k/l available to pane applications; Alt-h/j/k/l moves tmux panes.
+set -g @vim_navigator_mapping_left ""
+set -g @vim_navigator_mapping_right ""
+set -g @vim_navigator_mapping_up ""
+set -g @vim_navigator_mapping_down ""
+set -g @vim_navigator_mapping_prev ""
+unbind-key -q -n C-h
+unbind-key -q -n C-j
+unbind-key -q -n C-k
+unbind-key -q -n C-l
+unbind-key -q -n C-\\
 
 ##### Status bar plugins #####
 set -g @plugin 'catppuccin/tmux'
