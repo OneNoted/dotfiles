@@ -1,5 +1,11 @@
 # Environment
 set-environment -g TMUX_PLUGIN_MANAGER_PATH "$HOME/.config/tmux/plugins"
+# Keep SSH prompt-detection markers out of tmux panes. tmux sessions can live
+# longer than the client that attached to them, so these become stale easily.
+set-environment -gu SSH_CLIENT
+set-environment -gu SSH_CONNECTION
+set-environment -gu SSH_TTY
+set -g update-environment "DISPLAY KRB5CCNAME MSYSTEM SSH_ASKPASS SSH_AUTH_SOCK SSH_AGENT_PID WINDOWID XAUTHORITY"
 set -g default-shell {{ lookPath "fish" }}
 
 
