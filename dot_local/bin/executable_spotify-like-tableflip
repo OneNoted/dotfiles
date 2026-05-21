@@ -8,4 +8,8 @@ spotify_player like
 track_id="$(spotify_player get key playback | jq -r '.item.id // empty')"
 [ -n "$track_id" ] || exit 0
 
+# Avoid a full playlist scan on every keypress. Removing first makes the
+# following add leave exactly one copy, at the cost of moving existing tracks
+# to the end of the playlist.
+spotify_player playlist edit --track-id "$track_id" delete "$playlist_id" >/dev/null 2>&1 || true
 spotify_player playlist edit --track-id "$track_id" add "$playlist_id"
