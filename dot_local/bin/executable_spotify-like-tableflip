@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+
+playlist_id="3liOZyShR3VQQmsGJHPL2w"
+
+spotify_player like
+
+track_id="$(spotify_player get key playback | jq -r '.item.id // empty')"
+[ -n "$track_id" ] || exit 0
+
+spotify_player playlist edit --track-id "$track_id" add "$playlist_id"

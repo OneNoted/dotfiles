@@ -490,7 +490,7 @@ binds {
     Mod+T allow-inhibiting=false repeat=false hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
     Mod+Space repeat=false { spawn "vicinae" "toggle"; }
     Mod+S repeat=false hotkey-overlay-title="Pick a tmux session" { spawn "kitty" "--class" "niri-sesh-picker" "{{ .chezmoi.homeDir }}/.local/bin/niri-tmux-session-picker"; }
-    Mod+Z repeat=false hotkey-overlay-title="Like current Spotify track" { spawn "spotify_player" "like"; }
+    Mod+Z repeat=false hotkey-overlay-title="Like and playlist current Spotify track" { spawn "spotify-like-tableflip"; }
     Mod+E hotkey-overlay-title="Open a File Manager: yazi" { spawn "kitty" "-e" "yazi"; }
     Mod+Alt+T { switch-layout "next"; }
     // Mod+W hotkey-overlay-title="Open Brave: brave" { spawn "brave" "--ozone-platform=x11" "--new-window"; }
