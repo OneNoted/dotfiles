@@ -3,7 +3,7 @@
 A package manifest and bootstrap helper are included for Arch hosts:
 
 ```sh
-# print install plan (default mode)
+# print the install plan (default mode)
 bash bootstrap/bootstrap.sh --plan
 
 # install only the Neovim component
