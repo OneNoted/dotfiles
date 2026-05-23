@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+set -u
+
+playlist_name="${SPOTIFY_QUICK_ADD_PLAYLIST_NAME:-Liked from Radio}"
+playlist_id="${SPOTIFY_QUICK_ADD_PLAYLIST_ID:-}"
+cache_file="${XDG_CACHE_HOME:-$HOME/.cache}/spotify-player/Playlists_cache.json"
+
+notify() {
+  if command -v notify-send >/dev/null 2>&1; then
+    notify-send "Spotify" "$1"
+  fi
+}
+
+fail() {
+  notify "$1"
+  printf 'spotify-like-add-playlist: %s\n' "$1" >&2
+  exit 1
+}
+
+require() {
+  command -v "$1" >/dev/null 2>&1 || fail "Missing command: $1"
+}
+
+require jq
+require spotify_player
+
+if [[ -z "$playlist_id" ]]; then
+  [[ -r "$cache_file" ]] || fail "Playlist cache not found"
+  playlist_id="$(
+    jq -r --arg name "$playlist_name" '
+      first(.[] | .Playlist | select(.name == $name) | .id) // empty
+    ' "$cache_file"
+  )"
+fi
+
+[[ -n "$playlist_id" ]] || fail "Playlist not found: $playlist_name"
+
+playback_json="$(spotify_player get key playback 2>/dev/null)" || fail "Could not read current playback"
+track_id="$(jq -r 'select(.currently_playing_type == "track") | .item.id // empty' <<<"$playback_json")"
+track_name="$(jq -r '.item.name // "current track"' <<<"$playback_json")"
+
+[[ -n "$track_id" ]] || fail "Current playback is not a Spotify track"
+
+like_status=0
+spotify_player like >/dev/null 2>&1 || like_status=$?
+
+add_status=1
+for delay in 0 1 2; do
+  (( delay > 0 )) && sleep "$delay"
+  if spotify_player playlist edit --track-id "$track_id" add "$playlist_id" >/dev/null 2>&1; then
+    add_status=0
+    break
+  fi
+done
+
+if (( like_status == 0 && add_status == 0 )); then
+  notify "Liked and added: $track_name"
+elif (( like_status == 0 )); then
+  fail "Liked, but playlist add failed: $track_name"
+elif (( add_status == 0 )); then
+  fail "Added to playlist, but like failed: $track_name"
+else
+  fail "Like and playlist add failed: $track_name"
+fi
