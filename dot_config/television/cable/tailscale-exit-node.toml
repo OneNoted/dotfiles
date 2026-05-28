@@ -1,18 +1,116 @@
 [metadata]
 name = "tailscale-exit-node"
-description = "A channel to select a tailscale exit node"
-requirements = ["tailscale", "awk"]
+description = "Select a Tailscale exit node, including Mullvad VPN nodes"
+requirements = ["tailscale", "jq"]
 
 [source]
-command = "tailscale exit-node list | awk '/^[[:space:]]*[0-9]+\\./ {gsub(/^[[:space:]]+/, \"\"); print $1}'"
+command = '''
+suggested=$(
+  tailscale exit-node suggest 2>/dev/null \
+    | sed -n 's/^Suggested exit node: //p' \
+    | sed 's/\.$//'
+)
+
+printf 'off\tDisconnect VPN\t\t\t\n'
+
+if [ -n "$suggested" ]; then
+  tailscale status --json \
+    | jq -r --arg suggested "$suggested" '
+      .Peer
+      | to_entries[]
+      | select((.value.DNSName // "" | rtrimstr(".")) == $suggested)
+      | .value
+      | [
+          (.DNSName | rtrimstr(".")),
+          "Suggested",
+          (.Location.City // ""),
+          (.Location.Country // ""),
+          (.TailscaleIPs[0] // "")
+        ]
+      | @tsv
+    '
+fi
+
+tailscale status --json \
+  | jq -r '
+    .Peer
+    | to_entries
+    | map(.value)
+    | map(select((.DNSName // "") | contains("mullvad.ts.net")))
+    | sort_by(.Location.Country // "", .Location.City // "", .DNSName // "")
+    | .[]
+    | [
+        (.DNSName | rtrimstr(".")),
+        "Mullvad",
+        (.Location.City // ""),
+        (.Location.Country // ""),
+        (.TailscaleIPs[0] // "")
+      ]
+    | @tsv
+  '
+'''
+display = "{split:\t:1}  {split:\t:2}  {split:\t:3}  {split:\t:0}"
+output = "{split:\t:0}"
 
 [preview]
-command = "tailscale whois {}"
+command = '''
+node="{split:\t:0}"
+if [[ "$node" == "off" ]]; then
+  tailscale debug prefs | jq '{ExitNodeID, ExitNodeIP, RouteAll, ExitNodeAllowLANAccess}'
+else
+  addr=$(
+    tailscale status --json \
+      | jq -r --arg node "$node" '
+        .Peer
+        | to_entries[]
+        | select((.value.DNSName // "" | rtrimstr(".")) == $node)
+        | .value.TailscaleIPs[0]
+      ' \
+      | head -n1
+  )
+  tailscale whois "$addr"
+fi
+'''
+shell = "bash"
+
+[ui]
+layout = "portrait"
+
+[ui.preview_panel]
+header = "{split:\t:0}"
 
 [keybindings]
 enter = "actions:connect"
+ctrl-d = "actions:disconnect"
+ctrl-l = "actions:connect-lan"
 
 [actions.connect]
 description = "Set selected host as exit node"
-command = "tailscale set --exit-node='{}'"
+command = '''
+node="{split:\t:0}"
+if [[ "$node" == "off" ]]; then
+  sudo tailscale set --exit-node=
+else
+  sudo tailscale set --exit-node="$node"
+fi
+'''
+shell = "bash"
+mode = "execute"
+
+[actions.connect-lan]
+description = "Set selected host as exit node and allow LAN access"
+command = '''
+node="{split:\t:0}"
+if [[ "$node" == "off" ]]; then
+  sudo tailscale set --exit-node=
+else
+  sudo tailscale set --exit-node="$node" --exit-node-allow-lan-access=true
+fi
+'''
+shell = "bash"
+mode = "execute"
+
+[actions.disconnect]
+description = "Disconnect from the current exit node"
+command = "sudo tailscale set --exit-node="
 mode = "execute"
