@@ -136,6 +136,92 @@ end
 -- Packages }}}
 
 ------------------------------------------------------------
+-- Pack Management
+------------------------------------------------------------
+do -- {{{1
+	local function pack_args(command)
+		return #command.fargs > 0 and command.fargs or nil
+	end
+
+	local function pack_names(arg_lead)
+		local ok, plugins = pcall(vim.pack.get, nil, { info = false })
+		if not ok then
+			return {}
+		end
+
+		local names = vim
+			.iter(plugins)
+			:map(function(plugin)
+				return plugin.spec.name
+			end)
+			:filter(function(name)
+				return name:find("^" .. vim.pesc(arg_lead)) ~= nil
+			end)
+			:totable()
+		table.sort(names)
+		return names
+	end
+
+	local function pack_command_alias(alias, command)
+		vim.cmd(
+			("cnoreabbrev <expr> %s getcmdtype() ==# ':' && getcmdline() ==# %q ? %q : %q"):format(
+				alias,
+				alias,
+				command,
+				alias
+			)
+		)
+	end
+
+	vim.api.nvim_create_user_command("PackUpdate", function(command)
+		vim.pack.update(pack_args(command), { force = command.bang })
+	end, {
+		bang = true,
+		complete = pack_names,
+		desc = "Update vim.pack plugins; ! applies without confirmation",
+		nargs = "*",
+	})
+
+	vim.api.nvim_create_user_command("PackStatus", function(command)
+		vim.pack.update(pack_args(command), { offline = true, force = command.bang })
+	end, {
+		bang = true,
+		complete = pack_names,
+		desc = "Open vim.pack status without fetching; ! applies queued local changes",
+		nargs = "*",
+	})
+
+	vim.api.nvim_create_user_command("PackLockfile", function(command)
+		vim.pack.update(pack_args(command), { target = "lockfile", force = command.bang })
+	end, {
+		bang = true,
+		complete = pack_names,
+		desc = "Sync vim.pack plugins to lockfile revisions; ! applies without confirmation",
+		nargs = "*",
+	})
+
+	vim.api.nvim_create_user_command("PackDelete", function(command)
+		vim.pack.del(command.fargs, { force = command.bang })
+	end, {
+		bang = true,
+		complete = pack_names,
+		desc = "Delete vim.pack plugins from disk; ! allows active plugins",
+		nargs = "+",
+	})
+
+	vim.api.nvim_create_user_command("PackLog", function()
+		vim.cmd.edit(vim.fs.joinpath(vim.fn.stdpath("log"), "nvim-pack.log"))
+	end, { desc = "Open the vim.pack log" })
+
+	pack_command_alias("packupdate", "PackUpdate")
+	pack_command_alias("packstatus", "PackStatus")
+	pack_command_alias("packlockfile", "PackLockfile")
+	pack_command_alias("packdelete", "PackDelete")
+	pack_command_alias("packlog", "PackLog")
+end
+-- Pack Management }}}
+
+------------------------------------------------------------
 -- Plugin Hooks
 ------------------------------------------------------------
 -- do -- {{{1
