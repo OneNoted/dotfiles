@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eu
+
+: "${XDG_CONFIG_HOME:=$HOME/.config}"
+: "${MITMPROXY_CONF_DIR:=$XDG_CONFIG_HOME/mitmproxy}"
+
+exec /usr/bin/mitmproxy --set "confdir=$MITMPROXY_CONF_DIR" "$@"

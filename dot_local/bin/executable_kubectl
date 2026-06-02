@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+
+: "${XDG_CACHE_HOME:=$HOME/.cache}"
+
+for arg in "$@"; do
+  case "$arg" in
+    --cache-dir|--cache-dir=*)
+      exec /usr/bin/kubectl "$@"
+      ;;
+  esac
+done
+
+exec /usr/bin/kubectl --cache-dir "${KUBECTL_CACHE_DIR:-$XDG_CACHE_HOME/kube/cache}" "$@"

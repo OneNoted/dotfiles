@@ -15,10 +15,12 @@ set -q BASH_ENV; or set -gx BASH_ENV $XDG_CONFIG_HOME/bash/bashenv
 set -q LESSHISTFILE; or set -gx LESSHISTFILE $XDG_STATE_HOME/less/history
 set -q CARGO_HOME; or set -gx CARGO_HOME $XDG_DATA_HOME/cargo
 set -q RUSTUP_HOME; or set -gx RUSTUP_HOME $XDG_DATA_HOME/rustup
+set -q GOPATH; or set -gx GOPATH $XDG_DATA_HOME/go
 set -q GOBIN; or set -gx GOBIN $XDG_BIN_HOME
 set -q GOCACHE; or set -gx GOCACHE $XDG_CACHE_HOME/go-build
 set -q GOMODCACHE; or set -gx GOMODCACHE $XDG_CACHE_HOME/go/mod
 set -q PYTHON_EGG_CACHE; or set -gx PYTHON_EGG_CACHE $XDG_CACHE_HOME/python-eggs
+set -q PYTHON_HISTORY; or set -gx PYTHON_HISTORY $XDG_STATE_HOME/python/history
 set -q MYPY_CACHE_DIR; or set -gx MYPY_CACHE_DIR $XDG_CACHE_HOME/mypy
 set -q RUFF_CACHE_DIR; or set -gx RUFF_CACHE_DIR $XDG_CACHE_HOME/ruff
 set -q UV_CACHE_DIR; or set -gx UV_CACHE_DIR $XDG_CACHE_HOME/uv
@@ -41,10 +43,12 @@ set -q BUN_RUNTIME_TRANSPILER_CACHE_PATH; or set -gx BUN_RUNTIME_TRANSPILER_CACH
 set -q COREPACK_HOME; or set -gx COREPACK_HOME $XDG_CACHE_HOME/corepack
 set -q NODE_REPL_HISTORY; or set -gx NODE_REPL_HISTORY $XDG_STATE_HOME/node/repl_history
 set -q GRADLE_USER_HOME; or set -gx GRADLE_USER_HOME $XDG_DATA_HOME/gradle
+set -q MAVEN_OPTS; or set -gx MAVEN_OPTS "-Dmaven.repo.local=$XDG_CACHE_HOME/maven/repository"
 set -q NPM_CONFIG_USERCONFIG; or set -gx NPM_CONFIG_USERCONFIG $XDG_CONFIG_HOME/npm/npmrc
 set -q NPM_CONFIG_CACHE; or set -gx NPM_CONFIG_CACHE $XDG_CACHE_HOME/npm
 set -q NPM_CONFIG_PREFIX; or set -gx NPM_CONFIG_PREFIX $XDG_DATA_HOME/npm
 set -q NPM_CONFIG_LOGS_DIR; or set -gx NPM_CONFIG_LOGS_DIR $XDG_STATE_HOME/npm/logs
+set -q npm_config_devdir; or set -gx npm_config_devdir $XDG_CACHE_HOME/electron-gyp
 set -q PNPM_HOME; or set -gx PNPM_HOME $XDG_DATA_HOME/pnpm
 set -q NVM_DIR; or set -gx NVM_DIR $XDG_DATA_HOME/nvm
 set -q NODENV_ROOT; or set -gx NODENV_ROOT $XDG_DATA_HOME/nodenv
@@ -52,10 +56,27 @@ set -q N_PREFIX; or set -gx N_PREFIX $XDG_DATA_HOME/n
 set -q YARN_CACHE_FOLDER; or set -gx YARN_CACHE_FOLDER $XDG_CACHE_HOME/yarn
 set -q PUB_CACHE; or set -gx PUB_CACHE $XDG_DATA_HOME/pub-cache
 set -q DOCKER_CONFIG; or set -gx DOCKER_CONFIG $XDG_CONFIG_HOME/docker
+set -q ANDROID_USER_HOME; or set -gx ANDROID_USER_HOME $XDG_DATA_HOME/android
 set -q K9SCONFIG; or set -gx K9SCONFIG $XDG_CONFIG_HOME/k9s
+set -q KUBECONFIG; or set -gx KUBECONFIG $XDG_CONFIG_HOME/kube/config
+set -q TALOSCONFIG; or set -gx TALOSCONFIG $XDG_CONFIG_HOME/talos/config
+set -q SIDEROV1_KEYS_DIR; or set -gx SIDEROV1_KEYS_DIR $XDG_CONFIG_HOME/talos/keys
+set -q OCI_CLI_CONFIG_FILE; or set -gx OCI_CLI_CONFIG_FILE $XDG_CONFIG_HOME/oci/config
+set -q OCI_CLI_RC_FILE; or set -gx OCI_CLI_RC_FILE $XDG_CONFIG_HOME/oci/oci_cli_rc
 set -q HELM_CACHE_HOME; or set -gx HELM_CACHE_HOME $XDG_CACHE_HOME/helm
 set -q HELM_CONFIG_HOME; or set -gx HELM_CONFIG_HOME $XDG_CONFIG_HOME/helm
 set -q HELM_DATA_HOME; or set -gx HELM_DATA_HOME $XDG_DATA_HOME/helm
+set -q ANSIBLE_HOME; or set -gx ANSIBLE_HOME $XDG_DATA_HOME/ansible
+set -q PARALLEL_HOME; or set -gx PARALLEL_HOME $XDG_CONFIG_HOME/parallel
+set -q PLATFORMIO_CORE_DIR; or set -gx PLATFORMIO_CORE_DIR $XDG_DATA_HOME/platformio
+set -q PLATFORMIO_CACHE_DIR; or set -gx PLATFORMIO_CACHE_DIR $XDG_CACHE_HOME/platformio
+set -q CUDA_CACHE_PATH; or set -gx CUDA_CACHE_PATH $XDG_CACHE_HOME/nvidia/ComputeCache
+set -q __GL_SHADER_DISK_CACHE_PATH; or set -gx __GL_SHADER_DISK_CACHE_PATH $XDG_CACHE_HOME/nvidia/GLCache
+set -q FLY_CONFIG_DIR; or set -gx FLY_CONFIG_DIR $XDG_CONFIG_HOME/fly
+set -q MITMPROXY_CONF_DIR; or set -gx MITMPROXY_CONF_DIR $XDG_CONFIG_HOME/mitmproxy
+set -q TF_CLI_CONFIG_FILE; or set -gx TF_CLI_CONFIG_FILE $XDG_CONFIG_HOME/terraform/terraformrc
+set -q TF_PLUGIN_CACHE_DIR; or set -gx TF_PLUGIN_CACHE_DIR $XDG_CACHE_HOME/terraform/plugin-cache
+set -q WGETRC; or set -gx WGETRC $XDG_CONFIG_HOME/wget/wgetrc
 set -q MISE_CONFIG_DIR; or set -gx MISE_CONFIG_DIR $XDG_CONFIG_HOME/mise
 set -q MISE_DATA_DIR; or set -gx MISE_DATA_DIR $XDG_DATA_HOME/mise
 set -q MISE_CACHE_DIR; or set -gx MISE_CACHE_DIR $XDG_CACHE_HOME/mise
@@ -63,10 +84,17 @@ set -q MISE_STATE_DIR; or set -gx MISE_STATE_DIR $XDG_STATE_HOME/mise
 set -q STARSHIP_CONFIG; or set -gx STARSHIP_CONFIG $XDG_CONFIG_HOME/starship.toml
 set -q STARSHIP_CACHE; or set -gx STARSHIP_CACHE $XDG_CACHE_HOME/starship
 set -q FORGE_CONFIG; or set -gx FORGE_CONFIG $XDG_CONFIG_HOME/forge
+set -q AUDIBLE_CONFIG_DIR; or set -gx AUDIBLE_CONFIG_DIR $XDG_CONFIG_HOME/audible
+set -q AUDIBLE_PLUGIN_DIR; or set -gx AUDIBLE_PLUGIN_DIR $XDG_DATA_HOME/audible/plugins
+set -q PI_CODING_AGENT_DIR; or set -gx PI_CODING_AGENT_DIR $XDG_DATA_HOME/pi/agent
 set -q EMACSDIR; or set -gx EMACSDIR $XDG_CONFIG_HOME/emacs
 set -q DOOMDIR; or set -gx DOOMDIR $XDG_CONFIG_HOME/doom
 set -q DOOMPROFILE; or set -gx DOOMPROFILE default
 set -q GTK_USE_PORTAL; or set -gx GTK_USE_PORTAL 1
+
+for dir in $GOPATH (dirname $PYTHON_HISTORY) $ANSIBLE_HOME $PLATFORMIO_CACHE_DIR $npm_config_devdir $CUDA_CACHE_PATH $__GL_SHADER_DISK_CACHE_PATH $FLY_CONFIG_DIR $MITMPROXY_CONF_DIR $AUDIBLE_CONFIG_DIR $AUDIBLE_PLUGIN_DIR $PI_CODING_AGENT_DIR $TF_PLUGIN_CACHE_DIR
+    test -d "$dir"; or mkdir -p "$dir"
+end
 
 contains -- $NPM_CONFIG_PREFIX/bin $PATH; or set -gx PATH $NPM_CONFIG_PREFIX/bin $PATH
 contains -- $BUN_INSTALL/bin $PATH; or set -gx PATH $BUN_INSTALL/bin $PATH

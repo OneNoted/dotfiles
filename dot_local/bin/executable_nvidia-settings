@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+
+: "${XDG_CONFIG_HOME:=$HOME/.config}"
+
+for arg in "$@"; do
+  case "$arg" in
+    --config|--config=*)
+      exec /usr/bin/nvidia-settings "$@"
+      ;;
+  esac
+done
+
+exec /usr/bin/nvidia-settings --config="${NVIDIA_SETTINGS_RC:-$XDG_CONFIG_HOME/nvidia/settings-rc}" "$@"

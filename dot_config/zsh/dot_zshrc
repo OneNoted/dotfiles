@@ -25,10 +25,12 @@ zinit load zsh-users/zsh-completions
 # Load completions before binding editor widgets so later plugins see the
 # final completion functions and we don't rely on zinit's deferred scheduler.
 autoload -Uz compinit
-if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
-  compinit
+ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump"
+mkdir -p "${ZSH_COMPDUMP:h}"
+if [[ -n ${ZSH_COMPDUMP}(#qN.mh+24) ]]; then
+  compinit -d "$ZSH_COMPDUMP"
 else
-  compinit -C
+  compinit -C -d "$ZSH_COMPDUMP"
 fi
 
 # 2. Fish Experience Stack 
