@@ -1,5 +1,9 @@
 {
   "plugins": {
+    "SchemaStore.nvim": {
+      "rev": "250aed7415ddd6cb3ea321490c7b35094ed9148d",
+      "src": "https://github.com/b0o/SchemaStore.nvim"
+    },
     "avante.nvim": {
       "rev": "8c84af0f09e5d9058362ac58401a8e7b047d826e",
       "src": "https://github.com/yetone/avante.nvim"

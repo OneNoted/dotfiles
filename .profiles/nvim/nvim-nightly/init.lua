@@ -22,6 +22,7 @@ do -- {{{1
 
 	-- UI
 	opt.number = true
+	opt.relativenumber = true
 	opt.cursorline = true
 	opt.signcolumn = "yes"
 	opt.termguicolors = true
@@ -522,6 +523,15 @@ do -- {{{1
 
 			local select = require("nvim-treesitter-textobjects.select")
 			local move = require("nvim-treesitter-textobjects.move")
+			local function textobject_move(callback)
+				return function()
+					local ok, parser = pcall(vim.treesitter.get_parser, 0)
+					if not ok or not parser then
+						return
+					end
+					callback()
+				end
+			end
 
 			vim.keymap.set({ "x", "o" }, "af", function()
 				select.select_textobject("@function.outer", "textobjects")
@@ -542,24 +552,24 @@ do -- {{{1
 				select.select_textobject("@parameter.inner", "textobjects")
 			end, { desc = "Select Inner Parameter" })
 
-			vim.keymap.set({ "n", "x", "o" }, "]f", function()
+			vim.keymap.set({ "n", "x", "o" }, "]f", textobject_move(function()
 				move.goto_next_start("@function.outer", "textobjects")
-			end, { desc = "Next Function" })
-			vim.keymap.set({ "n", "x", "o" }, "[f", function()
+			end), { desc = "Next Function" })
+			vim.keymap.set({ "n", "x", "o" }, "[f", textobject_move(function()
 				move.goto_previous_start("@function.outer", "textobjects")
-			end, { desc = "Prev Function" })
-			vim.keymap.set({ "n", "x", "o" }, "]C", function()
+			end), { desc = "Prev Function" })
+			vim.keymap.set({ "n", "x", "o" }, "]C", textobject_move(function()
 				move.goto_next_start("@class.outer", "textobjects")
-			end, { desc = "Next Class" })
-			vim.keymap.set({ "n", "x", "o" }, "[C", function()
+			end), { desc = "Next Class" })
+			vim.keymap.set({ "n", "x", "o" }, "[C", textobject_move(function()
 				move.goto_previous_start("@class.outer", "textobjects")
-			end, { desc = "Prev Class" })
-			vim.keymap.set({ "n", "x", "o" }, "]a", function()
+			end), { desc = "Prev Class" })
+			vim.keymap.set({ "n", "x", "o" }, "]a", textobject_move(function()
 				move.goto_next_start("@parameter.inner", "textobjects")
-			end, { desc = "Next Parameter" })
-			vim.keymap.set({ "n", "x", "o" }, "[a", function()
+			end), { desc = "Next Parameter" })
+			vim.keymap.set({ "n", "x", "o" }, "[a", textobject_move(function()
 				move.goto_previous_start("@parameter.inner", "textobjects")
-			end, { desc = "Prev Parameter" })
+			end), { desc = "Prev Parameter" })
 		end
 	else
 		vim.schedule(function()
@@ -630,8 +640,7 @@ do -- {{{1
 	local function nightly_insert_enter()
 		local ok_cmp, cmp = pcall(require, "cmp")
 		if ok_cmp and cmp.visible() then
-			cmp.confirm({ select = true })
-			return ""
+			return vim.api.nvim_replace_termcodes("<Cmd>lua require('cmp').confirm({ select = true })<CR>", true, false, true)
 		end
 
 		if _G.MiniPairs and type(MiniPairs.cr) == "function" then
