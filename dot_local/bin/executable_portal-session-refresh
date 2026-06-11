@@ -30,6 +30,7 @@ fi
 for unit in \
 	xdg-desktop-portal-termfilechooser.service \
 	xdg-desktop-portal-gtk.service \
+	xdg-desktop-portal-gnome.service \
 	xdg-desktop-portal-wlr.service \
 	xdg-desktop-portal-hyprland.service \
 	xdg-desktop-portal.service; do

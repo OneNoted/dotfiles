@@ -48,7 +48,7 @@ pacman = [
 aur = []
 
 [groups.desktop]
-pacman = ["niri", "btop", "fastfetch"]
+pacman = ["niri", "xdg-desktop-portal-gnome", "btop", "fastfetch"]
 aur = ["hyprpanel-git", "zen-browser-bin"]
 
 [groups.nvim]
