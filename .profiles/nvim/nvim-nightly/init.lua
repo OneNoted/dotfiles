@@ -113,6 +113,7 @@ do -- {{{1
 
 		-- Editing & navigation
 		gh("echasnovski/mini.nvim"),
+		gh("cosmicbuffalo/eyeliner.nvim"),
 		gh("folke/flash.nvim"),
 		gh("folke/snacks.nvim"),
 		gh("folke/which-key.nvim"),
@@ -829,6 +830,26 @@ do -- {{{1
 		},
 	})
 	require("mini.jump").setup()
+	require("eyeliner").setup({
+		default_keymaps = false,
+		case_sensitive = false,
+		disabled_filetypes = { "help" },
+		disabled_buftypes = { "nofile", "prompt", "terminal" },
+	})
+	vim.api.nvim_create_autocmd("User", {
+		group = vim.api.nvim_create_augroup("nightly_eyeliner", { clear = true }),
+		pattern = "MiniJumpGetTarget",
+		callback = function()
+			if vim.b.eyelinerDisabled then
+				return
+			end
+
+			require("eyeliner").highlight({
+				forward = not MiniJump.state.backward,
+				case_sensitive = not vim.o.ignorecase,
+			})
+		end,
+	})
 
 	-- Appearance
 	require("mini.icons").setup()
