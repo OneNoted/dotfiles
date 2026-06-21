@@ -1594,7 +1594,18 @@ require("catppuccin").setup({ -- {{{1
 	},
 })
 
+local function nightly_set_mini_jump_highlight()
+	local colors = require("catppuccin.palettes").get_palette("mocha")
+	vim.api.nvim_set_hl(0, "MiniJump", { fg = colors.text, bg = colors.surface2, bold = true })
+end
+
 vim.cmd.colorscheme("catppuccin")
+nightly_set_mini_jump_highlight()
+vim.api.nvim_create_autocmd("ColorScheme", {
+	group = vim.api.nvim_create_augroup("nightly_mini_jump_highlight", { clear = true }),
+	pattern = "catppuccin*",
+	callback = nightly_set_mini_jump_highlight,
+})
 -- Colorscheme }}}
 
 ------------------------------------------------------------
