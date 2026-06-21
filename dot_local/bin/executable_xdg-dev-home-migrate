@@ -5,7 +5,6 @@ XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
-FORGE_CONFIG="${FORGE_CONFIG:-$XDG_CONFIG_HOME/forge}"
 
 CARGO_HOME="${CARGO_HOME:-$XDG_DATA_HOME/cargo}"
 RUSTUP_HOME="${RUSTUP_HOME:-$XDG_DATA_HOME/rustup}"
@@ -66,7 +65,6 @@ ensure_targets() {
 		"$DOCKER_CONFIG" \
 		"$(dirname "$NPM_CONFIG_USERCONFIG")" \
 		"$XDG_STATE_HOME/xdg-dev-home-migrate/backups" \
-		"$FORGE_CONFIG" \
 		"$AUDIBLE_CONFIG_DIR" \
 		"$AUDIBLE_PLUGIN_DIR" \
 		"$(dirname "$PI_CODING_AGENT_DIR")"
@@ -125,7 +123,6 @@ Before deleting any backup, start a fresh login shell or session and verify:
   npm config get cache
   npm prefix -g
   docker --config "$DOCKER_CONFIG" version
-  printf '%s\n' "$FORGE_CONFIG"
   audible --version
   PI_OFFLINE=1 pi --version
 
@@ -152,7 +149,6 @@ EOF
 	print_mapping "$HOME/.electron-gyp" "$npm_config_devdir" "Electron gyp"
 	print_mapping "$HOME/.pub-cache" "$PUB_CACHE" "Pub cache"
 	print_mapping "$HOME/.docker" "$DOCKER_CONFIG" "Docker config"
-	print_mapping "$HOME/.forge" "$FORGE_CONFIG" "Forge config"
 	print_mapping "$HOME/.audible" "$AUDIBLE_CONFIG_DIR" "Audible config"
 	print_mapping "$HOME/.pi" "$(dirname "$PI_CODING_AGENT_DIR")" "Pi agent"
 
@@ -184,7 +180,6 @@ main() {
 		migrate_dir "$HOME/.electron-gyp" "$npm_config_devdir" "Electron gyp"
 		migrate_dir "$HOME/.pub-cache" "$PUB_CACHE" "Pub cache"
 		migrate_dir "$HOME/.docker" "$DOCKER_CONFIG" "Docker config"
-		migrate_dir "$HOME/.forge" "$FORGE_CONFIG" "Forge config"
 		migrate_dir "$HOME/.audible" "$AUDIBLE_CONFIG_DIR" "Audible config"
 		migrate_dir "$HOME/.pi" "$(dirname "$PI_CODING_AGENT_DIR")" "Pi agent"
 		print_smoke_tests

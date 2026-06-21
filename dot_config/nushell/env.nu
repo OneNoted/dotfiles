@@ -105,7 +105,6 @@ $env.MISE_CACHE_DIR = ($env.MISE_CACHE_DIR? | default ($env.XDG_CACHE_HOME | pat
 $env.MISE_STATE_DIR = ($env.MISE_STATE_DIR? | default ($env.XDG_STATE_HOME | path join "mise"))
 $env.STARSHIP_CONFIG = ($env.STARSHIP_CONFIG? | default ($env.XDG_CONFIG_HOME | path join "starship.toml"))
 $env.STARSHIP_CACHE = ($env.STARSHIP_CACHE? | default ($env.XDG_CACHE_HOME | path join "starship"))
-$env.FORGE_CONFIG = ($env.FORGE_CONFIG? | default ($env.XDG_CONFIG_HOME | path join "forge"))
 $env.AUDIBLE_CONFIG_DIR = ($env.AUDIBLE_CONFIG_DIR? | default ($env.XDG_CONFIG_HOME | path join "audible"))
 $env.AUDIBLE_PLUGIN_DIR = ($env.AUDIBLE_PLUGIN_DIR? | default ($env.XDG_DATA_HOME | path join "audible" "plugins"))
 $env.PI_CODING_AGENT_DIR = ($env.PI_CODING_AGENT_DIR? | default ($env.XDG_DATA_HOME | path join "pi" "agent"))
