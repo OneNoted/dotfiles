@@ -674,8 +674,10 @@ end
 ------------------------------------------------------------
 do -- {{{1
 	local mason_bin_dir = vim.fn.stdpath("data") .. "/mason/bin"
-	local jsonls_bin = mason_bin_dir .. "/vscode-json-language-server"
-	if vim.fn.executable("vscode-json-language-server") == 0 and vim.fn.executable(jsonls_bin) == 1 then
+	if
+		vim.fn.isdirectory(mason_bin_dir) == 1
+		and not vim.tbl_contains(vim.split(vim.env.PATH or "", ":", { plain = true }), mason_bin_dir)
+	then
 		vim.env.PATH = mason_bin_dir .. ":" .. vim.env.PATH
 	end
 
@@ -686,14 +688,50 @@ do -- {{{1
 	end
 
 	local json_schemas = {}
+	local yaml_schemas = {}
 	local ok_schemastore, schemastore = pcall(require, "schemastore")
 	if ok_schemastore then
 		json_schemas = schemastore.json.schemas()
+		yaml_schemas = schemastore.yaml.schemas()
 	end
 
-	vim.lsp.config("jsonls", {
-		capabilities = capabilities,
-		cmd = { "vscode-json-language-server", "--stdio" },
+	vim.filetype.add({
+		filename = {
+			["compose.yaml"] = "yaml.docker-compose",
+			["compose.yml"] = "yaml.docker-compose",
+			["docker-compose.yaml"] = "yaml.docker-compose",
+			["docker-compose.yml"] = "yaml.docker-compose",
+		},
+	})
+
+	local function enable_lsp(name, executable, opts)
+		if executable and vim.fn.executable(executable) ~= 1 then
+			return
+		end
+
+		vim.lsp.config(name, vim.tbl_deep_extend("force", { capabilities = capabilities }, opts or {}))
+		vim.lsp.enable(name)
+	end
+
+	local function command_succeeds(cmd)
+		local ok, result = pcall(function()
+			return vim.system(cmd, { text = true }):wait()
+		end)
+
+		return ok and result and result.code == 0
+	end
+
+	local function rust_analyzer_cmd()
+		if vim.fn.executable("rust-analyzer") == 1 and command_succeeds({ "rust-analyzer", "--version" }) then
+			return { "rust-analyzer" }
+		end
+
+		if vim.fn.executable("rustup") == 1 and command_succeeds({ "rustup", "+stable", "which", "rust-analyzer" }) then
+			return { "rustup", "run", "stable", "rust-analyzer" }
+		end
+	end
+
+	enable_lsp("jsonls", "vscode-json-language-server", {
 		filetypes = { "json", "jsonc" },
 		init_options = {
 			provideFormatter = true,
@@ -706,7 +744,81 @@ do -- {{{1
 		},
 	})
 
-	vim.lsp.enable("jsonls")
+	enable_lsp("lua_ls", "lua-language-server", {
+		settings = {
+			Lua = {
+				runtime = { version = "LuaJIT" },
+				diagnostics = { globals = { "vim" } },
+				workspace = { checkThirdParty = false },
+				telemetry = { enable = false },
+			},
+		},
+	})
+
+	enable_lsp("gopls", "gopls", {
+		settings = {
+			gopls = {
+				analyses = { unusedparams = true },
+				staticcheck = true,
+			},
+		},
+	})
+
+	local rust_analyzer = rust_analyzer_cmd()
+	if rust_analyzer then
+		enable_lsp("rust_analyzer", nil, {
+			cmd = rust_analyzer,
+		})
+	end
+
+	enable_lsp("ts_ls", "typescript-language-server", {
+		settings = {
+			javascript = {
+				inlayHints = {
+					includeInlayFunctionLikeReturnTypeHints = true,
+					includeInlayParameterNameHints = "all",
+					includeInlayPropertyDeclarationTypeHints = true,
+				},
+			},
+			typescript = {
+				inlayHints = {
+					includeInlayFunctionLikeReturnTypeHints = true,
+					includeInlayParameterNameHints = "all",
+					includeInlayPropertyDeclarationTypeHints = true,
+				},
+			},
+		},
+	})
+
+	enable_lsp("jdtls", "jdtls")
+
+	enable_lsp("yamlls", "yaml-language-server", {
+		settings = {
+			yaml = {
+				completion = true,
+				hover = true,
+				schemaStore = {
+					enable = false,
+					url = "",
+				},
+				schemas = yaml_schemas,
+				validate = true,
+			},
+		},
+	})
+
+	enable_lsp("taplo", "taplo")
+	enable_lsp("dockerls", "docker-langserver")
+	enable_lsp("docker_compose_language_service", "docker-compose-langserver")
+	enable_lsp("terraformls", "terraform-ls")
+	enable_lsp("tofu_ls", "tofu-ls")
+	enable_lsp("tflint", "tflint")
+	enable_lsp("bashls", "bash-language-server")
+	enable_lsp("marksman", "marksman")
+	enable_lsp("nil_ls", "nil")
+	enable_lsp("zls", "zls")
+	enable_lsp("helm_ls", "helm_ls")
+	enable_lsp("ansiblels", "ansible-language-server")
 end
 -- LSP }}}
 
@@ -832,7 +944,9 @@ do -- {{{1
 			hex_color = hipatterns.gen_highlighter.hex_color(),
 		},
 	})
-	require("mini.jump").setup()
+	require("mini.jump").setup({
+		silent = true,
+	})
 	require("eyeliner").setup({
 		default_keymaps = false,
 		case_sensitive = false,
@@ -1243,7 +1357,7 @@ require("flash").setup({ -- {{{1
 local function nightly_lsp_supports(method, bufnr) -- {{{1
 	bufnr = bufnr or 0
 	for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr })) do
-		if client.supports_method(method) then
+		if client:supports_method(method, bufnr) then
 			return true
 		end
 	end
@@ -1494,6 +1608,10 @@ do -- {{{1
 
 	local function bufdelete(bufnr)
 		require("mini.bufremove").delete(bufnr, false)
+	end
+
+	if vim.F then
+		vim.F.if_nil = vim.nonnil
 	end
 
 	require("bufferline").setup({
