@@ -87,6 +87,9 @@ do -- {{{1
 		-- Colorscheme
 		{ src = gh("catppuccin/nvim"), name = "catppuccin" },
 
+		-- UI
+		gh("akinsho/bufferline.nvim"),
+
 		-- Treesitter
 		gh("nvim-treesitter/nvim-treesitter"),
 		gh("nvim-treesitter/nvim-treesitter-textobjects"),
@@ -1015,6 +1018,7 @@ require("which-key").setup({ -- {{{1
 		{ "z", mode = { "n", "x" } },
 	},
 	spec = {
+		{ "<leader>b", group = "buffer" },
 		{ "<leader>s", group = "search" },
 		{ "[", group = "prev" },
 		{ "]", group = "next" },
@@ -1293,6 +1297,11 @@ end, { desc = "Find Files" })
 vim.keymap.set("n", "<leader>fb", function()
 	require("snacks").picker.buffers()
 end, { desc = "Buffers" })
+vim.keymap.set("n", "<S-h>", "<Cmd>bprevious<CR>", { desc = "Prev buffer" })
+vim.keymap.set("n", "<S-l>", "<Cmd>bnext<CR>", { desc = "Next buffer" })
+vim.keymap.set("n", "[b", "<Cmd>bprevious<CR>", { desc = "Prev buffer" })
+vim.keymap.set("n", "]b", "<Cmd>bnext<CR>", { desc = "Next buffer" })
+vim.keymap.set("n", "<leader>bb", "<Cmd>edit #<CR>", { desc = "Switch to other buffer" })
 vim.keymap.set("n", "<leader>fr", function()
 	require("snacks").picker.recent()
 end, { desc = "Recent Files" })
@@ -1471,6 +1480,62 @@ require("catppuccin").setup({ -- {{{1
 
 vim.cmd.colorscheme("catppuccin")
 -- Colorscheme }}}
+
+------------------------------------------------------------
+-- bufferline.nvim
+------------------------------------------------------------
+do -- {{{1
+	local diag_icons = {
+		error = " ",
+		warning = " ",
+	}
+
+	local function bufdelete(bufnr)
+		require("mini.bufremove").delete(bufnr, false)
+	end
+
+	require("bufferline").setup({
+		highlights = require("catppuccin.special.bufferline").get_theme(),
+		options = {
+			close_command = bufdelete,
+			right_mouse_command = bufdelete,
+			diagnostics = "nvim_lsp",
+			always_show_bufferline = false,
+			diagnostics_indicator = function(_, _, diag)
+				local parts = {}
+				if diag.error and diag.error > 0 then
+					parts[#parts + 1] = diag_icons.error .. diag.error
+				end
+				if diag.warning and diag.warning > 0 then
+					parts[#parts + 1] = diag_icons.warning .. diag.warning
+				end
+				return table.concat(parts, " ")
+			end,
+			offsets = {
+				{
+					filetype = "snacks_layout_box",
+				},
+			},
+			---@param opts bufferline.IconFetcherOpts
+			get_element_icon = function(opts)
+				if _G.MiniIcons then
+					local icon, hl = MiniIcons.get("filetype", opts.filetype)
+					return icon, hl
+				end
+			end,
+		},
+	})
+
+	vim.api.nvim_create_autocmd({ "BufAdd", "BufDelete" }, {
+		group = vim.api.nvim_create_augroup("nightly_bufferline", { clear = true }),
+		callback = function()
+			vim.schedule(function()
+				pcall(vim.cmd.redrawtabline)
+			end)
+		end,
+	})
+end
+-- bufferline.nvim }}}
 
 ------------------------------------------------------------
 -- avante.nvim
