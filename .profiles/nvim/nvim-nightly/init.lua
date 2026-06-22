@@ -10,8 +10,7 @@
 vim.g.mapleader = " " -- {{{1
 vim.g.maplocalleader = "\\"
 
--- Let yazi.nvim take over directory opens like `nvim .`.
-vim.g.loaded_netrwPlugin = 1
+-- Keep netrw available for scp:// and sftp:// editing from Yazi VFS.
 -- Leader }}}
 
 ------------------------------------------------------------
@@ -1331,6 +1330,11 @@ require("yazi").setup({ -- {{{1
 ------------------------------------------------------------
 -- oil.nvim
 ------------------------------------------------------------
+-- Load netrw's remote protocol handlers before Oil disables its file explorer.
+vim.g.netrw_silent = 1
+vim.cmd("packadd netrw")
+vim.cmd("runtime autoload/netrw.vim")
+
 require("oil").setup({ -- {{{1
 	default_file_explorer = true,
 	keymaps = {

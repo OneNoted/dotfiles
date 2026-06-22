@@ -27,11 +27,12 @@ ueberzug_offset = [0, 0, 0, 0]
 
 [opener]
 play = [{ run = 'mpv %s', orphan = true, for = "unix" }]
-edit = [{ run = 'nvim %s', block = true, for = "unix" }]
+edit = [{ run = 'nvim %S', block = true, for = "unix" }]
 open = [{ run = 'xdg-open %s1', desc = "Open", for = "linux" }]
 
 [open]
 prepend_rules = [
+  { mime = "vfs/{absent,stale}", use = "download" },
   { url = "*.json", use = "edit" },
   { url = "*.sh", use = "edit" },
   { url = "*.toml", use = "edit" },
