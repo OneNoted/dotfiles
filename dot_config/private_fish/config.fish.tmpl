@@ -58,7 +58,7 @@ set -q PUB_CACHE; or set -gx PUB_CACHE $XDG_DATA_HOME/pub-cache
 set -q DOCKER_CONFIG; or set -gx DOCKER_CONFIG $XDG_CONFIG_HOME/docker
 set -q ANDROID_USER_HOME; or set -gx ANDROID_USER_HOME $XDG_DATA_HOME/android
 set -q K9SCONFIG; or set -gx K9SCONFIG $XDG_CONFIG_HOME/k9s
-set -q KUBECONFIG; or set -gx KUBECONFIG $XDG_CONFIG_HOME/kube/config
+set -q KUBECONFIG; or set -gx KUBECONFIG "$XDG_CONFIG_HOME/kube/config:$HOME/.kube/config"
 set -q TALOSCONFIG; or set -gx TALOSCONFIG $XDG_CONFIG_HOME/talos/config
 set -q SIDEROV1_KEYS_DIR; or set -gx SIDEROV1_KEYS_DIR $XDG_CONFIG_HOME/talos/keys
 set -q OCI_CLI_CONFIG_FILE; or set -gx OCI_CLI_CONFIG_FILE $XDG_CONFIG_HOME/oci/config

@@ -58,7 +58,7 @@ fi
 : "${DOCKER_CONFIG:=$XDG_CONFIG_HOME/docker}"
 : "${ANDROID_USER_HOME:=$XDG_DATA_HOME/android}"
 : "${K9SCONFIG:=$XDG_CONFIG_HOME/k9s}"
-: "${KUBECONFIG:=$XDG_CONFIG_HOME/kube/config}"
+: "${KUBECONFIG:=$XDG_CONFIG_HOME/kube/config:$HOME/.kube/config}"
 : "${TALOSCONFIG:=$XDG_CONFIG_HOME/talos/config}"
 : "${SIDEROV1_KEYS_DIR:=$XDG_CONFIG_HOME/talos/keys}"
 : "${OCI_CLI_CONFIG_FILE:=$XDG_CONFIG_HOME/oci/config}"
