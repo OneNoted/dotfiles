@@ -37,10 +37,12 @@ $env.BASH_ENV = ($env.BASH_ENV? | default ($env.XDG_CONFIG_HOME | path join "bas
 $env.LESSHISTFILE = ($env.LESSHISTFILE? | default ($env.XDG_STATE_HOME | path join "less" "history"))
 $env.CARGO_HOME = ($env.CARGO_HOME? | default ($env.XDG_DATA_HOME | path join "cargo"))
 $env.RUSTUP_HOME = ($env.RUSTUP_HOME? | default ($env.XDG_DATA_HOME | path join "rustup"))
+$env.GOPATH = ($env.GOPATH? | default ($env.XDG_DATA_HOME | path join "go"))
 $env.GOBIN = ($env.GOBIN? | default $env.XDG_BIN_HOME)
 $env.GOCACHE = ($env.GOCACHE? | default ($env.XDG_CACHE_HOME | path join "go-build"))
 $env.GOMODCACHE = ($env.GOMODCACHE? | default ($env.XDG_CACHE_HOME | path join "go" "mod"))
 $env.PYTHON_EGG_CACHE = ($env.PYTHON_EGG_CACHE? | default ($env.XDG_CACHE_HOME | path join "python-eggs"))
+$env.PYTHON_HISTORY = ($env.PYTHON_HISTORY? | default ($env.XDG_STATE_HOME | path join "python" "history"))
 $env.MYPY_CACHE_DIR = ($env.MYPY_CACHE_DIR? | default ($env.XDG_CACHE_HOME | path join "mypy"))
 $env.RUFF_CACHE_DIR = ($env.RUFF_CACHE_DIR? | default ($env.XDG_CACHE_HOME | path join "ruff"))
 $env.UV_CACHE_DIR = ($env.UV_CACHE_DIR? | default ($env.XDG_CACHE_HOME | path join "uv"))
@@ -63,10 +65,12 @@ $env.BUN_RUNTIME_TRANSPILER_CACHE_PATH = ($env.BUN_RUNTIME_TRANSPILER_CACHE_PATH
 $env.COREPACK_HOME = ($env.COREPACK_HOME? | default ($env.XDG_CACHE_HOME | path join "corepack"))
 $env.NODE_REPL_HISTORY = ($env.NODE_REPL_HISTORY? | default ($env.XDG_STATE_HOME | path join "node" "repl_history"))
 $env.GRADLE_USER_HOME = ($env.GRADLE_USER_HOME? | default ($env.XDG_DATA_HOME | path join "gradle"))
+$env.MAVEN_OPTS = ($env.MAVEN_OPTS? | default ("-Dmaven.repo.local=" + ($env.XDG_CACHE_HOME | path join "maven" "repository")))
 $env.NPM_CONFIG_USERCONFIG = ($env.NPM_CONFIG_USERCONFIG? | default ($env.XDG_CONFIG_HOME | path join "npm" "npmrc"))
 $env.NPM_CONFIG_CACHE = ($env.NPM_CONFIG_CACHE? | default ($env.XDG_CACHE_HOME | path join "npm"))
 $env.NPM_CONFIG_PREFIX = ($env.NPM_CONFIG_PREFIX? | default ($env.XDG_DATA_HOME | path join "npm"))
 $env.NPM_CONFIG_LOGS_DIR = ($env.NPM_CONFIG_LOGS_DIR? | default ($env.XDG_STATE_HOME | path join "npm" "logs"))
+$env.npm_config_devdir = ($env.npm_config_devdir? | default ($env.XDG_CACHE_HOME | path join "electron-gyp"))
 $env.PNPM_HOME = ($env.PNPM_HOME? | default ($env.XDG_DATA_HOME | path join "pnpm"))
 $env.NVM_DIR = ($env.NVM_DIR? | default ($env.XDG_DATA_HOME | path join "nvm"))
 $env.NODENV_ROOT = ($env.NODENV_ROOT? | default ($env.XDG_DATA_HOME | path join "nodenv"))
@@ -74,21 +78,60 @@ $env.N_PREFIX = ($env.N_PREFIX? | default ($env.XDG_DATA_HOME | path join "n"))
 $env.YARN_CACHE_FOLDER = ($env.YARN_CACHE_FOLDER? | default ($env.XDG_CACHE_HOME | path join "yarn"))
 $env.PUB_CACHE = ($env.PUB_CACHE? | default ($env.XDG_DATA_HOME | path join "pub-cache"))
 $env.DOCKER_CONFIG = ($env.DOCKER_CONFIG? | default ($env.XDG_CONFIG_HOME | path join "docker"))
+$env.ANDROID_USER_HOME = ($env.ANDROID_USER_HOME? | default ($env.XDG_DATA_HOME | path join "android"))
 $env.K9SCONFIG = ($env.K9SCONFIG? | default ($env.XDG_CONFIG_HOME | path join "k9s"))
+$env.KUBECONFIG = ($env.KUBECONFIG? | default ([($env.XDG_CONFIG_HOME | path join "kube" "config") ($env.HOME | path join ".kube" "config")] | str join ":"))
+$env.TALOSCONFIG = ($env.TALOSCONFIG? | default ($env.XDG_CONFIG_HOME | path join "talos" "config"))
+$env.SIDEROV1_KEYS_DIR = ($env.SIDEROV1_KEYS_DIR? | default ($env.XDG_CONFIG_HOME | path join "talos" "keys"))
+$env.OCI_CLI_CONFIG_FILE = ($env.OCI_CLI_CONFIG_FILE? | default ($env.XDG_CONFIG_HOME | path join "oci" "config"))
+$env.OCI_CLI_RC_FILE = ($env.OCI_CLI_RC_FILE? | default ($env.XDG_CONFIG_HOME | path join "oci" "oci_cli_rc"))
 $env.HELM_CACHE_HOME = ($env.HELM_CACHE_HOME? | default ($env.XDG_CACHE_HOME | path join "helm"))
 $env.HELM_CONFIG_HOME = ($env.HELM_CONFIG_HOME? | default ($env.XDG_CONFIG_HOME | path join "helm"))
 $env.HELM_DATA_HOME = ($env.HELM_DATA_HOME? | default ($env.XDG_DATA_HOME | path join "helm"))
+$env.ANSIBLE_HOME = ($env.ANSIBLE_HOME? | default ($env.XDG_DATA_HOME | path join "ansible"))
+$env.PARALLEL_HOME = ($env.PARALLEL_HOME? | default ($env.XDG_CONFIG_HOME | path join "parallel"))
+$env.PLATFORMIO_CORE_DIR = ($env.PLATFORMIO_CORE_DIR? | default ($env.XDG_DATA_HOME | path join "platformio"))
+$env.PLATFORMIO_CACHE_DIR = ($env.PLATFORMIO_CACHE_DIR? | default ($env.XDG_CACHE_HOME | path join "platformio"))
+$env.CUDA_CACHE_PATH = ($env.CUDA_CACHE_PATH? | default ($env.XDG_CACHE_HOME | path join "nvidia" "ComputeCache"))
+$env.__GL_SHADER_DISK_CACHE_PATH = ($env.__GL_SHADER_DISK_CACHE_PATH? | default ($env.XDG_CACHE_HOME | path join "nvidia" "GLCache"))
+$env.FLY_CONFIG_DIR = ($env.FLY_CONFIG_DIR? | default ($env.XDG_CONFIG_HOME | path join "fly"))
+$env.MITMPROXY_CONF_DIR = ($env.MITMPROXY_CONF_DIR? | default ($env.XDG_CONFIG_HOME | path join "mitmproxy"))
+$env.TF_CLI_CONFIG_FILE = ($env.TF_CLI_CONFIG_FILE? | default ($env.XDG_CONFIG_HOME | path join "terraform" "terraformrc"))
+$env.TF_PLUGIN_CACHE_DIR = ($env.TF_PLUGIN_CACHE_DIR? | default ($env.XDG_CACHE_HOME | path join "terraform" "plugin-cache"))
+$env.WGETRC = ($env.WGETRC? | default ($env.XDG_CONFIG_HOME | path join "wget" "wgetrc"))
 $env.MISE_CONFIG_DIR = ($env.MISE_CONFIG_DIR? | default ($env.XDG_CONFIG_HOME | path join "mise"))
 $env.MISE_DATA_DIR = ($env.MISE_DATA_DIR? | default ($env.XDG_DATA_HOME | path join "mise"))
 $env.MISE_CACHE_DIR = ($env.MISE_CACHE_DIR? | default ($env.XDG_CACHE_HOME | path join "mise"))
 $env.MISE_STATE_DIR = ($env.MISE_STATE_DIR? | default ($env.XDG_STATE_HOME | path join "mise"))
 $env.STARSHIP_CONFIG = ($env.STARSHIP_CONFIG? | default ($env.XDG_CONFIG_HOME | path join "starship.toml"))
 $env.STARSHIP_CACHE = ($env.STARSHIP_CACHE? | default ($env.XDG_CACHE_HOME | path join "starship"))
-$env.FORGE_CONFIG = ($env.FORGE_CONFIG? | default ($env.XDG_CONFIG_HOME | path join "forge"))
+$env.AUDIBLE_CONFIG_DIR = ($env.AUDIBLE_CONFIG_DIR? | default ($env.XDG_CONFIG_HOME | path join "audible"))
+$env.AUDIBLE_PLUGIN_DIR = ($env.AUDIBLE_PLUGIN_DIR? | default ($env.XDG_DATA_HOME | path join "audible" "plugins"))
+$env.PI_CODING_AGENT_DIR = ($env.PI_CODING_AGENT_DIR? | default ($env.XDG_DATA_HOME | path join "pi" "agent"))
 $env.EMACSDIR = ($env.EMACSDIR? | default ($env.XDG_CONFIG_HOME | path join "emacs"))
 $env.DOOMDIR = ($env.DOOMDIR? | default ($env.XDG_CONFIG_HOME | path join "doom"))
 $env.DOOMPROFILE = ($env.DOOMPROFILE? | default "default")
 $env.GTK_USE_PORTAL = ($env.GTK_USE_PORTAL? | default "1")
+
+for dir in [
+    $env.GOPATH
+    ($env.PYTHON_HISTORY | path dirname)
+    $env.ANSIBLE_HOME
+    $env.PLATFORMIO_CACHE_DIR
+    $env.npm_config_devdir
+    $env.CUDA_CACHE_PATH
+    $env.__GL_SHADER_DISK_CACHE_PATH
+    $env.FLY_CONFIG_DIR
+    $env.MITMPROXY_CONF_DIR
+    $env.AUDIBLE_CONFIG_DIR
+    $env.AUDIBLE_PLUGIN_DIR
+    $env.PI_CODING_AGENT_DIR
+    $env.TF_PLUGIN_CACHE_DIR
+] {
+    if not ($dir | path exists) {
+        mkdir $dir
+    }
+}
 
 for entry in [
     ($env.NPM_CONFIG_PREFIX | path join "bin")

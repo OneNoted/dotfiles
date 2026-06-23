@@ -10,4 +10,3 @@ type = "sftp"
 host = "astraea"
 user = "notes"
 port = 22
-key_file = "~/.ssh/id_ed25519"

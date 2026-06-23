@@ -1,0 +1,32 @@
+#!/bin/sh
+
+set -eu
+
+desktop_id="glide-browser.desktop"
+
+if ! command -v xdg-mime >/dev/null 2>&1; then
+	exit 0
+fi
+
+for mime in \
+	application/json \
+	application/pdf \
+	application/rdf+xml \
+	application/rss+xml \
+	application/xhtml+xml \
+	application/xml \
+	image/avif \
+	image/gif \
+	image/jpeg \
+	image/jpg \
+	image/png \
+	image/svg+xml \
+	image/webp \
+	text/html \
+	text/xml \
+	x-scheme-handler/chrome \
+	x-scheme-handler/http \
+	x-scheme-handler/https
+do
+	xdg-mime default "$desktop_id" "$mime"
+done

@@ -196,14 +196,25 @@ func listPresets(cfg Config) error {
 	}
 
 	active, _ := activePreset(cfg)
+	idWidth, headphoneWidth := presetListWidths(presets)
 	for _, preset := range presets {
 		marker := " "
 		if active.ID != "" && preset.ID == active.ID {
 			marker = "*"
 		}
-		fmt.Printf("%s %-36s  %-28s  %s\n", marker, preset.ID, preset.Headphone, preset.Name)
+		fmt.Printf("%s %-*s  %-*s  %s\n", marker, idWidth, preset.ID, headphoneWidth, preset.Headphone, preset.Name)
 	}
 	return nil
+}
+
+func presetListWidths(presets []Preset) (int, int) {
+	idWidth := 36
+	headphoneWidth := 28
+	for _, preset := range presets {
+		idWidth = max(idWidth, len(preset.ID))
+		headphoneWidth = max(headphoneWidth, len(preset.Headphone))
+	}
+	return idWidth, headphoneWidth
 }
 
 func applyPresetByName(cfg Config, name string) error {

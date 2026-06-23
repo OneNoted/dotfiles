@@ -71,19 +71,71 @@ return {
 					move = {
 						enable = true,
 						set_jumps = true, -- Add to jumplist
-						goto_next_start = {
-							["]f"] = "@function.outer",
-							["]C"] = "@class.outer", -- Capital C to avoid conflict with treesitter-context [c
-							["]a"] = "@parameter.inner",
-						},
-						goto_previous_start = {
-							["[f"] = "@function.outer",
-							["[C"] = "@class.outer", -- Capital C to avoid conflict with treesitter-context [c
-							["[a"] = "@parameter.inner",
-						},
 					},
 				},
 			})
+
+			local ok_move, move = pcall(require, "nvim-treesitter-textobjects.move")
+			if ok_move then
+				local function textobject_move(callback)
+					return function()
+						local ok, parser = pcall(vim.treesitter.get_parser, 0)
+						if not ok or not parser then
+							return
+						end
+						callback()
+					end
+				end
+
+				vim.keymap.set(
+					{ "n", "x", "o" },
+					"]f",
+					textobject_move(function()
+						move.goto_next_start("@function.outer", "textobjects")
+					end),
+					{ desc = "Next Function" }
+				)
+				vim.keymap.set(
+					{ "n", "x", "o" },
+					"[f",
+					textobject_move(function()
+						move.goto_previous_start("@function.outer", "textobjects")
+					end),
+					{ desc = "Prev Function" }
+				)
+				vim.keymap.set(
+					{ "n", "x", "o" },
+					"]C",
+					textobject_move(function()
+						move.goto_next_start("@class.outer", "textobjects")
+					end),
+					{ desc = "Next Class" }
+				)
+				vim.keymap.set(
+					{ "n", "x", "o" },
+					"[C",
+					textobject_move(function()
+						move.goto_previous_start("@class.outer", "textobjects")
+					end),
+					{ desc = "Prev Class" }
+				)
+				vim.keymap.set(
+					{ "n", "x", "o" },
+					"]a",
+					textobject_move(function()
+						move.goto_next_start("@parameter.inner", "textobjects")
+					end),
+					{ desc = "Next Parameter" }
+				)
+				vim.keymap.set(
+					{ "n", "x", "o" },
+					"[a",
+					textobject_move(function()
+						move.goto_previous_start("@parameter.inner", "textobjects")
+					end),
+					{ desc = "Prev Parameter" }
+				)
+			end
 		end,
 	},
 }

@@ -1,0 +1,38 @@
+#!/bin/sh
+
+set -eu
+
+: "${XDG_RUNTIME_DIR:=/run/user/$(id -u)}"
+export XDG_RUNTIME_DIR
+
+find_wayland_display() {
+	for socket in "$XDG_RUNTIME_DIR"/wayland-[0-9]*; do
+		[ -S "$socket" ] || continue
+		case "$socket" in
+		*-awww-*) continue ;;
+		esac
+
+		printf '%s\n' "${socket##*/}"
+		return 0
+	done
+}
+
+if [ -z "${WAYLAND_DISPLAY:-}" ]; then
+	WAYLAND_DISPLAY="$(find_wayland_display || true)"
+	[ -n "$WAYLAND_DISPLAY" ] && export WAYLAND_DISPLAY
+fi
+
+: "${XDG_CURRENT_DESKTOP:=niri}"
+: "${XDG_SESSION_DESKTOP:=niri}"
+: "${DESKTOP_SESSION:=niri}"
+: "${GTK_USE_PORTAL:=1}"
+
+export XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP DESKTOP_SESSION GTK_USE_PORTAL
+
+if [ -n "${WAYLAND_DISPLAY:-}" ]; then
+	: "${XDG_SESSION_TYPE:=wayland}"
+	export XDG_SESSION_TYPE
+	export MOZ_ENABLE_WAYLAND=1
+fi
+
+exec glide-bin "$@"

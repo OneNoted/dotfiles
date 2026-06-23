@@ -10,8 +10,7 @@
 vim.g.mapleader = " " -- {{{1
 vim.g.maplocalleader = "\\"
 
--- Let yazi.nvim take over directory opens like `nvim .`.
-vim.g.loaded_netrwPlugin = 1
+-- Keep netrw available for scp:// and sftp:// editing from Yazi VFS.
 -- Leader }}}
 
 ------------------------------------------------------------
@@ -22,6 +21,7 @@ do -- {{{1
 
 	-- UI
 	opt.number = true
+	opt.relativenumber = true
 	opt.cursorline = true
 	opt.signcolumn = "yes"
 	opt.termguicolors = true
@@ -86,6 +86,9 @@ do -- {{{1
 		-- Colorscheme
 		{ src = gh("catppuccin/nvim"), name = "catppuccin" },
 
+		-- UI
+		gh("akinsho/bufferline.nvim"),
+
 		-- Treesitter
 		gh("nvim-treesitter/nvim-treesitter"),
 		gh("nvim-treesitter/nvim-treesitter-textobjects"),
@@ -112,6 +115,7 @@ do -- {{{1
 
 		-- Editing & navigation
 		gh("echasnovski/mini.nvim"),
+		gh("cosmicbuffalo/eyeliner.nvim"),
 		gh("folke/flash.nvim"),
 		gh("folke/snacks.nvim"),
 		gh("folke/which-key.nvim"),
@@ -133,6 +137,92 @@ do -- {{{1
 	})
 end
 -- Packages }}}
+
+------------------------------------------------------------
+-- Pack Management
+------------------------------------------------------------
+do -- {{{1
+	local function pack_args(command)
+		return #command.fargs > 0 and command.fargs or nil
+	end
+
+	local function pack_names(arg_lead)
+		local ok, plugins = pcall(vim.pack.get, nil, { info = false })
+		if not ok then
+			return {}
+		end
+
+		local names = vim
+			.iter(plugins)
+			:map(function(plugin)
+				return plugin.spec.name
+			end)
+			:filter(function(name)
+				return name:find("^" .. vim.pesc(arg_lead)) ~= nil
+			end)
+			:totable()
+		table.sort(names)
+		return names
+	end
+
+	local function pack_command_alias(alias, command)
+		vim.cmd(
+			("cnoreabbrev <expr> %s getcmdtype() ==# ':' && getcmdline() ==# %q ? %q : %q"):format(
+				alias,
+				alias,
+				command,
+				alias
+			)
+		)
+	end
+
+	vim.api.nvim_create_user_command("PackUpdate", function(command)
+		vim.pack.update(pack_args(command), { force = command.bang })
+	end, {
+		bang = true,
+		complete = pack_names,
+		desc = "Update vim.pack plugins; ! applies without confirmation",
+		nargs = "*",
+	})
+
+	vim.api.nvim_create_user_command("PackStatus", function(command)
+		vim.pack.update(pack_args(command), { offline = true, force = command.bang })
+	end, {
+		bang = true,
+		complete = pack_names,
+		desc = "Open vim.pack status without fetching; ! applies queued local changes",
+		nargs = "*",
+	})
+
+	vim.api.nvim_create_user_command("PackLockfile", function(command)
+		vim.pack.update(pack_args(command), { target = "lockfile", force = command.bang })
+	end, {
+		bang = true,
+		complete = pack_names,
+		desc = "Sync vim.pack plugins to lockfile revisions; ! applies without confirmation",
+		nargs = "*",
+	})
+
+	vim.api.nvim_create_user_command("PackDelete", function(command)
+		vim.pack.del(command.fargs, { force = command.bang })
+	end, {
+		bang = true,
+		complete = pack_names,
+		desc = "Delete vim.pack plugins from disk; ! allows active plugins",
+		nargs = "+",
+	})
+
+	vim.api.nvim_create_user_command("PackLog", function()
+		vim.cmd.edit(vim.fs.joinpath(vim.fn.stdpath("log"), "nvim-pack.log"))
+	end, { desc = "Open the vim.pack log" })
+
+	pack_command_alias("packupdate", "PackUpdate")
+	pack_command_alias("packstatus", "PackStatus")
+	pack_command_alias("packlockfile", "PackLockfile")
+	pack_command_alias("packdelete", "PackDelete")
+	pack_command_alias("packlog", "PackLog")
+end
+-- Pack Management }}}
 
 ------------------------------------------------------------
 -- Plugin Hooks
@@ -522,6 +612,15 @@ do -- {{{1
 
 			local select = require("nvim-treesitter-textobjects.select")
 			local move = require("nvim-treesitter-textobjects.move")
+			local function textobject_move(callback)
+				return function()
+					local ok, parser = pcall(vim.treesitter.get_parser, 0)
+					if not ok or not parser then
+						return
+					end
+					callback()
+				end
+			end
 
 			vim.keymap.set({ "x", "o" }, "af", function()
 				select.select_textobject("@function.outer", "textobjects")
@@ -542,24 +641,24 @@ do -- {{{1
 				select.select_textobject("@parameter.inner", "textobjects")
 			end, { desc = "Select Inner Parameter" })
 
-			vim.keymap.set({ "n", "x", "o" }, "]f", function()
+			vim.keymap.set({ "n", "x", "o" }, "]f", textobject_move(function()
 				move.goto_next_start("@function.outer", "textobjects")
-			end, { desc = "Next Function" })
-			vim.keymap.set({ "n", "x", "o" }, "[f", function()
+			end), { desc = "Next Function" })
+			vim.keymap.set({ "n", "x", "o" }, "[f", textobject_move(function()
 				move.goto_previous_start("@function.outer", "textobjects")
-			end, { desc = "Prev Function" })
-			vim.keymap.set({ "n", "x", "o" }, "]C", function()
+			end), { desc = "Prev Function" })
+			vim.keymap.set({ "n", "x", "o" }, "]C", textobject_move(function()
 				move.goto_next_start("@class.outer", "textobjects")
-			end, { desc = "Next Class" })
-			vim.keymap.set({ "n", "x", "o" }, "[C", function()
+			end), { desc = "Next Class" })
+			vim.keymap.set({ "n", "x", "o" }, "[C", textobject_move(function()
 				move.goto_previous_start("@class.outer", "textobjects")
-			end, { desc = "Prev Class" })
-			vim.keymap.set({ "n", "x", "o" }, "]a", function()
+			end), { desc = "Prev Class" })
+			vim.keymap.set({ "n", "x", "o" }, "]a", textobject_move(function()
 				move.goto_next_start("@parameter.inner", "textobjects")
-			end, { desc = "Next Parameter" })
-			vim.keymap.set({ "n", "x", "o" }, "[a", function()
+			end), { desc = "Next Parameter" })
+			vim.keymap.set({ "n", "x", "o" }, "[a", textobject_move(function()
 				move.goto_previous_start("@parameter.inner", "textobjects")
-			end, { desc = "Prev Parameter" })
+			end), { desc = "Prev Parameter" })
 		end
 	else
 		vim.schedule(function()
@@ -574,8 +673,10 @@ end
 ------------------------------------------------------------
 do -- {{{1
 	local mason_bin_dir = vim.fn.stdpath("data") .. "/mason/bin"
-	local jsonls_bin = mason_bin_dir .. "/vscode-json-language-server"
-	if vim.fn.executable("vscode-json-language-server") == 0 and vim.fn.executable(jsonls_bin) == 1 then
+	if
+		vim.fn.isdirectory(mason_bin_dir) == 1
+		and not vim.tbl_contains(vim.split(vim.env.PATH or "", ":", { plain = true }), mason_bin_dir)
+	then
 		vim.env.PATH = mason_bin_dir .. ":" .. vim.env.PATH
 	end
 
@@ -586,14 +687,50 @@ do -- {{{1
 	end
 
 	local json_schemas = {}
+	local yaml_schemas = {}
 	local ok_schemastore, schemastore = pcall(require, "schemastore")
 	if ok_schemastore then
 		json_schemas = schemastore.json.schemas()
+		yaml_schemas = schemastore.yaml.schemas()
 	end
 
-	vim.lsp.config("jsonls", {
-		capabilities = capabilities,
-		cmd = { "vscode-json-language-server", "--stdio" },
+	vim.filetype.add({
+		filename = {
+			["compose.yaml"] = "yaml.docker-compose",
+			["compose.yml"] = "yaml.docker-compose",
+			["docker-compose.yaml"] = "yaml.docker-compose",
+			["docker-compose.yml"] = "yaml.docker-compose",
+		},
+	})
+
+	local function enable_lsp(name, executable, opts)
+		if executable and vim.fn.executable(executable) ~= 1 then
+			return
+		end
+
+		vim.lsp.config(name, vim.tbl_deep_extend("force", { capabilities = capabilities }, opts or {}))
+		vim.lsp.enable(name)
+	end
+
+	local function command_succeeds(cmd)
+		local ok, result = pcall(function()
+			return vim.system(cmd, { text = true }):wait()
+		end)
+
+		return ok and result and result.code == 0
+	end
+
+	local function rust_analyzer_cmd()
+		if vim.fn.executable("rust-analyzer") == 1 and command_succeeds({ "rust-analyzer", "--version" }) then
+			return { "rust-analyzer" }
+		end
+
+		if vim.fn.executable("rustup") == 1 and command_succeeds({ "rustup", "+stable", "which", "rust-analyzer" }) then
+			return { "rustup", "run", "stable", "rust-analyzer" }
+		end
+	end
+
+	enable_lsp("jsonls", "vscode-json-language-server", {
 		filetypes = { "json", "jsonc" },
 		init_options = {
 			provideFormatter = true,
@@ -606,7 +743,81 @@ do -- {{{1
 		},
 	})
 
-	vim.lsp.enable("jsonls")
+	enable_lsp("lua_ls", "lua-language-server", {
+		settings = {
+			Lua = {
+				runtime = { version = "LuaJIT" },
+				diagnostics = { globals = { "vim" } },
+				workspace = { checkThirdParty = false },
+				telemetry = { enable = false },
+			},
+		},
+	})
+
+	enable_lsp("gopls", "gopls", {
+		settings = {
+			gopls = {
+				analyses = { unusedparams = true },
+				staticcheck = true,
+			},
+		},
+	})
+
+	local rust_analyzer = rust_analyzer_cmd()
+	if rust_analyzer then
+		enable_lsp("rust_analyzer", nil, {
+			cmd = rust_analyzer,
+		})
+	end
+
+	enable_lsp("ts_ls", "typescript-language-server", {
+		settings = {
+			javascript = {
+				inlayHints = {
+					includeInlayFunctionLikeReturnTypeHints = true,
+					includeInlayParameterNameHints = "all",
+					includeInlayPropertyDeclarationTypeHints = true,
+				},
+			},
+			typescript = {
+				inlayHints = {
+					includeInlayFunctionLikeReturnTypeHints = true,
+					includeInlayParameterNameHints = "all",
+					includeInlayPropertyDeclarationTypeHints = true,
+				},
+			},
+		},
+	})
+
+	enable_lsp("jdtls", "jdtls")
+
+	enable_lsp("yamlls", "yaml-language-server", {
+		settings = {
+			yaml = {
+				completion = true,
+				hover = true,
+				schemaStore = {
+					enable = false,
+					url = "",
+				},
+				schemas = yaml_schemas,
+				validate = true,
+			},
+		},
+	})
+
+	enable_lsp("taplo", "taplo")
+	enable_lsp("dockerls", "docker-langserver")
+	enable_lsp("docker_compose_language_service", "docker-compose-langserver")
+	enable_lsp("terraformls", "terraform-ls")
+	enable_lsp("tofu_ls", "tofu-ls")
+	enable_lsp("tflint", "tflint")
+	enable_lsp("bashls", "bash-language-server")
+	enable_lsp("marksman", "marksman")
+	enable_lsp("nil_ls", "nil")
+	enable_lsp("zls", "zls")
+	enable_lsp("helm_ls", "helm_ls")
+	enable_lsp("ansiblels", "ansible-language-server")
 end
 -- LSP }}}
 
@@ -630,8 +841,7 @@ do -- {{{1
 	local function nightly_insert_enter()
 		local ok_cmp, cmp = pcall(require, "cmp")
 		if ok_cmp and cmp.visible() then
-			cmp.confirm({ select = true })
-			return ""
+			return vim.api.nvim_replace_termcodes("<Cmd>lua require('cmp').confirm({ select = true })<CR>", true, false, true)
 		end
 
 		if _G.MiniPairs and type(MiniPairs.cr) == "function" then
@@ -733,7 +943,29 @@ do -- {{{1
 			hex_color = hipatterns.gen_highlighter.hex_color(),
 		},
 	})
-	require("mini.jump").setup()
+	require("mini.jump").setup({
+		silent = true,
+	})
+	require("eyeliner").setup({
+		default_keymaps = false,
+		case_sensitive = false,
+		disabled_filetypes = { "help" },
+		disabled_buftypes = { "nofile", "prompt", "terminal" },
+	})
+	vim.api.nvim_create_autocmd("User", {
+		group = vim.api.nvim_create_augroup("nightly_eyeliner", { clear = true }),
+		pattern = "MiniJumpGetTarget",
+		callback = function()
+			if vim.b.eyelinerDisabled then
+				return
+			end
+
+			require("eyeliner").highlight({
+				forward = not MiniJump.state.backward,
+				case_sensitive = not vim.o.ignorecase,
+			})
+		end,
+	})
 
 	-- Appearance
 	require("mini.icons").setup()
@@ -899,6 +1131,7 @@ require("which-key").setup({ -- {{{1
 		{ "z", mode = { "n", "x" } },
 	},
 	spec = {
+		{ "<leader>b", group = "buffer" },
 		{ "<leader>s", group = "search" },
 		{ "[", group = "prev" },
 		{ "]", group = "next" },
@@ -1097,6 +1330,11 @@ require("yazi").setup({ -- {{{1
 ------------------------------------------------------------
 -- oil.nvim
 ------------------------------------------------------------
+-- Load netrw's remote protocol handlers before Oil disables its file explorer.
+vim.g.netrw_silent = 1
+vim.cmd("packadd netrw")
+vim.cmd("runtime autoload/netrw.vim")
+
 require("oil").setup({ -- {{{1
 	default_file_explorer = true,
 	keymaps = {
@@ -1123,7 +1361,7 @@ require("flash").setup({ -- {{{1
 local function nightly_lsp_supports(method, bufnr) -- {{{1
 	bufnr = bufnr or 0
 	for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr })) do
-		if client.supports_method(method) then
+		if client:supports_method(method, bufnr) then
 			return true
 		end
 	end
@@ -1152,8 +1390,8 @@ vim.keymap.set("n", "<C-s>", "<Cmd>write<CR>", { desc = "Save buffer" })
 vim.keymap.set("i", "<C-s>", "<C-o><Cmd>write<CR>", { desc = "Save buffer" })
 vim.keymap.set("x", "<C-s>", "<Esc><Cmd>write<CR>gv", { desc = "Save buffer" })
 vim.keymap.set("n", "<leader>?", function()
-	require("which-key").show({ global = false })
-end, { desc = "Buffer local keymaps" })
+	require("snacks").picker.keymaps()
+end, { desc = "Keymaps" })
 vim.keymap.set("n", "<leader><space>", function()
 	require("snacks").picker.files()
 end, { desc = "Find Files" })
@@ -1166,6 +1404,9 @@ end, { desc = "Grep" })
 vim.keymap.set("n", "<leader>sj", function()
 	require("snacks").picker.jumps()
 end, { desc = "Jumps" })
+vim.keymap.set("n", "<leader>sk", function()
+	require("snacks").picker.keymaps()
+end, { desc = "Keymaps" })
 vim.keymap.set("n", "<leader>st", function()
 	require("snacks").picker.treesitter()
 end, { desc = "Treesitter Symbols" })
@@ -1175,6 +1416,13 @@ vim.keymap.set("n", "<leader>ff", function()
 	require("snacks").picker.files()
 end, { desc = "Find Files" })
 vim.keymap.set("n", "<leader>fb", function()
+	require("snacks").picker.buffers()
+end, { desc = "Buffers" })
+vim.keymap.set("n", "<S-h>", "<Cmd>bprevious<CR>", { desc = "Prev buffer" })
+vim.keymap.set("n", "<S-l>", "<Cmd>bnext<CR>", { desc = "Next buffer" })
+vim.keymap.set("n", "[b", "<Cmd>bprevious<CR>", { desc = "Prev buffer" })
+vim.keymap.set("n", "]b", "<Cmd>bnext<CR>", { desc = "Next buffer" })
+vim.keymap.set("n", "<leader>bb", function()
 	require("snacks").picker.buffers()
 end, { desc = "Buffers" })
 vim.keymap.set("n", "<leader>fr", function()
@@ -1353,8 +1601,79 @@ require("catppuccin").setup({ -- {{{1
 	},
 })
 
+local function nightly_set_mini_jump_highlight()
+	local colors = require("catppuccin.palettes").get_palette("mocha")
+	vim.api.nvim_set_hl(0, "MiniJump", { fg = colors.text, bg = colors.surface2, bold = true })
+end
+
 vim.cmd.colorscheme("catppuccin")
+nightly_set_mini_jump_highlight()
+vim.api.nvim_create_autocmd("ColorScheme", {
+	group = vim.api.nvim_create_augroup("nightly_mini_jump_highlight", { clear = true }),
+	pattern = "catppuccin*",
+	callback = nightly_set_mini_jump_highlight,
+})
 -- Colorscheme }}}
+
+------------------------------------------------------------
+-- bufferline.nvim
+------------------------------------------------------------
+do -- {{{1
+	local diag_icons = {
+		error = " ",
+		warning = " ",
+	}
+
+	local function bufdelete(bufnr)
+		require("mini.bufremove").delete(bufnr, false)
+	end
+
+	if vim.F then
+		vim.F.if_nil = vim.nonnil
+	end
+
+	require("bufferline").setup({
+		highlights = require("catppuccin.special.bufferline").get_theme(),
+		options = {
+			close_command = bufdelete,
+			right_mouse_command = bufdelete,
+			diagnostics = "nvim_lsp",
+			always_show_bufferline = false,
+			diagnostics_indicator = function(_, _, diag)
+				local parts = {}
+				if diag.error and diag.error > 0 then
+					parts[#parts + 1] = diag_icons.error .. diag.error
+				end
+				if diag.warning and diag.warning > 0 then
+					parts[#parts + 1] = diag_icons.warning .. diag.warning
+				end
+				return table.concat(parts, " ")
+			end,
+			offsets = {
+				{
+					filetype = "snacks_layout_box",
+				},
+			},
+			---@param opts bufferline.IconFetcherOpts
+			get_element_icon = function(opts)
+				if _G.MiniIcons then
+					local icon, hl = MiniIcons.get("filetype", opts.filetype)
+					return icon, hl
+				end
+			end,
+		},
+	})
+
+	vim.api.nvim_create_autocmd({ "BufAdd", "BufDelete" }, {
+		group = vim.api.nvim_create_augroup("nightly_bufferline", { clear = true }),
+		callback = function()
+			vim.schedule(function()
+				pcall(vim.cmd.redrawtabline)
+			end)
+		end,
+	})
+end
+-- bufferline.nvim }}}
 
 ------------------------------------------------------------
 -- avante.nvim

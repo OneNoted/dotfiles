@@ -68,6 +68,21 @@ func TestPadTruncatePadsShortValues(t *testing.T) {
 	}
 }
 
+func TestPresetListWidthsExpandForLongValues(t *testing.T) {
+	presets := []Preset{
+		{ID: "short", Headphone: "Short Headphone"},
+		{ID: "very-long-preset-identifier-that-needs-room", Headphone: "A longer headphone name than the default column"},
+	}
+
+	idWidth, headphoneWidth := presetListWidths(presets)
+	if idWidth != len(presets[1].ID) {
+		t.Fatalf("idWidth = %d, want %d", idWidth, len(presets[1].ID))
+	}
+	if headphoneWidth != len(presets[1].Headphone) {
+		t.Fatalf("headphoneWidth = %d, want %d", headphoneWidth, len(presets[1].Headphone))
+	}
+}
+
 func TestStreamsOnSinkFiltersBySinkName(t *testing.T) {
 	streams := []Stream{
 		{ID: "1", SinkName: "effect_input.test"},
