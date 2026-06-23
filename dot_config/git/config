@@ -11,6 +11,6 @@
 	helper =
 	helper = !/usr/bin/gh auth git-credential
 [core]
-	excludesFile = /home/notes/.config/git/ignore
+	excludesFile = ~/.config/git/ignore
 [protocol "file"]
 	allow = always
