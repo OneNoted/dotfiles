@@ -1,5 +1,6 @@
 {{ if ne .chezmoi.hostname "aeolus" }}
 ~/.config/hypr/monitors.conf
+~/.config/systemd/user/t3code.service
 {{- end }}
 
 {{ if eq .chezmoi.hostname "hephaestus" }}
