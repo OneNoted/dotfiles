@@ -28,6 +28,25 @@ map("n", "<leader>bb", "<cmd>e #<cr>", { desc = "Switch to other buffer" })
 -- Clear search highlight
 map({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and clear hlsearch" })
 
+local function substitute_cword(range, visual)
+	local word = vim.fn.expand("<cword>")
+	if word == "" then
+		return "<Ignore>"
+	end
+
+	local pattern = vim.fn.escape(word, [=[\/.*$^~[]]=])
+	local prefix = visual and ":<C-u>" or ":"
+	local visual_atom = visual and [[\%V]] or ""
+	return ("%s%ss/%s\\<%s\\>//gI<Left><Left><Left>"):format(prefix, range, visual_atom, pattern)
+end
+
+map("n", "<leader>s", function()
+	return substitute_cword("%", false)
+end, { expr = true, desc = "Substitute word in file" })
+map("x", "<leader>s", function()
+	return substitute_cword([['<,'>]], true)
+end, { expr = true, desc = "Substitute word in selection" })
+
 -- Better indenting (stay in visual mode)
 map("v", "<", "<gv", { desc = "Indent left" })
 map("v", ">", ">gv", { desc = "Indent right" })

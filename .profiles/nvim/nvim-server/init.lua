@@ -434,6 +434,25 @@ vim.keymap.set({ "o", "x" }, "R", function()
   require("flash").treesitter_search()
 end, { desc = "Treesitter search" })
 
+local function substitute_cword(range, visual)
+  local word = vim.fn.expand("<cword>")
+  if word == "" then
+    return "<Ignore>"
+  end
+
+  local pattern = vim.fn.escape(word, [=[\/.*$^~[]]=])
+  local prefix = visual and ":<C-u>" or ":"
+  local visual_atom = visual and [[\%V]] or ""
+  return ("%s%ss/%s\\<%s\\>//gI<Left><Left><Left>"):format(prefix, range, visual_atom, pattern)
+end
+
+vim.keymap.set("n", "<leader>s", function()
+  return substitute_cword("%", false)
+end, { expr = true, desc = "Substitute word in file" })
+vim.keymap.set("x", "<leader>s", function()
+  return substitute_cword([['<,'>]], true)
+end, { expr = true, desc = "Substitute word in selection" })
+
 ------------------------------------------------------------
 -- Which Key
 ------------------------------------------------------------
@@ -444,7 +463,7 @@ require("which-key").setup({
     { "<leader>f", group = "file/find" },
     { "<leader>g", group = "git" },
     { "<leader>h", group = "hunks" },
-    { "<leader>s", group = "search" },
+    { "<leader>S", group = "search" },
     { "<leader>b", group = "buffer" },
     { "<leader>c", group = "code" },
     { "<leader>x", group = "diagnostics" },
@@ -499,22 +518,22 @@ vim.keymap.set("n", "<leader>fb", function()
 end, { desc = "Buffers" })
 
 -- Pickers: search
-vim.keymap.set("n", "<leader>sg", function()
+vim.keymap.set("n", "<leader>Sg", function()
   Snacks.picker.grep()
 end, { desc = "Grep" })
-vim.keymap.set({ "n", "v" }, "<leader>sw", function()
+vim.keymap.set({ "n", "v" }, "<leader>Sw", function()
   Snacks.picker.grep_word()
 end, { desc = "Grep word" })
-vim.keymap.set("n", "<leader>sd", function()
+vim.keymap.set("n", "<leader>Sd", function()
   Snacks.picker.diagnostics()
 end, { desc = "Diagnostics" })
-vim.keymap.set("n", "<leader>sh", function()
+vim.keymap.set("n", "<leader>Sh", function()
   Snacks.picker.help()
 end, { desc = "Help pages" })
-vim.keymap.set("n", "<leader>sk", function()
+vim.keymap.set("n", "<leader>Sk", function()
   Snacks.picker.keymaps()
 end, { desc = "Keymaps" })
-vim.keymap.set("n", "<leader>sm", function()
+vim.keymap.set("n", "<leader>Sm", function()
   Snacks.picker.marks()
 end, { desc = "Marks" })
 

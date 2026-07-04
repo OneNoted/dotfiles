@@ -1149,7 +1149,7 @@ require("which-key").setup({ -- {{{1
 	},
 	spec = {
 		{ "<leader>b", group = "buffer" },
-		{ "<leader>s", group = "search" },
+		{ "<leader>S", group = "search" },
 		{ "[", group = "prev" },
 		{ "]", group = "next" },
 		{ "g", group = "goto" },
@@ -1403,6 +1403,24 @@ local function nightly_picker_workspace_symbols()
 	vim.notify("No attached LSP client with workspace symbol support", vim.log.levels.WARN)
 end
 
+local function nightly_substitute_cword(range, visual)
+	local word = vim.fn.expand("<cword>")
+	if word == "" then
+		return "<Ignore>"
+	end
+
+	local pattern = vim.fn.escape(word, [=[\/.*$^~[]]=])
+	local prefix = visual and ":<C-u>" or ":"
+	local visual_atom = visual and [[\%V]] or ""
+	return ("%s%ss/%s\\<%s\\>//gI<Left><Left><Left>"):format(prefix, range, visual_atom, pattern)
+end
+
+vim.keymap.set("n", "<leader>s", function()
+	return nightly_substitute_cword("%", false)
+end, { expr = true, desc = "Substitute word in file" })
+vim.keymap.set("x", "<leader>s", function()
+	return nightly_substitute_cword([['<,'>]], true)
+end, { expr = true, desc = "Substitute word in selection" })
 vim.keymap.set("n", "<C-s>", "<Cmd>write<CR>", { desc = "Save buffer" })
 vim.keymap.set("i", "<C-s>", "<C-o><Cmd>write<CR>", { desc = "Save buffer" })
 vim.keymap.set("x", "<C-s>", "<Esc><Cmd>write<CR>gv", { desc = "Save buffer" })
@@ -1418,17 +1436,17 @@ end, { desc = "Buffers" })
 vim.keymap.set("n", "<leader>/", function()
 	require("snacks").picker.grep()
 end, { desc = "Grep" })
-vim.keymap.set("n", "<leader>sj", function()
+vim.keymap.set("n", "<leader>Sj", function()
 	require("snacks").picker.jumps()
 end, { desc = "Jumps" })
-vim.keymap.set("n", "<leader>sk", function()
+vim.keymap.set("n", "<leader>Sk", function()
 	require("snacks").picker.keymaps()
 end, { desc = "Keymaps" })
-vim.keymap.set("n", "<leader>st", function()
+vim.keymap.set("n", "<leader>St", function()
 	require("snacks").picker.treesitter()
 end, { desc = "Treesitter Symbols" })
-vim.keymap.set("n", "<leader>ss", nightly_picker_symbols, { desc = "Symbols" })
-vim.keymap.set("n", "<leader>sS", nightly_picker_workspace_symbols, { desc = "Workspace Symbols" })
+vim.keymap.set("n", "<leader>Ss", nightly_picker_symbols, { desc = "Symbols" })
+vim.keymap.set("n", "<leader>SS", nightly_picker_workspace_symbols, { desc = "Workspace Symbols" })
 vim.keymap.set("n", "<leader>ff", function()
 	require("snacks").picker.files()
 end, { desc = "Find Files" })
