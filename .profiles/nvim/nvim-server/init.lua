@@ -737,6 +737,18 @@ autocmd("FileType", {
   end,
 })
 
+-- Wrap and spell in text buffers
+autocmd("FileType", {
+  group = vim.api.nvim_create_augroup("server_wrap_spell", { clear = true }),
+  pattern = { "text", "mail", "plaintex", "typst", "gitcommit", "markdown" },
+  callback = function()
+    vim.opt_local.wrap = true
+    vim.opt_local.linebreak = true
+    vim.opt_local.breakindent = true
+    vim.opt_local.spell = true
+  end,
+})
+
 -- Auto-create parent directories
 autocmd("BufWritePre", {
   callback = function(ev)

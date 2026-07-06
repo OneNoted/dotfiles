@@ -70,6 +70,23 @@ end
 -- Options }}}
 
 ------------------------------------------------------------
+-- Prose Buffers
+------------------------------------------------------------
+do -- {{{1
+	vim.api.nvim_create_autocmd("FileType", {
+		group = vim.api.nvim_create_augroup("nightly_wrap_spell", { clear = true }),
+		pattern = { "text", "mail", "plaintex", "typst", "gitcommit", "markdown" },
+		callback = function()
+			vim.opt_local.wrap = true
+			vim.opt_local.linebreak = true
+			vim.opt_local.breakindent = true
+			vim.opt_local.spell = true
+		end,
+	})
+end
+-- Prose Buffers }}}
+
+------------------------------------------------------------
 -- Packages
 ------------------------------------------------------------
 do -- {{{1
