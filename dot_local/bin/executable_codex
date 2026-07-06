@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+resolve_path() {
+  readlink -f -- "$1" 2>/dev/null || realpath "$1" 2>/dev/null || printf '%s\n' "$1"
+}
+
+resolve_self() {
+  local self=${BASH_SOURCE[0]:-$0}
+
+  if [[ "$self" != */* ]]; then
+    local found
+    found="$(command -v -- "$self" 2>/dev/null || true)"
+    if [[ -n "$found" ]]; then
+      self="$found"
+    fi
+  fi
+
+  resolve_path "$self"
+}
+
+find_real_codex() {
+  local IFS=:
+  local dir candidate resolved
+
+  for dir in ${PATH:-}; do
+    [[ -n "$dir" ]] || dir=.
+    candidate="$dir/codex"
+    [[ -x "$candidate" && ! -d "$candidate" ]] || continue
+
+    resolved="$(resolve_path "$candidate")"
+    [[ "$resolved" != "$SELF" ]] || continue
+
+    printf '%s\n' "$candidate"
+    return 0
+  done
+
+  return 1
+}
+
+derive_github_pat_token() {
+  if [[ -n "${GITHUB_PAT_TOKEN:-}" ]]; then
+    return 0
+  fi
+
+  if [[ -n "${GH_TOKEN:-}" ]]; then
+    export GITHUB_PAT_TOKEN="$GH_TOKEN"
+    return 0
+  fi
+
+  if [[ -n "${GITHUB_TOKEN:-}" ]]; then
+    export GITHUB_PAT_TOKEN="$GITHUB_TOKEN"
+    return 0
+  fi
+
+  if command -v gh >/dev/null 2>&1; then
+    local token
+    token="$(gh auth token 2>/dev/null || true)"
+    if [[ -n "$token" ]]; then
+      export GITHUB_PAT_TOKEN="$token"
+    fi
+  fi
+}
+
+SELF="$(resolve_self)"
+CODEX_BIN="$(find_real_codex)" || {
+  printf 'codex: unable to find a non-wrapper codex executable (wrapper: %s)\n' "$SELF" >&2
+  exit 127
+}
+
+derive_github_pat_token
+exec "$CODEX_BIN" "$@"
