@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -eu
+
+if ! command -v systemctl >/dev/null 2>&1; then
+	exit 0
+fi
+
+systemctl --user disable --now filter-chain.service >/dev/null 2>&1 || true
+systemctl --user reset-failed filter-chain.service >/dev/null 2>&1 || true
