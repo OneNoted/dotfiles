@@ -1,8 +1,22 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+resolve_path() {
+  readlink -f -- "$1" 2>/dev/null || realpath "$1" 2>/dev/null || printf '%s\n' "$1"
+}
+
 resolve_self() {
-  readlink -f -- "$0" 2>/dev/null || realpath "$0" 2>/dev/null || printf '%s\n' "$0"
+  local self=${BASH_SOURCE[0]:-$0}
+
+  if [[ "$self" != */* ]]; then
+    local found
+    found="$(command -v -- "$self" 2>/dev/null || true)"
+    if [[ -n "$found" ]]; then
+      self="$found"
+    fi
+  fi
+
+  resolve_path "$self"
 }
 
 find_real_codex() {
@@ -14,7 +28,7 @@ find_real_codex() {
     candidate="$dir/codex"
     [[ -x "$candidate" && ! -d "$candidate" ]] || continue
 
-    resolved="$(readlink -f -- "$candidate" 2>/dev/null || realpath "$candidate" 2>/dev/null || printf '%s\n' "$candidate")"
+    resolved="$(resolve_path "$candidate")"
     [[ "$resolved" != "$SELF" ]] || continue
 
     printf '%s\n' "$candidate"
@@ -50,7 +64,7 @@ derive_github_pat_token() {
 
 SELF="$(resolve_self)"
 CODEX_BIN="$(find_real_codex)" || {
-  printf 'codex: unable to find the real codex executable after %s\n' "$SELF" >&2
+  printf 'codex: unable to find a non-wrapper codex executable (wrapper: %s)\n' "$SELF" >&2
   exit 127
 }
 
