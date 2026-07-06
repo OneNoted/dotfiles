@@ -26,7 +26,7 @@ return {
 				{ "<leader>f", group = "file/find" },
 				{ "<leader>g", group = "git" },
 				{ "<leader>h", group = "harpoon" },
-				{ "<leader>s", group = "search" },
+				{ "<leader>S", group = "search" },
 				{ "<leader>b", group = "buffer" },
 				{ "<leader>c", group = "code" },
 				{ "<leader>t", group = "test" },

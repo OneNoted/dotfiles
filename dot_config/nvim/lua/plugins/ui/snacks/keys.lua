@@ -60,14 +60,14 @@ return {
 		},
 		-- Search
 		{
-			"<leader>sg",
+			"<leader>Sg",
 			function()
 				Snacks.picker.grep()
 			end,
 			desc = "Grep",
 		},
 		{
-			"<leader>sw",
+			"<leader>Sw",
 			function()
 				Snacks.picker.grep_word()
 			end,
@@ -75,28 +75,28 @@ return {
 			mode = { "n", "x" },
 		},
 		{
-			"<leader>sd",
+			"<leader>Sd",
 			function()
 				Snacks.picker.diagnostics()
 			end,
 			desc = "Diagnostics",
 		},
 		{
-			"<leader>sh",
+			"<leader>Sh",
 			function()
 				Snacks.picker.help()
 			end,
 			desc = "Help Pages",
 		},
 		{
-			"<leader>sk",
+			"<leader>Sk",
 			function()
 				Snacks.picker.keymaps()
 			end,
 			desc = "Keymaps",
 		},
 		{
-			"<leader>sm",
+			"<leader>Sm",
 			function()
 				Snacks.picker.marks()
 			end,
