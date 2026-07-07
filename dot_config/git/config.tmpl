@@ -11,6 +11,8 @@
 	helper =
 	helper = !/usr/bin/gh auth git-credential
 [core]
-	excludesFile = ~/.config/git/ignore
+	excludesFile = {{ .chezmoi.homeDir }}/.config/git/ignore
 [protocol "file"]
 	allow = always
+[credential]
+	helper = /usr/lib/git-core/git-credential-libsecret

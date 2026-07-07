@@ -6,6 +6,23 @@ has_graphical_session() {
 	[ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ]
 }
 
+if has_graphical_session &&
+	command -v niri >/dev/null 2>&1 &&
+	[ -z "${XDG_OPEN_NIRI_SPAWNED:-}" ] &&
+	niri msg focused-window >/dev/null 2>&1; then
+	self=$0
+	case $self in
+	*/*) ;;
+	*) self=$(command -v -- "$self" 2>/dev/null || printf '%s\n' "$self") ;;
+	esac
+
+	exec niri msg action spawn -- sh -c "
+		cd \"\$1\" || exit
+		shift
+		exec env XDG_OPEN_NIRI_SPAWNED=1 \"\$@\"
+	" sh "$PWD" "$self" "$@"
+fi
+
 if has_graphical_session && command -v gio >/dev/null 2>&1; then
 	exec gio open "$@"
 fi

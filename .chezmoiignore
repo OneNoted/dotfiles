@@ -1,3 +1,11 @@
+# Repo-only source support files should not be installed into $HOME.
+*.md
+bootstrap
+bootstrap/**
+docs
+docs/**
+justfile
+
 {{ if ne .chezmoi.hostname "aeolus" }}
 ~/.config/hypr/monitors.conf
 .config/systemd/user/t3code.service
